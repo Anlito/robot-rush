@@ -48,6 +48,9 @@
 
   // ---------- C0 · Accès ----------
   function montrerAcces(erreur) {
+    const bouton = el('#form-acces button[type="submit"]');
+    bouton.disabled = false;
+    bouton.textContent = 'Entrer';
     el('#ecran-acces').hidden = false;
     el('#ecran-admin').hidden = true;
     const e = el('#erreur-acces');
@@ -63,12 +66,26 @@
     socket.on('etat', (e) => { etat = e; afficher(); });
     socket.on('disconnect', () => message('Connexion au serveur perdue… reconnexion en cours. Vérifiez que la fenêtre Robot Rush est toujours ouverte sur ce PC.', true));
     socket.on('connect', () => message(''));
-    socket.on('connect_error', () => message('Le serveur Robot Rush ne répond pas. Vérifiez que la fenêtre noire du programme est ouverte.', true));
+    socket.on('connect_error', () => {
+      const texte = 'Le serveur Robot Rush ne répond pas. Vérifiez que la fenêtre noire du programme est ouverte sur ce PC.';
+      if (!el('#ecran-acces').hidden) montrerAcces(texte); else message(texte, true);
+    });
   }
   el('#form-acces').addEventListener('submit', (ev) => {
     ev.preventDefault();
+    const bouton = el('#form-acces button[type="submit"]');
+    bouton.disabled = true;
+    bouton.textContent = 'Connexion…';
     el('#erreur-acces').hidden = true;
-    ouvrir(el('#mdp').value);
+    ouvrir(el('#mdp').value.trim());
+    // Sans réponse du serveur au bout de 5 s, on le dit.
+    setTimeout(() => {
+      bouton.disabled = false;
+      bouton.textContent = 'Entrer';
+      if (!el('#ecran-acces').hidden && el('#erreur-acces').hidden) {
+        montrerAcces('Pas de réponse du serveur. Vérifiez que Robot Rush est lancé (fenêtre noire ouverte), puis réessayez.');
+      }
+    }, 5000);
   });
   el('#btn-deconnexion').addEventListener('click', () => {
     session.ecrire(null);
