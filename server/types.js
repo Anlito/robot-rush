@@ -1,10 +1,12 @@
 'use strict';
 
-// Un type de question = trois fonctions côté serveur :
-//  - preparer(q, rng) : vue envoyée à l'élève (sans la bonne réponse) + données privées gardées par le serveur ;
+const blocs = require('./blocs');
+
+// Un type de question = quatre fonctions côté serveur :
+//  - preparer(q, rng) : vue envoyée à l'élève (jamais la bonne réponse) + données privées gardées par le serveur ;
 //  - valider(q, reponse, prive) : true si la réponse est juste ;
-//  - textes(q, reponse, prive) : { donnee, bonne } en clair, affichés après la réponse.
-// Étape 1 : QCM seulement. Ordre, calcul, blocs et programme à compléter arrivent à l'étape 3.
+//  - textes(q, reponse, prive) : { donnee, bonne } en clair, affichés après une mauvaise réponse ;
+//  - verifier(q) : message d'erreur si la question est mal remplie, sinon null.
 
 function melanger(tableau, rng) {
   const t = tableau.slice();
@@ -15,6 +17,10 @@ function melanger(tableau, rng) {
   return t;
 }
 
+const nettoyer = (t) => String(t ?? '').trim().replace(/\s+/g, ' ');
+const pareil = (a, b) => nettoyer(a).toLowerCase() === nettoyer(b).toLowerCase();
+
+// ---------- 1. QCM : 4 réponses, une bonne ----------
 const qcm = {
   preparer(q, rng) {
     const choix = q.donnees.choix;
@@ -35,16 +41,153 @@ const qcm = {
   verifier(q) {
     const d = q.donnees || {};
     if (!Array.isArray(d.choix) || d.choix.length < 2) return 'il faut au moins 2 réponses';
-    if (!Number.isInteger(d.bonne) || d.bonne < 0 || d.bonne >= d.choix.length) return 'bonne réponse manquante';
+    if (d.choix.some((c) => !nettoyer(c))) return 'une réponse est vide';
+    if (!Number.isInteger(d.bonne) || d.bonne < 0 || d.bonne >= d.choix.length) return 'bonne réponse non choisie';
     return null;
   },
 };
 
-const TYPES = { qcm };
+// ---------- 2. Remise en ordre ----------
+// L'élève renvoie les positions affichées dans l'ordre qu'il a choisi. On compare les textes :
+// deux étapes identiques (« Attendre 1 s » deux fois) sont donc interchangeables.
+const ordre = {
+  preparer(q, rng) {
+    const elements = q.donnees.elements;
+    let affichage = melanger(elements.map((_, i) => i), rng);
+    // Jamais déjà dans le bon ordre au départ.
+    for (let essai = 0; essai < 10 && affichage.every((v, i) => elements[v] === elements[i]); essai++) affichage = melanger(affichage, rng);
+    return { vue: { elements: affichage.map((i) => elements[i]) }, prive: { affichage } };
+  },
+  lire(q, reponse, prive) {
+    if (!Array.isArray(reponse) || reponse.length !== prive.affichage.length) return null;
+    const vus = new Set();
+    const textes = [];
+    for (const r of reponse) {
+      const i = Number(r);
+      if (!Number.isInteger(i) || i < 0 || i >= prive.affichage.length || vus.has(i)) return null;
+      vus.add(i);
+      textes.push(q.donnees.elements[prive.affichage[i]]);
+    }
+    return textes;
+  },
+  valider(q, reponse, prive) {
+    const textes = ordre.lire(q, reponse, prive);
+    return Boolean(textes) && textes.every((t, i) => t === q.donnees.elements[i]);
+  },
+  textes(q, reponse, prive) {
+    const textes = ordre.lire(q, reponse, prive);
+    return { donnee: textes ? textes.join(' → ') : null, bonne: q.donnees.elements.join(' → ') };
+  },
+  verifier(q) {
+    const e = (q.donnees || {}).elements;
+    if (!Array.isArray(e) || e.length < 2) return 'il faut au moins 2 étapes';
+    if (e.some((x) => !nettoyer(x))) return 'une étape est vide';
+    return null;
+  },
+};
+
+// ---------- 3. Calcul : réponse numérique exacte ----------
+function lireNombre(texte) {
+  const t = String(texte ?? '').trim().replace(/\s/g, '').replace(',', '.');
+  if (!/^-?\d+(\.\d+)?$/.test(t)) return null;
+  return Number(t);
+}
+const calcul = {
+  preparer(q) {
+    return { vue: { unite: q.donnees.unite || null }, prive: {} };
+  },
+  valider(q, reponse) {
+    const n = lireNombre(reponse);
+    return n !== null && Math.abs(n - Number(q.donnees.reponse)) < 1e-9;
+  },
+  textes(q, reponse) {
+    const u = q.donnees.unite ? ` ${q.donnees.unite}` : '';
+    const n = lireNombre(reponse);
+    return { donnee: reponse === null || reponse === undefined || reponse === '' ? null : `${n === null ? nettoyer(reponse) : String(n).replace('.', ',')}${u}`,
+      bonne: `${String(q.donnees.reponse).replace('.', ',')}${u}` };
+  },
+  verifier(q) {
+    const r = (q.donnees || {}).reponse;
+    if (r === undefined || r === null || r === '' || !Number.isFinite(Number(r))) return 'réponse numérique manquante';
+    return null;
+  },
+};
+
+// ---------- 4. Blocs à assembler (Blockly, module du distributeur de céréales) ----------
+const TAILLE_MAX_PROGRAMME = 60000; // caractères de la sauvegarde Blockly envoyée par l'élève
+function lireProgramme(reponse) {
+  try {
+    const texte = typeof reponse === 'string' ? reponse : JSON.stringify(reponse);
+    if (!texte || texte.length > TAILLE_MAX_PROGRAMME) return null;
+    return blocs.depuisBlockly(typeof reponse === 'string' ? JSON.parse(reponse) : reponse);
+  } catch {
+    return null;
+  }
+}
+const blocsType = {
+  preparer(q) {
+    const autorises = (q.donnees.blocs || blocs.BLOCS_DISPONIBLES).filter((b) => blocs.BLOCS_DISPONIBLES.includes(b));
+    return { vue: { blocs: autorises }, prive: {} };
+  },
+  valider(q, reponse) {
+    const lu = lireProgramme(reponse);
+    return Boolean(lu) && lu.incomplets === 0 && blocs.programmeAccepte(lu.programme, q.donnees.sequences);
+  },
+  textes(q, reponse) {
+    const lu = lireProgramme(reponse);
+    return { donnee: lu ? blocs.texteProgramme(lu.programme) : null, bonne: blocs.texteProgramme(q.donnees.sequences[0]) };
+  },
+  verifier(q) {
+    const s = (q.donnees || {}).sequences;
+    if (!Array.isArray(s) || !s.length || !s.every(Array.isArray)) return 'aucune séquence acceptée';
+    if (s.some((x) => !x.length)) return 'une séquence acceptée est vide';
+    return null;
+  },
+};
+
+// ---------- 5. Programme à compléter : trous à remplir (liste déroulante ou glisser-déposer) ----------
+const MARQUEUR = '___';
+const completer = {
+  preparer(q, rng) {
+    const d = q.donnees;
+    const segments = d.texte.split(MARQUEUR);
+    const mode = d.mode === 'glisser' ? 'glisser' : 'liste';
+    const vue = { segments, mode };
+    if (mode === 'liste') {
+      vue.options = d.trous.map((t) => melanger([t.bonne, ...(t.distracteurs || [])], rng));
+    } else {
+      // Glisser-déposer : une seule réserve d'étiquettes pour tous les trous.
+      const toutes = [];
+      for (const t of d.trous) for (const x of [t.bonne, ...(t.distracteurs || [])]) if (!toutes.some((y) => pareil(x, y))) toutes.push(x);
+      vue.etiquettes = melanger(toutes, rng);
+    }
+    return { vue, prive: {} };
+  },
+  valider(q, reponse) {
+    const trous = q.donnees.trous;
+    return Array.isArray(reponse) && reponse.length === trous.length && trous.every((t, i) => pareil(reponse[i], t.bonne));
+  },
+  textes(q, reponse) {
+    const remplir = (valeurs) => q.donnees.texte.split(MARQUEUR)
+      .map((s, i) => (i === 0 ? s : `[${valeurs[i - 1] ?? '…'}]${s}`)).join('').replace(/\s*\n\s*/g, ' · ');
+    return { donnee: Array.isArray(reponse) ? remplir(reponse.map(nettoyer)) : null, bonne: remplir(q.donnees.trous.map((t) => t.bonne)) };
+  },
+  verifier(q) {
+    const d = q.donnees || {};
+    if (typeof d.texte !== 'string') return 'programme manquant';
+    const n = d.texte.split(MARQUEUR).length - 1;
+    if (n === 0) return `aucun trou (écrire ${MARQUEUR} à la place de chaque trou)`;
+    if (!Array.isArray(d.trous) || d.trous.length !== n) return `${n} trou(s) dans le programme mais ${(d.trous || []).length} réponse(s)`;
+    if (d.trous.some((t) => !nettoyer(t.bonne))) return 'bonne réponse d\'un trou manquante';
+    return null;
+  },
+};
+
+const TYPES = { qcm, ordre, calcul, blocs: blocsType, completer };
 
 function typeJouable(q) {
   const t = TYPES[q.type];
   return Boolean(t) && !t.verifier(q);
 }
 
-module.exports = { TYPES, typeJouable, melanger };
+module.exports = { TYPES, typeJouable, melanger, lireNombre };

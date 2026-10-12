@@ -9,6 +9,7 @@
 const path = require('node:path');
 const fs = require('node:fs');
 const { io } = require('socket.io-client');
+const blocs = require('../server/blocs');
 
 const NB = Number(process.argv[2]) || 12;
 const URL = process.argv[3] || 'http://localhost:3000';
@@ -20,6 +21,32 @@ const fichier = path.resolve(process.env.DATA_DIR || path.join(__dirname, '..', 
 const banque = new Map(JSON.parse(fs.readFileSync(fichier, 'utf8')).map((q) => [q.id, q]));
 const hasard = (t) => t[Math.floor(Math.random() * t.length)];
 const delai = (min, max) => min + Math.random() * (max - min);
+
+// Réponse d'un élève factice, juste ou fausse, pour chacun des 5 types de questions.
+function repondre(vue, q, juste) {
+  switch (vue.type) {
+    case 'qcm':
+      return juste ? vue.choix.indexOf(q.donnees.choix[q.donnees.bonne]) : Math.floor(Math.random() * vue.choix.length);
+    case 'ordre': {
+      const indices = vue.elements.map((_, i) => i);
+      if (!juste) return indices.sort(() => Math.random() - 0.5);
+      const pris = new Set();
+      return q.donnees.elements.map((t) => {
+        const i = vue.elements.findIndex((x, k) => x === t && !pris.has(k));
+        pris.add(i);
+        return i;
+      });
+    }
+    case 'calcul':
+      return String(juste ? q.donnees.reponse : Math.floor(Math.random() * 200));
+    case 'completer':
+      return q.donnees.trous.map((t) => (juste ? t.bonne : hasard(t.distracteurs || ['?'])));
+    case 'blocs':
+      return blocs.versBlockly(juste ? q.donnees.sequences[0] : [{ bloc: 'led_etat', etat: 1 }]);
+    default:
+      return null;
+  }
+}
 
 function lireCodes() {
   return new Promise((resolve, reject) => {
@@ -48,10 +75,9 @@ function eleve(numero, code) {
     if (moi.phase === 'question') {
       minuterie = setTimeout(() => {
         const q = banque.get(moi.question.id);
-        let reponse = Math.floor(Math.random() * moi.question.choix.length);
-        if (q && Math.random() < TAUX) reponse = moi.question.choix.indexOf(q.donnees.choix[q.donnees.bonne]);
-        s.emit('repondre', { questionId: moi.question.id, reponse }, () => {});
-      }, delai(2000, 6000));
+        const juste = q && Math.random() < TAUX;
+        s.emit('repondre', { questionId: moi.question.id, reponse: repondre(moi.question, q, juste) }, () => {});
+      }, delai(2000, moi.question.type === 'blocs' || moi.question.type === 'completer' ? 9000 : 6000));
     } else if (moi.phase === 'action') {
       minuterie = setTimeout(() => s.emit('action', { action: hasard(['avancer', 'avancer', 'solution', 'attaque']) }, () => {}), delai(800, 2500));
     } else if (moi.phase === 'solution') {

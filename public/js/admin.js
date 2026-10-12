@@ -139,7 +139,8 @@
     if (etat.parcoursId && el('#parcours').value !== etat.parcoursId) el('#parcours').value = etat.parcoursId;
     const p = donnees.parcours.find((x) => x.id === etat.parcoursId);
     el('#info-parcours').textContent = p
-      ? `${p.nb} questions · ${p.nbTypes} type${p.nbTypes > 1 ? 's' : ''} · ${etat.nbQuestionsJouables} jouable${etat.nbQuestionsJouables > 1 ? 's' : ''} pour l'instant (QCM)`
+      ? `${p.nb} questions · ${p.nbTypes} type${p.nbTypes > 1 ? 's' : ''}`
+        + (etat.nbQuestionsJouables < p.nb ? ` · attention : ${p.nb - etat.nbQuestionsJouables} incomplète(s), elles ne seront pas posées` : '')
       : '';
     el('#nb-equipes').querySelectorAll('button').forEach((b) => {
       b.classList.toggle('actif', Number(b.dataset.n) === etat.equipes.length);

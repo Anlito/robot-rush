@@ -84,6 +84,43 @@ Choix validés avec le professeur :
 - Une solution déjà au plafond est exclue du tirage ; « Attaquer » est grisé si aucune équipe ne peut être visée
   (toutes bloquées ou protégées).
 
+## Types de questions
+
+Chaque question : `{ id, type, niveau, enonce, image, duree_s, explication, donnees }`.
+Dans l'énoncé, un mot entre accents graves (`` `score` ``) s'affiche comme du code.
+Le serveur garde la réponse ; l'élève ne reçoit que ce qu'il faut pour répondre (choix mélangés, étapes mélangées…).
+
+| Type | `donnees` | Validation (côté serveur) |
+|---|---|---|
+| `qcm` | `choix` (2 à 4 textes), `bonne` (index) | choix affichés mélangés, correspondance gardée par le serveur |
+| `ordre` | `elements` dans le bon ordre | comparaison des textes (deux étapes identiques sont interchangeables) |
+| `calcul` | `reponse` (nombre), `unite` facultative | nombre exact ; virgule ou point acceptés |
+| `blocs` | `blocs` (blocs proposés), `sequences` (programmes acceptés) | programme Blockly relu par le serveur, comparé aux séquences acceptées |
+| `completer` | `texte` avec `___` pour chaque trou, `trous` (`bonne`, `distracteurs`), `mode` (`liste` ou `glisser`) | chaque trou comparé à sa bonne réponse (majuscules ignorées) |
+
+Durée par défaut : 30 s, 60 s pour `blocs` et `completer` (réglables), sauf si la question fixe `duree_s`.
+
+### Blocs : ce qui vient du projet « distributeur de céréales »
+
+| Repris tel quel | Adapté pour Robot Rush |
+|---|---|
+| Blockly copié dans `public/vendor/blockly` (aucun CDN) | chargé seulement à la première question de blocs |
+| Libellés français, couleurs des familles, thème, rendu « zelos » (`public/js/blocs.js`) | pas de choix de broche ; un seul chapeau « Programme » ; nouveau bloc « répéter ( ) fois » ; palette à plat (les blocs de la question) |
+| Format simplifié des programmes et conversion Blockly ↔ programme (`server/blocs.js`) | lu côté serveur, étendu à « répéter » ; normalisation des écritures équivalentes |
+| Repérage des blocs « hors du programme » (contour pointillé) | avertissement avant de valider |
+| — | pas de simulateur ni de scénarios (version réduite) : comparaison avec les séquences acceptées |
+
+Séquences acceptées, au format de l'atelier céréales (sans broche) :
+
+```json
+[{ "bloc": "si_sinon", "condition": { "bloc": "bouton_etat" },
+   "alors": [{ "bloc": "servo_angle", "angle": 90 }], "sinon": [{ "bloc": "servo_angle", "angle": 0 }] }]
+```
+
+Écritures équivalentes acceptées automatiquement : « si bouton », « si bouton = HAUT », « si HAUT = bouton »,
+« si bouton ≠ BAS » ; « si bouton = BAS alors A sinon B » vaut « si bouton alors B sinon A ».
+Pour une autre variante (ex. clignoter en commençant éteint), ajouter une séquence à la liste.
+
 ## Données
 
 - `data/questions.json`, `data/parcours.json`, `data/config.json` : créés au premier lancement à partir de `seed/`
@@ -96,11 +133,15 @@ Choix validés avec le professeur :
 server/
   index.js       serveur HTTP + Socket.IO, diffusion de l'état
   jeu.js         logique de partie (machine à états, règles, minuteries)
-  types.js       types de questions : préparation (sans la réponse) et validation côté serveur
+  types.js       5 types de questions : préparation (sans la réponse) et validation côté serveur
+  blocs.js       programmes Blockly : lecture, normalisation, comparaison (repris du projet céréales)
   constantes.js  équipes, réglages par défaut, paires obstacle / solution
   stockage.js    fichiers JSON
   reseau.js      adresse IP locale, port de secours, config-serveur.json
 public/          pages /course, /jouer, /admin, /test, styles, scripts, SVG, polices embarquées
+  js/questions.js  affichage des 5 types de questions (élève)
+  js/blocs.js      éditeur Blockly (blocs de l'atelier céréales)
+  vendor/blockly/  Blockly, copié depuis le projet céréales
 seed/            questions et parcours de départ
 test/            tests de la logique de jeu (node --test)
 tools/           élèves factices
@@ -115,9 +156,9 @@ Les navigateurs ne reçoivent jamais la bonne réponse avant d'avoir répondu.
 ## Avancement
 
 1. **Cœur du jeu** (fait) : serveur, salle d'attente avec codes, écran élève avec bandeau d'état, projecteur 2 à 8 équipes,
-   règles complètes, questions QCM.
+   règles complètes.
 2. **Interface finale** (fait) : écrans fidèles aux maquettes, animations, polices embarquées ;
    **mode local** : scripts de lancement, adresse et QR code, page /test, fonctionnement hors ligne.
-3. Autres types de questions : ordre, calcul, blocs (module du distributeur de céréales), programme à compléter.
+3. **Autres types de questions** (fait) : remise en ordre, calcul, blocs (Blockly du distributeur de céréales), programme à compléter.
 4. Admin complet : éditeur de questions et de parcours, export / import JSON.
 5. Déploiement en ligne depuis GitHub, test de charge (60 clients).

@@ -5,13 +5,6 @@
   const { robot, pastille, pion, coche, majuscule, icone, esc, el, decompte } = RR;
   const CLE_JETON = 'robotrush.jeton';
   const ALPHABET = /[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]/;
-  // Boutons QCM : couleur + forme + lettre (design/README.md)
-  const REPONSES = [
-    { fond: '#2563EB', texte: '#fff', forme: 'M0 -8L8.5 7H-8.5Z', lettre: 'A' },
-    { fond: '#F97316', texte: '#16161D', forme: 'M0 -9L9 0L0 9L-9 0Z', lettre: 'B' },
-    { fond: '#7C3AED', texte: '#fff', forme: 'M0 -8A8 8 0 1 1 0 8A8 8 0 1 1 0 -8Z', lettre: 'C' },
-    { fond: '#15803D', texte: '#fff', forme: 'M-7.5 -7.5H7.5V7.5H-7.5Z', lettre: 'D' },
-  ];
   const TYPES = { qcm: 'QCM', ordre: 'Remise en ordre', calcul: 'Calcul', blocs: 'Blocs à assembler', completer: 'Programme à compléter' };
   const DUREE_FLASH = 600;
   const DUREE_MESSAGE = 4000;
@@ -208,8 +201,10 @@
     if (cle !== cleZone) {
       cleZone = cle;
       obstacleChoisi = null;
+      if (composant) { composant.detruire(); composant = null; }
       const rendus = { question: zoneQuestion, action: zoneAction, solution: zoneSolution, attaque: zoneAttaque, erreur: zoneErreur, fin: zoneFin };
       el('#zone').innerHTML = (rendus[moi.phase] || zoneAttente)();
+      if (composant) composant.monter(el('#zone .corps-q'));
       RR.majDecomptes();
     }
     if (moi.phase === 'action') majOptions();
@@ -238,30 +233,25 @@
       <b class="secondes" data-fin="${RR.fin(q.restantMs)}" data-suffixe=" s" data-barre="${q.dureeMs}" data-cible="barre-q">${Math.ceil(q.restantMs / 1000)} s</b></div>`;
   }
 
+  // Composant de la question en cours (public/js/questions.js : un par type de question).
+  let composant = null;
+
   function zoneQuestion() {
     const q = moi.question;
-    let corps;
-    if (q.type === 'qcm') {
-      corps = `<div class="grille-qcm">${q.choix.map((c, i) => {
-        const r = REPONSES[i];
-        return `<button class="rep" data-rep="${i}" style="background:${r.fond};color:${r.texte}" aria-label="Réponse ${r.lettre} : ${esc(c)}">
-          <svg width="56" height="56" viewBox="-10 -10 20 20"><path d="${r.forme}" fill="${r.texte}"/></svg><span>${esc(c)}</span></button>`;
-      }).join('')}</div>`;
-    } else {
-      corps = '<p>Ce type de question arrive à l\'étape 3.</p>';
-    }
-    return `${enteteQuestion(q)}<h2 class="enonce">${esc(q.enonce)}</h2>
-      ${q.image ? `<img class="image-q" src="${esc(q.image)}" alt="">` : ''}${corps}<div class="message-zone" id="message-zone"></div>`;
-  }
-
-  async function repondre(reponse, bouton) {
-    document.querySelectorAll('.rep').forEach((b) => { b.disabled = true; });
-    if (bouton) bouton.classList.add('choisie');
-    const r = await envoyer('repondre', { questionId: moi.question.id, reponse });
-    if (!r.ok) {
-      messageZone(r.erreur);
-      document.querySelectorAll('.rep').forEach((b) => { b.disabled = false; b.classList.remove('choisie'); });
-    }
+    composant = RR.questions.creer(q, {
+      message: messageZone,
+      async repondre(reponse) {
+        const boutons = document.querySelectorAll('#zone [data-valider]');
+        boutons.forEach((b) => { b.disabled = true; });
+        const r = await envoyer('repondre', { questionId: q.id, reponse });
+        if (!r.ok) { messageZone(r.erreur); boutons.forEach((b) => { b.disabled = false; }); }
+        return r;
+      },
+    });
+    const corps = composant ? composant.html : '<p>Type de question inconnu : préviens le professeur.</p>';
+    return `${enteteQuestion(q)}<h2 class="enonce">${RR.questions.enonce(q.enonce)}</h2>
+      ${q.image ? `<img class="image-q" src="${esc(q.image)}" alt="">` : ''}
+      <div class="corps-q corps-${esc(q.type)}">${corps}</div><div class="message-zone" id="message-zone" role="alert"></div>`;
   }
 
   // Options calculées à partir de l'état public (le serveur revérifie tout).
@@ -418,18 +408,20 @@
   el('#zone').addEventListener('click', (ev) => {
     const b = ev.target.closest('button');
     if (!b || b.disabled) return;
-    if (b.dataset.rep !== undefined) repondre(Number(b.dataset.rep), b);
-    else if (b.dataset.action) choisirAction(b.dataset.action);
+    if (b.dataset.action) choisirAction(b.dataset.action);
     else if (b.dataset.solution) choisirSolution(b.dataset.solution);
     else if (b.dataset.obstacle) choisirObstacle(b.dataset.obstacle);
     else if (b.dataset.cible) attaquer(Number(b.dataset.cible));
   });
   document.addEventListener('keydown', (ev) => {
-    if (!moi || ev.target.tagName === 'INPUT' || ev.repeat || ev.ctrlKey || ev.altKey || ev.metaKey) return;
+    if (!moi || ['INPUT', 'SELECT', 'TEXTAREA'].includes(ev.target.tagName) || ev.repeat || ev.ctrlKey || ev.altKey || ev.metaKey) return;
+    if (ev.target.closest && ev.target.closest('.zone-blocs')) return; // Blockly gère son propre clavier
+    // Pendant une question, chaque type gère ses touches (1 à 4 pour le QCM, Entrée pour valider…).
+    if (moi.phase === 'question') { if (composant && composant.touche(ev)) ev.preventDefault(); return; }
     const n = Number(ev.key);
     if (!Number.isInteger(n) || n < 1) return;
     const selecteur = {
-      question: '[data-rep]', action: '[data-action]', solution: '[data-solution]',
+      action: '[data-action]', solution: '[data-solution]',
       attaque: obstacleChoisi ? '[data-cible]' : '[data-obstacle]',
     }[moi.phase];
     if (!selecteur) return;
