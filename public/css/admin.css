@@ -1,0 +1,68 @@
+/* Admin : sobre, texte 15 px, contours 1,5 px, pas de socle */
+body { background: var(--fond-admin); font-size: 15px; }
+h1, h2, h3 { margin: 0; }
+.erreur { color: var(--danger); font-weight: 700; min-height: 1.2em; margin: 8px 0; }
+.aide { font-size: 13px; color: var(--encre-2); margin: 4px 0 0; }
+
+.btn { height: 40px; padding: 0 16px; border: 1.5px solid var(--encre); border-radius: 10px; background: var(--blanc); cursor: pointer; font-weight: 700; }
+.btn:disabled { border-color: var(--bordure-champ); color: var(--bordure-champ); cursor: not-allowed; }
+.btn-primaire { background: var(--encre); color: var(--blanc); }
+.btn-primaire:disabled { background: var(--bordure-champ); color: var(--blanc); }
+.btn-danger { color: var(--danger); border-color: var(--danger); }
+input, select { font: inherit; height: 36px; border: 1.5px solid var(--bordure-champ); border-radius: 10px; padding: 0 10px; background: var(--blanc); }
+input:focus, select:focus, .btn:focus-visible { outline: 3px solid #2563EB; outline-offset: 1px; }
+
+.acces { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+.carte-acces { width: 400px; background: var(--blanc); border: 1.5px solid var(--encre); border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 8px; }
+.carte-acces h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+
+.barre-admin { height: 60px; background: var(--blanc); border-bottom: 1.5px solid var(--encre); display: flex; align-items: center; gap: 32px; padding: 0 24px; }
+.logo { font-size: 22px; font-weight: 800; }
+.onglets { display: flex; gap: 24px; height: 100%; }
+.onglets a, .onglets span { display: flex; align-items: center; color: var(--encre); text-decoration: none; font-weight: 700; border-bottom: 3px solid transparent; }
+.onglets a.actif { border-bottom-color: var(--encre); }
+.onglets .bientot { color: var(--bordure-champ); cursor: default; }
+.lien { margin-left: auto; color: var(--encre); font-weight: 700; }
+
+.mise-en-page { display: grid; grid-template-columns: 360px 1fr; min-height: calc(100vh - 60px); }
+.colonne-reglages { border-right: 1.5px solid var(--trait); padding: 20px 24px; background: var(--blanc); }
+.colonne-reglages h2 { font-size: 22px; font-weight: 800; font-family: var(--f-titre); margin-bottom: 12px; }
+.colonne-reglages h3 { font-size: 15px; margin: 20px 0 8px; }
+.colonne-reglages label { display: block; font-weight: 700; margin: 12px 0 6px; }
+.colonne-reglages select { width: 100%; }
+.segmente { display: flex; border: 1.5px solid var(--encre); border-radius: 10px; overflow: hidden; }
+.segmente button { flex: 1; height: 36px; border: none; border-right: 1.5px solid var(--encre); background: var(--blanc); cursor: pointer; font-weight: 700; }
+.segmente button:last-child { border-right: none; }
+.segmente button.actif { background: var(--encre); color: var(--blanc); }
+.segmente button:disabled { cursor: not-allowed; opacity: .6; }
+.reglages { display: grid; grid-template-columns: 1fr 76px; gap: 6px 10px; align-items: center; }
+.reglages label { margin: 0; font-weight: 400; }
+.reglages input { width: 76px; text-align: right; font-family: var(--f-mono); }
+.interrupteur { display: flex !important; gap: 8px; align-items: flex-start; font-weight: 400 !important; margin-top: 14px !important; }
+.interrupteur input { height: 18px; width: 18px; flex: none; margin-top: 2px; }
+.paires { list-style: none; padding: 0; margin: 0; }
+.paires li { display: flex; align-items: center; gap: 6px; padding: 3px 0; }
+
+.principal { padding: 20px 28px; }
+.tete-principal { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+.tete-principal h1 { font-size: 26px; font-weight: 800; }
+.sous { margin: 4px 0 0; color: var(--encre-2); }
+.actions { display: flex; gap: 8px; }
+.message { min-height: 1.4em; font-weight: 700; margin: 12px 0; }
+.message.erreur { color: var(--danger); }
+.fin-actions { display: flex; gap: 8px; margin-bottom: 16px; }
+.cartes-equipes { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.carte-equipe { background: var(--blanc); border: 1.5px solid var(--encre); border-radius: 12px; overflow: hidden; }
+.carte-equipe .tete { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1.5px solid var(--encre); }
+.carte-equipe .nom { font-family: var(--f-titre); font-size: 18px; font-weight: 800; }
+.carte-equipe .code { margin-left: auto; font-family: var(--f-mono); font-size: 20px; font-weight: 700; background: var(--blanc); color: var(--encre); padding: 0 8px; border-radius: 6px; border: 1.5px solid var(--encre); }
+.carte-equipe .infos { padding: 6px 12px; font-size: 13px; color: var(--encre-2); border-bottom: 1px solid var(--trait); }
+.carte-equipe ul { list-style: none; margin: 0; padding: 4px 0; }
+.carte-equipe li { display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 12px; }
+.carte-equipe li .point { width: 10px; height: 10px; border-radius: 50%; background: var(--correct-2); flex: none; }
+.carte-equipe li .point.absent { background: var(--bordure-champ); }
+.carte-equipe li .pseudo { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.carte-equipe li .stats { font-family: var(--f-mono); font-size: 12px; color: var(--encre-2); }
+.carte-equipe li select { height: 26px; width: 34px; padding: 0 2px; border-radius: 6px; cursor: pointer; }
+.carte-equipe li .retirer { height: 26px; width: 26px; border: 1.5px solid var(--bordure-champ); border-radius: 6px; background: var(--blanc); cursor: pointer; color: var(--danger); font-weight: 700; }
+.carte-equipe .vide { color: var(--encre-2); font-style: italic; padding: 6px 12px; }

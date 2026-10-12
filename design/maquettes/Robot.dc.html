@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<svg width="{{ size }}" height="{{ size }}" viewBox="0 0 64 64" style="display:block;overflow:visible">
+<sc-if value="{{ isSucces }}" hint-placeholder-val="{{ false }}"><path d="M1 38H9M-2 45H7M2 52H10" stroke="#16161D" stroke-width="2.5" stroke-linecap="round" fill="none"></path></sc-if>
+<line x1="32" y1="11" x2="32" y2="5" stroke="#16161D" stroke-width="2.5"></line>
+<circle cx="32" cy="4.5" r="3.5" fill="{{ color }}" stroke="#16161D" stroke-width="2"></circle>
+<rect x="14" y="10" width="36" height="22" rx="6" fill="{{ color }}" stroke="#16161D" stroke-width="2.5"></rect>
+<sc-if value="{{ isNormal }}" hint-placeholder-val="{{ true }}">
+<circle cx="25" cy="20" r="5" fill="#fff" stroke="#16161D" stroke-width="2"></circle>
+<circle cx="39" cy="20" r="5" fill="#fff" stroke="#16161D" stroke-width="2"></circle>
+<circle cx="27" cy="20.5" r="2.4" fill="#16161D"></circle>
+<circle cx="41" cy="20.5" r="2.4" fill="#16161D"></circle>
+<path d="M28 27.5H36" stroke="#16161D" stroke-width="2.2" stroke-linecap="round"></path>
+</sc-if>
+<sc-if value="{{ isBloque }}" hint-placeholder-val="{{ false }}">
+<circle cx="25" cy="21" r="5" fill="#fff" stroke="#16161D" stroke-width="2"></circle>
+<circle cx="39" cy="21" r="5" fill="#fff" stroke="#16161D" stroke-width="2"></circle>
+<circle cx="25" cy="23" r="2.2" fill="#16161D"></circle>
+<circle cx="39" cy="23" r="2.2" fill="#16161D"></circle>
+<path d="M19 15.5L28 13M36 13L45 15.5" stroke="#16161D" stroke-width="2.2" stroke-linecap="round" fill="none"></path>
+<path d="M26 29Q29 27 32 29Q35 31 38 29" stroke="#16161D" stroke-width="2" stroke-linecap="round" fill="none"></path>
+</sc-if>
+<sc-if value="{{ isSucces }}" hint-placeholder-val="{{ false }}">
+<path d="M20.5 22Q25 15 29.5 22M34.5 22Q39 15 43.5 22" stroke="#16161D" stroke-width="2.6" stroke-linecap="round" fill="none"></path>
+<path d="M25 25.5Q32 32.5 39 25.5Z" fill="#fff" stroke="#16161D" stroke-width="2" stroke-linejoin="round"></path>
+</sc-if>
+<rect x="16" y="34" width="32" height="18" rx="4" fill="{{ color }}" stroke="#16161D" stroke-width="2.5"></rect>
+<circle cx="32" cy="43" r="7" fill="#fff" stroke="#16161D" stroke-width="2"></circle>
+<path d="{{ symD }}" fill="#16161D" transform="translate(32 43) scale(0.95)"></path>
+<circle cx="22" cy="56" r="5.5" fill="#16161D"></circle>
+<circle cx="42" cy="56" r="5.5" fill="#16161D"></circle>
+<circle cx="22" cy="56" r="2" fill="#fff"></circle>
+<circle cx="42" cy="56" r="2" fill="#fff"></circle>
+<sc-if value="{{ isBloque }}" hint-placeholder-val="{{ false }}">
+<circle cx="54" cy="8" r="8" fill="#E0362C" stroke="#16161D" stroke-width="2"></circle>
+<path d="M54 3.5V9" stroke="#fff" stroke-width="2.6" stroke-linecap="round"></path>
+<circle cx="54" cy="12.3" r="1.5" fill="#fff"></circle>
+</sc-if>
+</svg>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:200,&quot;height&quot;:200},&quot;color&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#2563EB&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;symbol&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;etoile&quot;,&quot;triangle&quot;,&quot;cercle&quot;,&quot;carre&quot;,&quot;losange&quot;,&quot;eclair&quot;,&quot;coeur&quot;,&quot;croix&quot;],&quot;default&quot;:&quot;triangle&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;state&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;normal&quot;,&quot;bloque&quot;,&quot;succes&quot;],&quot;default&quot;:&quot;normal&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;size&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:64,&quot;tsType&quot;:&quot;number&quot;}}">
+class Component extends DCLogic {
+  static SYM = {
+    etoile: 'M0 -5L1.29 -1.78L4.76 -1.55L2.09 0.68L2.94 4.05L0 2.2L-2.94 4.05L-2.09 0.68L-4.76 -1.55L-1.29 -1.78Z',
+    triangle: 'M0 -5L5 4.2L-5 4.2Z',
+    cercle: 'M0 -4.6A4.6 4.6 0 1 1 0 4.6A4.6 4.6 0 1 1 0 -4.6Z',
+    carre: 'M-4 -4H4V4H-4Z',
+    losange: 'M0 -5.4L5 0L0 5.4L-5 0Z',
+    eclair: 'M1.5 -5.5L-4 1H-0.5L-1.5 5.5L4 -1H0.5Z',
+    coeur: 'M0 4.5C-6 0.5 -5.5 -4.5 -2.6 -4.5C-1.2 -4.5 -0.4 -3.6 0 -2.6C0.4 -3.6 1.2 -4.5 2.6 -4.5C5.5 -4.5 6 0.5 0 4.5Z',
+    croix: 'M-1.6 -5H1.6V-1.6H5V1.6H1.6V5H-1.6V1.6H-5V-1.6H-1.6Z'
+  };
+  renderVals() {
+    const s = this.props.state ?? 'normal';
+    return {
+      size: this.props.size ?? 64,
+      color: this.props.color ?? '#2563EB',
+      symD: Component.SYM[this.props.symbol ?? 'triangle'] || Component.SYM.triangle,
+      isNormal: s === 'normal', isBloque: s === 'bloque', isSucces: s === 'succes'
+    };
+  }
+}
+</script>
+</body>
+</html>

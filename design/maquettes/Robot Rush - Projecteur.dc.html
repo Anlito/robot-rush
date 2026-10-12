@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#CFC9BC;color:#16161D;font-family:'Atkinson Hyperlegible',sans-serif}a{color:#2563EB}a:hover{color:#16161D}*{box-sizing:border-box}</style>
+</helmet>
+<div style="display:flex;flex-direction:column;gap:120px;padding:120px;width:max-content">
+
+<div style="display:flex;flex-direction:column;gap:20px">
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:40px">A1 · Course — 8 équipes</div>
+<div data-screen-label="A1 Course 8 équipes" style="width:1920px;height:1080px;background:#F5F2EA;display:flex;flex-direction:column;overflow:hidden">
+<div style="height:104px;flex:none;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 32px;border-bottom:3px solid #16161D;background:#fff">
+<div style="display:flex;align-items:center;gap:16px"><dc-import name="Robot" color="#16161D" symbol="etoile" size="{{ 60 }}" hint-size="60px,60px"></dc-import><div style="display:flex;flex-direction:column"><span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:40px;line-height:1">Robot Rush</span><span style="font-size:24px;color:#4A4A57">5e – Distributeur de céréales</span></div></div>
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:88px;line-height:1;background:#16161D;color:#fff;padding:4px 28px;border-radius:14px;font-variant-numeric:tabular-nums">08:42</div>
+<div style="justify-self:end;text-align:right;font-size:24px;line-height:1.3"><span style="color:#4A4A57">Rejoindre</span><br><b style="font-family:'JetBrains Mono',monospace">robot-rush.onrender.com/jouer</b></div>
+</div>
+<div style="flex:1;display:grid;grid-template-columns:1fr 440px;gap:24px;padding:24px;min-height:0">
+<div style="display:flex;flex-direction:column;gap:6px">
+<sc-for list="{{ teams8 }}" as="t" hint-placeholder-count="8">
+<div style="height:112px;display:grid;grid-template-columns:240px 1fr;border:2.5px solid #16161D;border-radius:14px;overflow:hidden;background:#E9E3D6">
+<div style="background:{{ t.color }};color:{{ t.on }};display:flex;align-items:center;gap:14px;padding:0 16px;border-right:2.5px solid #16161D">
+<svg width="48" height="48" viewBox="-12 -12 24 24" style="flex:none"><circle r="11" fill="#fff" stroke="#16161D" stroke-width="1.5"></circle><path d="{{ t.symD }}" fill="#16161D" transform="scale(1.25)"></path></svg>
+<div style="display:flex;flex-direction:column;min-width:0"><span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:34px;line-height:1">{{ t.name }}</span><span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:24px">{{ t.pos }} / 30</span></div>
+</div>
+<div style="position:relative">
+<div style="position:absolute;left:28px;right:76px;top:0;bottom:0;background-image:linear-gradient(90deg,#D3CBB9 2px,transparent 2px);background-size:calc(100% / 30) 100%">
+<div style="position:absolute;left:-4px;top:0;bottom:0;width:6px;background:#fff;border-left:2px solid #16161D;border-right:2px solid #16161D"></div>
+<div style="position:absolute;right:-24px;top:0;bottom:0;width:24px;background:repeating-conic-gradient(#16161D 0 25%,#fff 0 50%) 0 0/12px 12px;border-left:2px solid #16161D"></div>
+<div style="position:absolute;top:6px;left:{{ t.left }};transform:translateX(-36px);display:flex;align-items:flex-start;gap:6px">
+<div style="display:flex;flex-direction:column;align-items:center;gap:2px">
+<div style="width:72px;height:66px;display:flex;align-items:center;justify-content:center;border-radius:50%;outline:{{ t.halo }};outline-offset:-2px"><dc-import name="Robot" color="{{ t.color }}" symbol="{{ t.symbol }}" state="{{ t.state }}" size="{{ 64 }}" hint-size="64px,64px"></dc-import></div>
+<div style="display:flex;gap:4px">
+<sc-for list="{{ t.stock }}" as="s" hint-placeholder-count="2"><div style="display:flex;align-items:center;gap:1px;background:#fff;border:1.5px solid #16161D;border-radius:6px;padding:0 4px 0 2px;height:32px"><dc-import name="Icone" kind="{{ s.k }}" size="{{ 24 }}" hint-size="24px,24px"></dc-import><span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:22px">{{ s.n }}</span></div></sc-for>
+</div>
+</div>
+<sc-if value="{{ t.blocked }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:6px;margin-top:6px">
+<div style="width:56px;height:56px;background:#FCE3DF;border:2.5px solid #16161D;border-radius:10px;display:flex;align-items:center;justify-content:center"><dc-import name="Icone" kind="{{ t.obstacle }}" size="{{ 42 }}" hint-size="42px,42px"></dc-import></div>
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:32px;background:#16161D;color:#F2B705;padding:2px 12px;border-radius:10px;font-variant-numeric:tabular-nums">{{ t.timer }}</div>
+</div>
+</sc-if>
+</div>
+</div>
+<sc-if value="{{ t.blocked }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:0;right:0;bottom:0;height:8px;background:repeating-linear-gradient(-45deg,#F2B705 0 10px,#16161D 10px 20px)"></div></sc-if>
+</div>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;flex-direction:column;gap:16px;min-height:0">
+<div style="background:#fff;border:2.5px solid #16161D;border-radius:14px;padding:14px 18px;display:flex;flex-direction:column;gap:4px">
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:28px;margin-bottom:4px">Classement</div>
+<sc-for list="{{ ranking }}" as="r" hint-placeholder-count="8">
+<div style="display:grid;grid-template-columns:36px 34px 1fr auto;align-items:center;gap:10px;height:40px;font-size:25px">
+<span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800">{{ r.rank }}</span>
+<svg width="32" height="32" viewBox="-12 -12 24 24"><rect x="-11" y="-11" width="22" height="22" rx="5" fill="{{ r.color }}" stroke="#16161D" stroke-width="1.5"></rect><path d="{{ r.symD }}" fill="{{ r.on }}" transform="scale(1.3)"></path></svg>
+<b>{{ r.name }}</b>
+<span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:24px">{{ r.pos }}</span>
+</div>
+</sc-for>
+</div>
+<div style="background:#fff;border:2.5px solid #16161D;border-radius:14px;padding:14px 18px;display:flex;flex-direction:column;gap:12px;flex:1;min-height:0;overflow:hidden">
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:28px">En direct</div>
+<sc-for list="{{ feed }}" as="f" hint-placeholder-count="6">
+<div style="display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:center;font-size:24px;line-height:1.2;padding-top:10px;border-top:1.5px solid #DDD6C8;opacity:{{ f.op }}">
+<dc-import name="Icone" kind="{{ f.k }}" size="{{ 40 }}" hint-size="40px,40px"></dc-import>
+<span><b>{{ f.a }}</b> {{ f.v }} <b>{{ f.b }}</b></span>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:20px">
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:40px">A2 · Course — 2 équipes</div>
+<div data-screen-label="A2 Course 2 équipes" style="width:1920px;height:1080px;background:#F5F2EA;display:flex;flex-direction:column;overflow:hidden">
+<div style="height:104px;flex:none;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 32px;border-bottom:3px solid #16161D;background:#fff">
+<div style="display:flex;align-items:center;gap:16px"><dc-import name="Robot" color="#16161D" symbol="etoile" size="{{ 60 }}" hint-size="60px,60px"></dc-import><div style="display:flex;flex-direction:column"><span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:40px;line-height:1">Robot Rush</span><span style="font-size:24px;color:#4A4A57">4e – Capteurs</span></div></div>
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:88px;line-height:1;background:#16161D;color:#fff;padding:4px 28px;border-radius:14px;font-variant-numeric:tabular-nums">03:15</div>
+<div style="justify-self:end;text-align:right;font-size:24px;line-height:1.3"><span style="color:#4A4A57">Rejoindre</span><br><b style="font-family:'JetBrains Mono',monospace">robot-rush.onrender.com/jouer</b></div>
+</div>
+<div style="flex:1;display:grid;grid-template-columns:1fr 440px;gap:24px;padding:24px;min-height:0">
+<div style="display:flex;flex-direction:column;gap:16px">
+<sc-for list="{{ teams2 }}" as="t" hint-placeholder-count="2">
+<div style="flex:1;display:grid;grid-template-rows:auto 1fr;border:3px solid #16161D;border-radius:18px;overflow:hidden;background:#E9E3D6">
+<div style="background:{{ t.color }};color:{{ t.on }};display:flex;align-items:center;gap:20px;padding:12px 24px;border-bottom:3px solid #16161D">
+<svg width="64" height="64" viewBox="-12 -12 24 24" style="flex:none"><circle r="11" fill="#fff" stroke="#16161D" stroke-width="1.2"></circle><path d="{{ t.symD }}" fill="#16161D" transform="scale(1.25)"></path></svg>
+<span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:60px;line-height:1">Équipe {{ t.name }}</span>
+<span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:44px">{{ t.pos }} / 30</span>
+</div>
+<div style="position:relative">
+<div style="position:absolute;left:48px;right:120px;top:0;bottom:0;background-image:linear-gradient(90deg,#D3CBB9 3px,transparent 3px);background-size:calc(100% / 30) 100%">
+<div style="position:absolute;left:-6px;top:0;bottom:0;width:10px;background:#fff;border-left:3px solid #16161D;border-right:3px solid #16161D"></div>
+<div style="position:absolute;right:-48px;top:0;bottom:0;width:48px;background:repeating-conic-gradient(#16161D 0 25%,#fff 0 50%) 0 0/24px 24px;border-left:3px solid #16161D"></div>
+<div style="position:absolute;top:24px;left:{{ t.left }};transform:translateX(-90px);display:flex;align-items:flex-start;gap:16px">
+<div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+<dc-import name="Robot" color="{{ t.color }}" symbol="{{ t.symbol }}" state="{{ t.state }}" size="{{ 180 }}" hint-size="180px,180px"></dc-import>
+<div style="display:flex;gap:10px">
+<sc-for list="{{ t.stock }}" as="s" hint-placeholder-count="2"><div style="display:flex;align-items:center;gap:4px;background:#fff;border:2.5px solid #16161D;border-radius:10px;padding:2px 10px 2px 4px"><dc-import name="Icone" kind="{{ s.k }}" size="{{ 52 }}" hint-size="52px,52px"></dc-import><span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:40px">{{ s.n }}</span></div></sc-for>
+</div>
+</div>
+<sc-if value="{{ t.blocked }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:30px">
+<div style="width:120px;height:120px;background:#FCE3DF;border:3px solid #16161D;border-radius:16px;display:flex;align-items:center;justify-content:center"><dc-import name="Icone" kind="{{ t.obstacle }}" size="{{ 92 }}" hint-size="92px,92px"></dc-import></div>
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:56px;background:#16161D;color:#F2B705;padding:2px 20px;border-radius:14px">{{ t.timer }}</div>
+</div>
+</sc-if>
+</div>
+</div>
+<sc-if value="{{ t.blocked }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:0;right:0;bottom:0;height:16px;background:repeating-linear-gradient(-45deg,#F2B705 0 18px,#16161D 18px 36px)"></div></sc-if>
+</div>
+</div>
+</sc-for>
+</div>
+<div style="background:#fff;border:2.5px solid #16161D;border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:16px;overflow:hidden">
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:32px">En direct</div>
+<sc-for list="{{ feed2 }}" as="f" hint-placeholder-count="5">
+<div style="display:grid;grid-template-columns:52px 1fr;gap:14px;align-items:center;font-size:28px;line-height:1.2;padding-top:14px;border-top:1.5px solid #DDD6C8;opacity:{{ f.op }}">
+<dc-import name="Icone" kind="{{ f.k }}" size="{{ 52 }}" hint-size="52px,52px"></dc-import>
+<span><b>{{ f.a }}</b> {{ f.v }} <b>{{ f.b }}</b></span>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:20px">
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:40px">A3 · Avant la partie — codes d'équipe</div>
+<div data-screen-label="A3 Avant la partie" style="width:1920px;height:1080px;background:#F5F2EA;display:flex;flex-direction:column;padding:48px 56px;gap:36px;overflow:hidden">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:40px">
+<div style="display:flex;flex-direction:column;gap:8px">
+<span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:72px;line-height:1">Rejoins ton équipe</span>
+<span style="font-size:36px">Va sur <b style="font-family:'JetBrains Mono',monospace;background:#16161D;color:#fff;padding:2px 14px;border-radius:8px">robot-rush.onrender.com/jouer</b> et tape le code.</span>
+</div>
+<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:96px;line-height:1">37</span><span style="font-size:28px;color:#4A4A57">élèves connectés</span></div>
+</div>
+<div style="flex:1;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:1fr 1fr;gap:20px;min-height:0">
+<sc-for list="{{ lobby }}" as="t" hint-placeholder-count="8">
+<div style="background:#fff;border:3px solid #16161D;border-radius:18px;overflow:hidden;display:flex;flex-direction:column">
+<div style="background:{{ t.color }};color:{{ t.on }};display:flex;align-items:center;gap:14px;padding:12px 18px;border-bottom:3px solid #16161D">
+<dc-import name="Robot" color="{{ t.color }}" symbol="{{ t.symbol }}" size="{{ 64 }}" hint-size="64px,64px"></dc-import>
+<span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:40px">{{ t.name }}</span>
+</div>
+<div style="padding:12px 18px 16px;display:flex;flex-direction:column;gap:8px;flex:1;min-height:0">
+<div style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:104px;line-height:1;letter-spacing:.06em">{{ t.code }}</div>
+<div style="font-size:24px;line-height:1.3;color:#4A4A57;overflow:hidden"><b style="color:#16161D">{{ t.count }} ·</b> {{ t.names }}</div>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:20px">
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:40px">A4 · Fin de partie — podium</div>
+<div data-screen-label="A4 Fin de partie" style="width:1920px;height:1080px;background:#F5F2EA;display:grid;grid-template-columns:1fr 600px;gap:48px;padding:56px;overflow:hidden">
+<div style="display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:32px;color:#4A4A57">Arrivée en 10:48</span><span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:88px;line-height:1">L'équipe Rose gagne !</span></div>
+<div style="flex:1;display:grid;grid-template-columns:repeat(3,1fr);align-items:end;gap:20px">
+<sc-for list="{{ podium }}" as="p" hint-placeholder-count="3">
+<div style="display:flex;flex-direction:column;align-items:center;gap:12px">
+<dc-import name="Robot" color="{{ p.color }}" symbol="{{ p.symbol }}" state="succes" size="{{ p.rs }}" hint-size="160px,160px"></dc-import>
+<span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:44px">{{ p.name }}</span>
+<div style="width:100%;height:{{ p.h }};background:{{ p.color }};color:{{ p.on }};border:3px solid #16161D;border-radius:16px 16px 0 0;display:flex;flex-direction:column;align-items:center;padding-top:16px;gap:4px"><span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:96px;line-height:1">{{ p.rank }}</span><span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:28px">{{ p.pos }}</span></div>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;gap:16px;font-size:26px;border-top:3px solid #16161D;padding-top:16px;flex-wrap:wrap">
+<sc-for list="{{ rest }}" as="r" hint-placeholder-count="5"><div style="display:flex;align-items:center;gap:8px"><b style="font-family:'Bricolage Grotesque',sans-serif">{{ r.rank }}</b><svg width="28" height="28" viewBox="-12 -12 24 24"><rect x="-11" y="-11" width="22" height="22" rx="5" fill="{{ r.color }}" stroke="#16161D" stroke-width="1.5"></rect><path d="{{ r.symD }}" fill="{{ r.on }}" transform="scale(1.3)"></path></svg><span>{{ r.name }} · {{ r.pos }}</span></div></sc-for>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:20px">
+<span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:48px">Meilleurs joueurs</span>
+<sc-for list="{{ mvps }}" as="m" hint-placeholder-count="3">
+<div style="background:#fff;border:3px solid #16161D;border-radius:18px;padding:20px 24px;display:grid;grid-template-columns:80px 1fr auto;align-items:center;gap:20px;flex:1">
+<dc-import name="Robot" color="{{ m.color }}" symbol="{{ m.symbol }}" state="succes" size="{{ 80 }}" hint-size="80px,80px"></dc-import>
+<div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:26px;color:#4A4A57">{{ m.cat }}</span><span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:44px;line-height:1.05">{{ m.who }}</span><span style="font-size:26px">équipe {{ m.team }}</span></div>
+<span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:72px">{{ m.n }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  static SYM = {
+    etoile: 'M0 -5L1.29 -1.78L4.76 -1.55L2.09 0.68L2.94 4.05L0 2.2L-2.94 4.05L-2.09 0.68L-4.76 -1.55L-1.29 -1.78Z',
+    triangle: 'M0 -5L5 4.2L-5 4.2Z',
+    cercle: 'M0 -4.6A4.6 4.6 0 1 1 0 4.6A4.6 4.6 0 1 1 0 -4.6Z',
+    carre: 'M-4 -4H4V4H-4Z',
+    losange: 'M0 -5.4L5 0L0 5.4L-5 0Z',
+    eclair: 'M1.5 -5.5L-4 1H-0.5L-1.5 5.5L4 -1H0.5Z',
+    coeur: 'M0 4.5C-6 0.5 -5.5 -4.5 -2.6 -4.5C-1.2 -4.5 -0.4 -3.6 0 -2.6C0.4 -3.6 1.2 -4.5 2.6 -4.5C5.5 -4.5 6 0.5 0 4.5Z',
+    croix: 'M-1.6 -5H1.6V-1.6H5V1.6H1.6V5H-1.6V1.6H-5V-1.6H-1.6Z'
+  };
+  static T = {
+    Rouge: ['#E0362C','etoile','#fff'], Bleue: ['#2563EB','triangle','#fff'], Verte: ['#16A34A','cercle','#16161D'],
+    Jaune: ['#F2B705','carre','#16161D'], Violette: ['#7C3AED','losange','#fff'], Orange: ['#F97316','eclair','#16161D'],
+    Rose: ['#DB2777','coeur','#fff'], Turquoise: ['#0891B2','croix','#fff']
+  };
+  team(name, o = {}) {
+    const [color, symbol, on] = Component.T[name];
+    const pos = o.pos ?? 0;
+    return {
+      name, color, symbol, on, symD: Component.SYM[symbol], pos,
+      left: (pos / 30 * 100).toFixed(2) + '%',
+      state: o.obstacle ? 'bloque' : (o.succes ? 'succes' : 'normal'),
+      blocked: !!o.obstacle, obstacle: o.obstacle || 'trou', timer: (o.timer || 0) + ' s',
+      halo: o.protege ? '4px dashed #fff' : 'none',
+      stock: Object.entries(o.stock || {}).map(([k, n]) => ({ k, n }))
+    };
+  }
+  renderVals() {
+    const t8 = [
+      this.team('Rouge', { pos: 17, stock: { pont: 1 }, obstacle: 'mur', timer: 9 }),
+      this.team('Bleue', { pos: 21, stock: { pont: 2, echelle: 1, chenilles: 1 } }),
+      this.team('Verte', { pos: 12, stock: { pelleteuse: 1 }, protege: true }),
+      this.team('Jaune', { pos: 19, stock: { echelle: 3 } }),
+      this.team('Violette', { pos: 8, obstacle: 'trou', timer: 12 }),
+      this.team('Orange', { pos: 15, stock: { chenilles: 2, pont: 1 } }),
+      this.team('Rose', { pos: 23, succes: true }),
+      this.team('Turquoise', { pos: 10, stock: { pelleteuse: 2, echelle: 1 } })
+    ];
+    const ranking = [...t8].sort((a, b) => b.pos - a.pos).map((t, i) => ({ ...t, rank: i + 1 }));
+    const op = (i) => [1, 1, 0.85, 0.7, 0.55, 0.4][i];
+    const feed = [
+      { k: 'chenilles', a: 'Rose', v: 'franchit la boue avec ses chenilles', b: '' },
+      { k: 'trou', a: 'Bleue', v: 'envoie un trou à', b: 'Violette !' },
+      { k: 'mur', a: 'Turquoise', v: 'envoie un mur à', b: 'Rouge !' },
+      { k: 'pelleteuse', a: 'Verte', v: 'prend une pelleteuse et repart', b: '' },
+      { k: 'echelle', a: 'Jaune', v: 'stocke une échelle', b: '' },
+      { k: 'pont', a: 'Orange', v: 'stocke un pont', b: '' }
+    ].map((f, i) => ({ ...f, op: op(i) }));
+    const feed2 = [
+      { k: 'trou', a: 'Rouge', v: 'envoie un trou à', b: 'Bleue !' },
+      { k: 'echelle', a: 'Bleue', v: 'stocke une échelle', b: '' },
+      { k: 'pont', a: 'Rouge', v: 'stocke un pont', b: '' },
+      { k: 'rocher', a: 'Bleue', v: 'pulvérise le rocher avec sa pelleteuse', b: '' },
+      { k: 'chenilles', a: 'Rouge', v: 'stocke des chenilles', b: '' }
+    ].map((f, i) => ({ ...f, op: op(i) }));
+    const codes = ['K7PX','M3RT','H9WE','B4ZN','T6QD','R2YC','W8FL','D5JV'];
+    const names = ['Lina, Noah, Inès, Sacha, Malo','Adam, Jade, Yanis, Lou','Rayan, Chloé, Tom, Nina, Léo','Inès, Hugo, Mila, Sam, Enzo','Zoé, Ilyes, Lisa, Nathan','Manon, Théo, Sofia, Ali, Rose','Emma, Louis, Aya, Gabin','Lucas, Maël, Lya, Kenzo, Anna'];
+    const counts = [5,4,5,5,4,5,4,5];
+    const lobby = Object.keys(Component.T).map((n, i) => ({ ...this.team(n), code: codes[i], names: names[i], count: counts[i] + ' élèves' }));
+    const fin = [['Rose',30,'arrivée'],['Bleue',27],['Jaune',25],['Rouge',22],['Orange',20],['Verte',18],['Turquoise',15],['Violette',13]]
+      .map(([n, pos, l], i) => ({ ...this.team(n, { pos }), rank: i + 1, pos: l || pos + ' / 30' }));
+    const order = [1, 0, 2];
+    const podium = order.map(i => ({ ...fin[i], rs: [180, 140, 120][i], h: ['360px', '260px', '190px'][i] }));
+    return {
+      teams8: t8, ranking, feed, feed2, lobby, podium, rest: fin.slice(3),
+      teams2: [
+        this.team('Rouge', { pos: 14, stock: { pont: 1, chenilles: 1 } }),
+        this.team('Bleue', { pos: 11, stock: { echelle: 1 }, obstacle: 'trou', timer: 9 })
+      ],
+      mvps: [
+        { cat: 'Réponses justes', who: 'Lina', team: 'Bleue', n: 14, color: '#2563EB', symbol: 'triangle' },
+        { cat: 'Attaques envoyées', who: 'Noah', team: 'Rouge', n: 6, color: '#E0362C', symbol: 'etoile' },
+        { cat: 'Solutions fournies', who: 'Inès', team: 'Jaune', n: 7, color: '#F2B705', symbol: 'carre' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

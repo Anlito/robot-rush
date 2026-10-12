@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#CFC9BC;color:#16161D;font-family:'Atkinson Hyperlegible',sans-serif}a{color:#2563EB}a:hover{color:#16161D}*{box-sizing:border-box}</style>
+</helmet>
+<div style="display:grid;grid-template-columns:repeat(2,1440px);gap:100px 80px;padding:120px;width:max-content">
+
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:36px">B1 · Connexion</div>
+<div data-screen-label="B1 Connexion" style="width:1440px;height:900px;background:#2563EB;display:flex;align-items:center;justify-content:center;overflow:hidden">
+<div style="width:560px;background:#fff;border:3px solid #16161D;border-radius:22px;padding:36px 40px;display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;align-items:center;gap:14px"><dc-import name="Robot" color="#2563EB" symbol="triangle" state="succes" size="{{ 64 }}" hint-size="64px,64px"></dc-import><span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:40px">Robot Rush</span></div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<label style="font-weight:700;font-size:18px">Code de ton équipe</label>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+<sc-for list="{{ code }}" as="c" hint-placeholder-count="4"><div style="height:96px;border:3px solid #16161D;border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:56px;background:#F5F2EA">{{ c }}</div></sc-for>
+</div>
+<div style="display:flex;align-items:center;gap:10px;background:#DCE7FD;border:2px solid #2563EB;border-radius:10px;padding:8px 12px;font-size:17px"><svg width="22" height="22" viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" fill="#16A34A" stroke="#16161D" stroke-width="2"></circle><path d="M9 15.5L13 19.5L21 11" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg><span>Tu rejoins l'<b>équipe Bleue</b> ▲ · 4 coéquipiers</span></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<label style="font-weight:700;font-size:18px">Ton pseudo</label>
+<div style="height:64px;border:3px solid #16161D;border-radius:14px;display:flex;align-items:center;padding:0 18px;font-size:26px">Lina<span style="width:2px;height:30px;background:#16161D;margin-left:2px"></span></div>
+</div>
+<div style="height:72px;background:#16161D;color:#fff;border-radius:16px;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:28px;box-shadow:0 5px 0 #4A4A57">Rejoindre la course</div>
+<p style="margin:0;font-size:15px;color:#4A4A57;line-height:1.4">Les codes n'utilisent ni O, 0, I ni 1. Si tu actualises la page, tu retrouves ton équipe et ton pseudo.</p>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:36px">B2 · QCM</div>
+<div data-screen-label="B2 QCM" style="width:1440px;height:900px;background:#F5F2EA;display:flex;flex-direction:column;overflow:hidden">
+<dc-import name="Bandeau" etat="libre" hint-size="100%,176px"></dc-import>
+<div style="flex:1;display:flex;flex-direction:column;gap:22px;padding:24px 40px 36px">
+<div style="display:flex;align-items:center;gap:16px"><span style="background:#16161D;color:#fff;font-weight:700;font-size:15px;padding:4px 10px;border-radius:6px">QCM</span><span style="font-size:16px;color:#4A4A57">Question 7</span><div style="flex:1;height:14px;border:2px solid #16161D;border-radius:7px;overflow:hidden;background:#fff"><div style="width:62%;height:100%;background:#16161D"></div></div><b style="font-family:'Bricolage Grotesque',sans-serif;font-size:28px;width:60px;text-align:right">19 s</b></div>
+<h2 style="margin:0;font-size:36px;line-height:1.2;text-wrap:pretty">Dans un programme Arduino, quelle partie s'exécute en boucle indéfiniment ?</h2>
+<div style="flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:18px">
+<sc-for list="{{ qcm }}" as="a" hint-placeholder-count="4">
+<div style="background:{{ a.bg }};color:{{ a.fg }};border:3px solid #16161D;border-radius:18px;padding:0 32px;display:flex;align-items:center;gap:24px;font-family:'JetBrains Mono',monospace;font-size:40px;font-weight:700;box-shadow:0 6px 0 #16161D">
+<svg width="56" height="56" viewBox="-10 -10 20 20" style="flex:none"><path d="{{ a.d }}" fill="{{ a.fg }}"></path></svg><span>{{ a.t }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:36px">B3 · Remise en ordre</div>
+<div data-screen-label="B3 Remise en ordre" style="width:1440px;height:900px;background:#F5F2EA;display:flex;flex-direction:column;overflow:hidden">
+<dc-import name="Bandeau" etat="libre" hint-size="100%,176px"></dc-import>
+<div style="flex:1;display:flex;flex-direction:column;gap:22px;padding:24px 40px 36px">
+<div style="display:flex;align-items:center;gap:16px"><span style="background:#16161D;color:#fff;font-weight:700;font-size:15px;padding:4px 10px;border-radius:6px">Remise en ordre</span><span style="font-size:16px;color:#4A4A57">Question 8</span><div style="flex:1;height:14px;border:2px solid #16161D;border-radius:7px;overflow:hidden;background:#fff"><div style="width:80%;height:100%;background:#16161D"></div></div><b style="font-family:'Bricolage Grotesque',sans-serif;font-size:28px;width:60px;text-align:right">24 s</b></div>
+<h2 style="margin:0;font-size:36px;line-height:1.2">Distributeur : remets les étapes dans l'ordre.</h2>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:32px;flex:1">
+<div style="display:flex;flex-direction:column;gap:12px">
+<sc-for list="{{ order }}" as="o" hint-placeholder-count="4">
+<div style="height:76px;background:#fff;border:3px solid #16161D;border-radius:14px;display:grid;grid-template-columns:44px 52px 1fr auto;align-items:center;gap:12px;padding:0 16px;font-size:26px;font-weight:700;transform:{{ o.tf }};box-shadow:{{ o.sh }};position:relative;z-index:{{ o.z }}">
+<svg width="24" height="32" viewBox="0 0 24 32"><path d="M7 6H9M15 6H17M7 16H9M15 16H17M7 26H9M15 26H17" stroke="#4A4A57" stroke-width="4" stroke-linecap="round"></path></svg>
+<span style="width:44px;height:44px;border-radius:10px;background:#16161D;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-size:24px">{{ o.n }}</span>
+<span>{{ o.t }}</span>
+<div style="display:flex;gap:6px"><div style="width:44px;height:44px;border:2px solid #16161D;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px">↑</div><div style="width:44px;height:44px;border:2px solid #16161D;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px">↓</div></div>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;flex-direction:column;justify-content:flex-end;gap:12px">
+<p style="margin:0;font-size:17px;color:#4A4A57;line-height:1.4">Glisse les étiquettes par la poignée, ou utilise les flèches.</p>
+<div style="height:80px;background:#16161D;color:#fff;border-radius:16px;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:30px;box-shadow:0 5px 0 #4A4A57">Valider</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:36px">B4 · Calcul</div>
+<div data-screen-label="B4 Calcul" style="width:1440px;height:900px;background:#F5F2EA;display:flex;flex-direction:column;overflow:hidden">
+<dc-import name="Bandeau" etat="libre" hint-size="100%,176px"></dc-import>
+<div style="flex:1;display:flex;flex-direction:column;gap:22px;padding:24px 40px 36px">
+<div style="display:flex;align-items:center;gap:16px"><span style="background:#16161D;color:#fff;font-weight:700;font-size:15px;padding:4px 10px;border-radius:6px">Calcul</span><span style="font-size:16px;color:#4A4A57">Question 9</span><div style="flex:1;height:14px;border:2px solid #16161D;border-radius:7px;overflow:hidden;background:#fff"><div style="width:15%;height:100%;background:#E0362C"></div></div><b style="font-family:'Bricolage Grotesque',sans-serif;font-size:28px;width:60px;text-align:right;color:#B42318">4 s</b></div>
+<h2 style="margin:0;font-size:36px;line-height:1.3;max-width:1100px;text-wrap:pretty">La variable <code style="font-family:'JetBrains Mono',monospace;background:#fff;border:2px solid #16161D;border-radius:8px;padding:0 10px">score</code> vaut 5. On exécute « ajouter 3 à score » deux fois. Que vaut <code style="font-family:'JetBrains Mono',monospace;background:#fff;border:2px solid #16161D;border-radius:8px;padding:0 10px">score</code> ?</h2>
+<div style="flex:1;display:flex;align-items:center;justify-content:center;gap:20px">
+<div style="width:380px;height:150px;background:#fff;border:4px solid #16161D;border-radius:20px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:96px">11<span style="width:4px;height:84px;background:#16161D;margin-left:6px"></span></div>
+<div style="height:150px;padding:0 48px;background:#16161D;color:#fff;border-radius:20px;display:flex;align-items:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:40px;box-shadow:0 6px 0 #4A4A57">Valider ↵</div>
+</div>
+<p style="margin:0;text-align:center;font-size:17px;color:#4A4A57">Chiffres uniquement. Touche Entrée pour valider. Sous 5 s, la barre passe au rouge.</p>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:36px">B5 · Blocs à assembler</div>
+<div data-screen-label="B5 Blocs" style="width:1440px;height:900px;background:#F5F2EA;display:flex;flex-direction:column;overflow:hidden">
+<dc-import name="Bandeau" etat="libre" hint-size="100%,176px"></dc-import>
+<div style="flex:1;display:flex;flex-direction:column;gap:18px;padding:24px 40px 32px;min-height:0">
+<div style="display:flex;align-items:center;gap:16px"><span style="background:#16161D;color:#fff;font-weight:700;font-size:15px;padding:4px 10px;border-radius:6px">Blocs à assembler</span><span style="font-size:16px;color:#4A4A57">Question 10 · 60 s</span><div style="flex:1;height:14px;border:2px solid #16161D;border-radius:7px;overflow:hidden;background:#fff"><div style="width:55%;height:100%;background:#16161D"></div></div><b style="font-family:'Bricolage Grotesque',sans-serif;font-size:28px;width:60px;text-align:right">33 s</b></div>
+<h2 style="margin:0;font-size:32px;line-height:1.2">Fais clignoter la LED 5 fois (1 s allumée, 1 s éteinte).</h2>
+<div style="flex:1;display:grid;grid-template-columns:330px minmax(0,1fr) 220px;gap:20px;min-height:0">
+<div style="background:#fff;border:2px solid #16161D;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px">
+<span style="font-size:13px;font-weight:700;color:#4A4A57;text-transform:uppercase;letter-spacing:.04em">Blocs</span>
+<sc-for list="{{ palette }}" as="b" hint-placeholder-count="6">
+<div style="position:relative;align-self:flex-start;background:{{ b.bg }};color:{{ b.fg }};border:2px solid #16161D;border-radius:8px;padding:10px 14px;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:19px;opacity:{{ b.op }}"><span style="position:absolute;top:-2px;left:16px;width:20px;height:6px;background:#fff;border:2px solid #16161D;border-top:none;border-radius:0 0 4px 4px"></span>{{ b.t }}</div>
+</sc-for>
+</div>
+<div style="background:#fff;border:2px solid #16161D;border-radius:14px;padding:20px 24px;background-image:radial-gradient(#DDD6C8 1.5px,transparent 1.5px);background-size:20px 20px;display:flex;flex-direction:column;align-items:flex-start">
+<div style="background:#F2B705;border:2px solid #16161D;border-radius:8px 8px 8px 0;padding:10px 14px;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:20px;display:flex;align-items:center;gap:8px">répéter <span style="background:#fff;border:2px solid #16161D;border-radius:999px;padding:0 12px">5</span> fois</div>
+<div style="display:flex">
+<div style="width:26px;background:#F2B705;border-left:2px solid #16161D;border-right:2px solid #16161D"></div>
+<div style="display:flex;flex-direction:column;gap:6px;padding:6px 0 6px 6px">
+<div style="background:#0891B2;color:#fff;border:2px solid #16161D;border-radius:8px;padding:10px 14px;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:20px">allumer LED</div>
+<div style="background:#7C3AED;color:#fff;border:2px solid #16161D;border-radius:8px;padding:10px 14px;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:20px">attendre 1 s</div>
+<div style="background:#0891B2;color:#fff;border:2px solid #16161D;border-radius:8px;padding:10px 14px;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:20px">éteindre LED</div>
+<div style="border:3px dashed #2563EB;background:#DCE7FD;border-radius:8px;padding:10px 14px;font-size:17px;font-weight:700;color:#1D4ED8;width:240px">Dépose un bloc ici</div>
+</div>
+</div>
+<div style="width:180px;height:22px;background:#F2B705;border:2px solid #16161D;border-radius:0 0 8px 8px"></div>
+</div>
+<div style="display:flex;flex-direction:column;justify-content:flex-end;gap:12px">
+<div style="height:56px;border:2.5px solid #16161D;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px">Tout effacer</div>
+<div style="height:80px;background:#16161D;color:#fff;border-radius:16px;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:30px;box-shadow:0 5px 0 #4A4A57">Valider</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:36px">B6 · Programme à compléter</div>
+<div data-screen-label="B6 Programme à compléter" style="width:1440px;height:900px;background:#F5F2EA;display:flex;flex-direction:column;overflow:hidden">
+<dc-import name="Bandeau" etat="libre" hint-size="100%,176px"></dc-import>
+<div style="flex:1;display:flex;flex-direction:column;gap:22px;padding:24px 40px 36px">
+<div style="display:flex;align-items:center;gap:16px"><span style="background:#16161D;color:#fff;font-weight:700;font-size:15px;padding:4px 10px;border-radius:6px">Programme à compléter</span><span style="font-size:16px;color:#4A4A57">Question 11 · 60 s</span><div style="flex:1;height:14px;border:2px solid #16161D;border-radius:7px;overflow:hidden;background:#fff"><div style="width:70%;height:100%;background:#16161D"></div></div><b style="font-family:'Bricolage Grotesque',sans-serif;font-size:28px;width:60px;text-align:right">42 s</b></div>
+<h2 style="margin:0;font-size:34px;line-height:1.2;text-wrap:pretty">La LED doit être allumée uniquement quand on appuie. Complète le programme.</h2>
+<div style="background:#16161D;color:#fff;border-radius:16px;padding:28px 36px;font-family:'JetBrains Mono',monospace;font-size:32px;line-height:1.9;display:flex;flex-direction:column">
+<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap"><span style="color:#F2B705">si</span><span style="min-width:300px;height:58px;border:3px dashed #F2B705;border-radius:10px;background:#2A2A35;display:inline-flex;align-items:center;justify-content:center;font-size:20px;color:#F2B705;font-family:'Atkinson Hyperlegible',sans-serif;font-weight:700">dépose ici</span><span style="color:#F2B705">alors</span></div>
+<div style="padding-left:56px">allumer la LED</div>
+<div style="color:#F2B705">sinon</div>
+<div style="padding-left:56px">éteindre la LED</div>
+</div>
+<div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
+<span style="font-size:17px;color:#4A4A57;margin-right:6px">Étiquettes :</span>
+<sc-for list="{{ holes }}" as="h" hint-placeholder-count="4"><div style="background:#fff;border:2.5px solid #16161D;border-radius:12px;padding:14px 22px;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:24px;box-shadow:0 4px 0 #16161D;transform:{{ h.tf }}">{{ h.t }}</div></sc-for>
+<div style="margin-left:auto;height:72px;padding:0 44px;background:#16161D;color:#fff;border-radius:16px;display:flex;align-items:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:30px;box-shadow:0 5px 0 #4A4A57">Valider</div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:36px">B7 · Bonne réponse : choisis ton action</div>
+<div data-screen-label="B7 Choix action" style="width:1440px;height:900px;background:#F5F2EA;display:flex;flex-direction:column;overflow:hidden">
+<dc-import name="Bandeau" etat="libre" hint-size="100%,176px"></dc-import>
+<div style="flex:1;display:flex;flex-direction:column;gap:24px;padding:28px 40px 40px">
+<div style="display:flex;align-items:center;gap:24px">
+<dc-import name="Robot" color="#2563EB" symbol="triangle" state="succes" size="{{ 96 }}" hint-size="96px,96px"></dc-import>
+<div style="flex:1;display:flex;flex-direction:column;gap:4px"><span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:52px;line-height:1">Bonne réponse !</span><span style="font-size:20px;color:#4A4A57">loop() se répète tant que la carte est alimentée.</span></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:2px"><div style="width:96px;height:96px;border-radius:50%;border:6px solid #16161D;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:44px">6</div><span style="font-size:14px;color:#4A4A57">puis « Avancer »</span></div>
+</div>
+<div style="flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+<div style="background:#16161D;color:#fff;border:3px solid #16161D;border-radius:20px;padding:28px;display:flex;flex-direction:column;gap:12px;box-shadow:0 6px 0 #4A4A57;outline:4px solid #2563EB;outline-offset:4px">
+<svg width="88" height="88" viewBox="0 0 40 40"><path d="M6 20H32M22 9L33 20L22 31" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+<span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:44px;margin-top:auto">Avancer</span><span style="font-size:22px">Le robot avance de 2 cases.</span><span style="font-size:16px;color:#B7BCC4">Choix par défaut · touche 1</span>
+</div>
+<div style="background:#fff;border:3px solid #16161D;border-radius:20px;padding:28px;display:flex;flex-direction:column;gap:12px;box-shadow:0 6px 0 #16161D">
+<div style="display:flex;gap:6px"><dc-import name="Icone" kind="pont" size="{{ 64 }}" hint-size="64px,64px"></dc-import><dc-import name="Icone" kind="echelle" size="{{ 64 }}" hint-size="64px,64px"></dc-import></div>
+<span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:44px;margin-top:auto">Solution</span><span style="font-size:22px">Ajoute une parade au stock de l'équipe.</span><span style="font-size:16px;color:#4A4A57">Touche 2</span>
+</div>
+<div style="background:#F2B705;border:3px solid #16161D;border-radius:20px;padding:28px;display:flex;flex-direction:column;gap:12px;box-shadow:0 6px 0 #16161D">
+<div style="display:flex;gap:6px"><dc-import name="Icone" kind="mur" size="{{ 64 }}" hint-size="64px,64px"></dc-import><dc-import name="Icone" kind="rocher" size="{{ 64 }}" hint-size="64px,64px"></dc-import></div>
+<span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:44px;margin-top:auto">Attaquer</span><span style="font-size:22px">Envoie un obstacle à une autre équipe.</span><span style="font-size:16px">Touche 3</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:36px">B8 · Prendre une solution (2 tirées au hasard)</div>
+<div data-screen-label="B8 Solution" style="width:1440px;height:900px;background:#F5F2EA;display:flex;flex-direction:column;overflow:hidden">
+<dc-import name="Bandeau" etat="libre" hint-size="100%,176px"></dc-import>
+<div style="flex:1;display:flex;flex-direction:column;gap:24px;padding:28px 40px 40px">
+<div style="display:flex;align-items:center;gap:24px"><div style="flex:1;display:flex;flex-direction:column;gap:4px"><span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:48px;line-height:1">Choisis une solution</span><span style="font-size:20px;color:#4A4A57">Elle rejoint le stock partagé de l'équipe Bleue (3 maximum par type).</span></div><div style="width:84px;height:84px;border-radius:50%;border:6px solid #16161D;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:40px">5</div></div>
+<div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:24px">
+<div style="background:#E3F1E6;border:3px solid #16161D;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;box-shadow:0 6px 0 #16161D">
+<dc-import name="Icone" kind="pelleteuse" size="{{ 180 }}" hint-size="180px,180px"></dc-import>
+<span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:52px">Pelleteuse</span>
+<span style="font-size:22px">contre le <b>rocher</b> · stock 0 → 1</span>
+</div>
+<div style="background:#E3F1E6;border:3px solid #16161D;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;box-shadow:0 6px 0 #16161D">
+<dc-import name="Icone" kind="pont" size="{{ 180 }}" hint-size="180px,180px"></dc-import>
+<span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:52px">Pont</span>
+<span style="font-size:22px">contre le <b>trou</b> · stock 2 → 3 (plein)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:36px">B9 · Attaquer : obstacle puis équipe visée</div>
+<div data-screen-label="B9 Attaquer" style="width:1440px;height:900px;background:#F5F2EA;display:flex;flex-direction:column;overflow:hidden">
+<dc-import name="Bandeau" etat="libre" hint-size="100%,176px"></dc-import>
+<div style="flex:1;display:flex;flex-direction:column;gap:22px;padding:28px 40px 40px">
+<div style="display:flex;align-items:center;gap:24px"><div style="flex:1;display:flex;flex-direction:column;gap:4px"><span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:48px;line-height:1">Attaquer</span><span style="font-size:20px;color:#4A4A57">1. Choisis l'obstacle. 2. Clique sur l'équipe visée.</span></div><div style="width:84px;height:84px;border-radius:50%;border:6px solid #16161D;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:40px">4</div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+<div style="background:#F2B705;border:3px solid #16161D;border-radius:20px;height:170px;display:flex;align-items:center;gap:24px;padding:0 32px;outline:5px solid #16161D;outline-offset:4px">
+<div style="background:#fff;border:2.5px solid #16161D;border-radius:14px;padding:8px"><dc-import name="Icone" kind="mur" size="{{ 100 }}" hint-size="100px,100px"></dc-import></div>
+<div style="display:flex;flex-direction:column"><span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:48px">Mur</span><span style="font-size:20px">paré par une échelle</span></div>
+<svg width="44" height="44" viewBox="0 0 30 30" style="margin-left:auto"><circle cx="15" cy="15" r="13" fill="#16161D"></circle><path d="M9 15.5L13 19.5L21 11" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</div>
+<div style="background:#fff;border:3px solid #16161D;border-radius:20px;height:170px;display:flex;align-items:center;gap:24px;padding:0 32px">
+<div style="background:#FCE3DF;border:2.5px solid #16161D;border-radius:14px;padding:8px"><dc-import name="Icone" kind="boue" size="{{ 100 }}" hint-size="100px,100px"></dc-import></div>
+<div style="display:flex;flex-direction:column"><span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:48px">Boue</span><span style="font-size:20px">parée par des chenilles</span></div>
+</div>
+</div>
+<div style="font-weight:700;font-size:22px">Envoyer le mur à…</div>
+<div style="flex:1;display:grid;grid-template-columns:repeat(5,1fr);gap:16px">
+<sc-for list="{{ targets }}" as="t" hint-placeholder-count="5">
+<div style="background:{{ t.bg }};color:{{ t.fg }};border:3px solid #16161D;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;opacity:{{ t.op }};box-shadow:{{ t.sh }}">
+<dc-import name="Robot" color="{{ t.color }}" symbol="{{ t.symbol }}" state="{{ t.state }}" size="{{ 80 }}" hint-size="80px,80px"></dc-import>
+<span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:30px">{{ t.name }}</span>
+<span style="font-size:17px;font-weight:700">{{ t.note }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:36px">B10 · Mauvaise réponse (3 s)</div>
+<div data-screen-label="B10 Mauvaise réponse" style="width:1440px;height:900px;background:#F5F2EA;display:flex;flex-direction:column;overflow:hidden">
+<dc-import name="Bandeau" etat="libre" hint-size="100%,176px"></dc-import>
+<div style="flex:1;display:flex;align-items:center;justify-content:center;padding:40px">
+<div style="width:880px;background:#fff;border:3px solid #16161D;border-radius:24px;padding:40px 48px;display:grid;grid-template-columns:auto 1fr;gap:32px;align-items:center">
+<dc-import name="Robot" color="#2563EB" symbol="triangle" state="bloque" size="{{ 150 }}" hint-size="150px,150px"></dc-import>
+<div style="display:flex;flex-direction:column;gap:14px">
+<span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:52px;line-height:1">Pas cette fois.</span>
+<div style="font-size:22px;line-height:1.4">Tu as répondu <b style="font-family:'JetBrains Mono',monospace">setup()</b>. La bonne réponse : <b style="font-family:'JetBrains Mono',monospace;background:#E3F1E6;border:2px solid #16A34A;border-radius:6px;padding:0 8px">loop()</b></div>
+<div style="font-size:18px;color:#4A4A57;line-height:1.4">setup() ne s'exécute qu'une fois, au démarrage de la carte.</div>
+<div style="display:flex;align-items:center;gap:14px;margin-top:6px"><div style="flex:1;height:14px;border:2px solid #16161D;border-radius:7px;overflow:hidden"><div style="width:66%;height:100%;background:#16161D"></div></div><span style="font-size:18px;font-weight:700">Nouvelle question dans 2 s</span></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:16px;grid-column:1 / -1">
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:36px">B11 · États et alertes du bandeau</div>
+<div data-screen-label="B11 Bandeau états" style="width:1440px;background:#fff;display:flex;flex-direction:column;gap:28px;padding:28px 0;border:2px solid #16161D">
+<sc-for list="{{ etats }}" as="e" hint-placeholder-count="5">
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="padding:0 28px;display:flex;gap:14px;align-items:baseline"><b style="font-family:'Bricolage Grotesque',sans-serif;font-size:24px">{{ e.title }}</b><span style="font-size:17px;color:#4A4A57">{{ e.d }}</span></div>
+<dc-import name="Bandeau" etat="{{ e.k }}" hint-size="100%,176px"></dc-import>
+</div>
+</sc-for>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      code: ['M','3','R','T'],
+      qcm: [
+        {t:'setup()',bg:'#2563EB',fg:'#fff',d:'M0 -8L8.5 7H-8.5Z'},
+        {t:'loop()',bg:'#F97316',fg:'#16161D',d:'M0 -9L9 0L0 9L-9 0Z'},
+        {t:'main()',bg:'#7C3AED',fg:'#fff',d:'M0 -8A8 8 0 1 1 0 8A8 8 0 1 1 0 -8Z'},
+        {t:'start()',bg:'#15803D',fg:'#fff',d:'M-7.5 -7.5H7.5V7.5H-7.5Z'}
+      ],
+      order: [
+        {n:1,t:'Lire l\'état du bouton',tf:'none',sh:'none',z:0},
+        {n:2,t:'Attendre 2 secondes',tf:'translateX(18px) rotate(-1.2deg)',sh:'0 8px 0 #16161D',z:2},
+        {n:3,t:'Tourner le servo à 90°',tf:'none',sh:'none',z:0},
+        {n:4,t:'Remettre le servo à 0°',tf:'none',sh:'none',z:0}
+      ],
+      palette: [
+        {t:'répéter ( ) fois',bg:'#F2B705',fg:'#16161D',op:1},
+        {t:'si [ ] alors',bg:'#F2B705',fg:'#16161D',op:1},
+        {t:'allumer LED',bg:'#0891B2',fg:'#fff',op:1},
+        {t:'éteindre LED',bg:'#0891B2',fg:'#fff',op:1},
+        {t:'servo à 90°',bg:'#0891B2',fg:'#fff',op:1},
+        {t:'attendre 1 s',bg:'#7C3AED',fg:'#fff',op:1},
+        {t:'attendre 2 s',bg:'#7C3AED',fg:'#fff',op:1}
+      ],
+      holes: [
+        {t:'bouton relâché',tf:'none'},{t:'LED allumée',tf:'none'},{t:'bouton appuyé',tf:'translateY(-6px) rotate(-2deg)'},{t:'servo à 0°',tf:'none'}
+      ],
+      targets: [
+        {name:'Jaune',color:'#F2B705',symbol:'carre',bg:'#F2B705',fg:'#16161D',state:'normal',note:'16 / 30 · en tête',op:1,sh:'0 6px 0 #16161D'},
+        {name:'Rouge',color:'#E0362C',symbol:'etoile',bg:'#E0362C',fg:'#fff',state:'normal',note:'14 / 30',op:1,sh:'0 6px 0 #16161D'},
+        {name:'Orange',color:'#F97316',symbol:'eclair',bg:'#F97316',fg:'#16161D',state:'normal',note:'protégée 2 s',op:0.4,sh:'none'},
+        {name:'Verte',color:'#16A34A',symbol:'cercle',bg:'#16A34A',fg:'#16161D',state:'normal',note:'9 / 30',op:1,sh:'0 6px 0 #16161D'},
+        {name:'Violette',color:'#7C3AED',symbol:'losange',bg:'#7C3AED',fg:'#fff',state:'bloque',note:'déjà bloquée',op:0.4,sh:'none'}
+      ],
+      etats: [
+        {k:'libre',title:'Libre',d:'État de fond, pendant la question.'},
+        {k:'attaque',title:'Attaque reçue (flash 600 ms)',d:'Fond rouge plein sur tout le bandeau, puis passage à « Bloquée ».'},
+        {k:'bloque',title:'Bloquée',d:'Bandes de chantier, compte à rebours, solution à prendre en clair. Les questions continuent.'},
+        {k:'parade',title:'Parade automatique (flash blanc)',d:'Le stock contenait la bonne solution : elle est consommée, pas de blocage.'},
+        {k:'debloque',title:'Débloquée (flash couleur d\'équipe)',d:'Un coéquipier a pris la solution, ou le délai est écoulé. Protection 3 s.'}
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

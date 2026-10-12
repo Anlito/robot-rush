@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="width:100%;height:176px;background:{{ bg }};border-bottom:3px solid #16161D;padding:12px;display:grid;grid-template-columns:340px minmax(0,1fr) 230px 290px;gap:12px;font-family:'Atkinson Hyperlegible',sans-serif;color:#16161D;box-sizing:border-box">
+<div style="border:2px solid #16161D;border-radius:12px;overflow:hidden;background:{{ cardBg }};display:flex;flex-direction:column">
+<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#2563EB;color:#fff;border-bottom:2px solid #16161D">
+<dc-import name="Robot" color="#2563EB" symbol="triangle" state="{{ robotState }}" size="{{ 34 }}" hint-size="34px,34px"></dc-import>
+<b style="font-family:'Bricolage Grotesque',sans-serif;font-size:19px">Équipe Bleue</b><span style="margin-left:auto;font-size:15px">Lina</span>
+</div>
+<sc-if value="{{ isLibre }}" hint-placeholder-val="{{ true }}">
+<div style="flex:1;display:flex;align-items:center;gap:10px;padding:0 14px"><svg width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" fill="#16A34A" stroke="#16161D" stroke-width="2"></circle><path d="M9 15.5L13 19.5L21 11" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg><b style="font-family:'Bricolage Grotesque',sans-serif;font-size:26px">Libre</b><span style="font-size:15px;color:#4A4A57">11 / 30 · 4e</span></div>
+</sc-if>
+<sc-if value="{{ isBloque }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;display:flex;align-items:center;gap:10px;padding:8px 10px;background:repeating-linear-gradient(-45deg,#F2B705 0 12px,#16161D 12px 24px)">
+<div style="flex:1;background:#16161D;color:#fff;border-radius:8px;padding:6px 10px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px">
+<div style="background:#FCE3DF;border-radius:6px;padding:2px"><dc-import name="Icone" kind="trou" size="{{ 30 }}" hint-size="30px,30px"></dc-import></div>
+<div style="display:flex;flex-direction:column;line-height:1.15"><b style="font-size:16px">Bloquée par un TROU</b><span style="font-size:14px;color:#F2B705;font-weight:700">Prends un PONT !</span></div>
+<b style="font-family:'Bricolage Grotesque',sans-serif;font-size:28px;color:#F2B705">12 s</b>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ isAttaque }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;display:flex;align-items:center;gap:10px;padding:0 14px;background:#E0362C;color:#fff"><div style="background:#fff;border-radius:8px;border:2px solid #16161D;padding:2px"><dc-import name="Icone" kind="trou" size="{{ 32 }}" hint-size="32px,32px"></dc-import></div><div style="display:flex;flex-direction:column;line-height:1.1"><b style="font-family:'Bricolage Grotesque',sans-serif;font-size:24px">Attaque !</b><span style="font-size:15px">Rouge t'envoie un trou</span></div></div>
+</sc-if>
+<sc-if value="{{ isParade }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;display:flex;align-items:center;gap:10px;padding:0 14px"><div style="background:#E3F1E6;border-radius:8px;border:2px solid #16161D;padding:2px"><dc-import name="Icone" kind="pont" size="{{ 32 }}" hint-size="32px,32px"></dc-import></div><div style="display:flex;flex-direction:column;line-height:1.1"><b style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px">Paré !</b><span style="font-size:15px">Votre pont a bouché le trou de Rouge</span></div></div>
+</sc-if>
+<sc-if value="{{ isDebloque }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;display:flex;align-items:center;gap:10px;padding:0 14px"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M5 15H23M16 8L23 15L16 22" stroke="#16161D" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg><div style="display:flex;flex-direction:column;line-height:1.1"><b style="font-family:'Bricolage Grotesque',sans-serif;font-size:24px">C'est reparti !</b><span style="font-size:15px">Adam a pris un pont · protégés 3 s</span></div></div>
+</sc-if>
+</div>
+<div style="border:2px solid #16161D;border-radius:12px;background:#fff;padding:6px 10px;display:flex;flex-direction:column;gap:2px;min-width:0">
+<sc-for list="{{ lanes }}" as="l" hint-placeholder-count="6">
+<div style="height:22px;display:grid;grid-template-columns:68px 1fr;align-items:center;gap:8px;border-radius:5px;background:{{ l.rowBg }}">
+<span style="font-size:13px;font-weight:{{ l.fw }};padding-left:6px">{{ l.label }}</span>
+<div style="position:relative;height:100%;margin-right:20px">
+<div style="position:absolute;left:0;right:0;top:10px;height:2px;background:#DDD6C8"></div>
+<div style="position:absolute;right:-12px;top:2px;bottom:2px;width:8px;background:repeating-conic-gradient(#16161D 0 25%,#fff 0 50%) 0 0/4px 4px"></div>
+<svg width="20" height="20" viewBox="-12 -12 24 24" style="position:absolute;top:1px;left:{{ l.left }};transform:translateX(-10px)"><circle r="11" fill="{{ l.color }}" stroke="#16161D" stroke-width="{{ l.sw }}"></circle><path d="{{ l.symD }}" fill="{{ l.on }}" transform="scale(1.2)"></path></svg>
+<sc-if value="{{ l.blocked }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:0;left:{{ l.left }};transform:translateX(10px);font-size:11px;font-weight:700;background:#16161D;color:#F2B705;border-radius:4px;padding:1px 4px;line-height:1.3">bloquée</div></sc-if>
+</div>
+</div>
+</sc-for>
+</div>
+<div style="border:2px solid #16161D;border-radius:12px;background:#fff;padding:8px 12px;display:flex;flex-direction:column;gap:6px">
+<span style="font-size:13px;font-weight:700;color:#4A4A57;text-transform:uppercase;letter-spacing:.04em">Stock de l'équipe</span>
+<div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:6px">
+<sc-for list="{{ stock }}" as="s" hint-placeholder-count="4"><div style="display:flex;align-items:center;gap:6px;opacity:{{ s.op }}"><dc-import name="Icone" kind="{{ s.k }}" size="{{ 32 }}" hint-size="32px,32px"></dc-import><b style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px">{{ s.n }}</b><span style="font-size:12px;color:#4A4A57">/3</span></div></sc-for>
+</div>
+</div>
+<div style="border:2px solid #16161D;border-radius:12px;background:#fff;padding:8px 12px;display:flex;flex-direction:column;gap:6px">
+<span style="font-size:13px;font-weight:700;color:#4A4A57;text-transform:uppercase;letter-spacing:.04em">Dernières actions</span>
+<sc-for list="{{ log }}" as="g" hint-placeholder-count="3"><div style="display:flex;align-items:center;gap:8px;font-size:14px;line-height:1.2"><dc-import name="Icone" kind="{{ g.k }}" size="{{ 22 }}" hint-size="22px,22px"></dc-import><span><b>{{ g.a }}</b> {{ g.v }}</span></div></sc-for>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:176},&quot;etat&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;libre&quot;,&quot;bloque&quot;,&quot;attaque&quot;,&quot;parade&quot;,&quot;debloque&quot;],&quot;default&quot;:&quot;libre&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  static SYM = {
+    etoile: 'M0 -5L1.29 -1.78L4.76 -1.55L2.09 0.68L2.94 4.05L0 2.2L-2.94 4.05L-2.09 0.68L-4.76 -1.55L-1.29 -1.78Z',
+    triangle: 'M0 -5L5 4.2L-5 4.2Z',
+    cercle: 'M0 -4.6A4.6 4.6 0 1 1 0 4.6A4.6 4.6 0 1 1 0 -4.6Z',
+    carre: 'M-4 -4H4V4H-4Z',
+    losange: 'M0 -5.4L5 0L0 5.4L-5 0Z',
+    eclair: 'M1.5 -5.5L-4 1H-0.5L-1.5 5.5L4 -1H0.5Z'
+  };
+  renderVals() {
+    const e = this.props.etat ?? 'libre';
+    const blockedSelf = e === 'bloque' || e === 'attaque';
+    const lanes = [
+      ['Jaune','#F2B705','carre','#16161D',16],['Rouge','#E0362C','etoile','#fff',14],['Orange','#F97316','eclair','#16161D',12],
+      ['Bleue','#2563EB','triangle','#fff',11],['Verte','#16A34A','cercle','#16161D',9],['Violette','#7C3AED','losange','#fff',7]
+    ].map(([n,color,s,on,pos]) => {
+      const me = n === 'Bleue';
+      return { label: me ? 'Toi' : n, color, on, symD: Component.SYM[s], left: (pos/30*100).toFixed(1)+'%',
+        rowBg: me ? '#DCE7FD' : 'transparent', fw: me ? 700 : 400, sw: me ? 3 : 1.5,
+        blocked: n === 'Violette' || (me && blockedSelf) };
+    });
+    const st = e === 'parade' || e === 'debloque' ? { pont: 1, echelle: 1, pelleteuse: 0, chenilles: 1 } : { pont: e === 'libre' ? 2 : 0, echelle: 1, pelleteuse: 0, chenilles: 1 };
+    const log = {
+      libre: [{k:'pont',a:'Adam',v:'a pris un pont'},{k:'mur',a:'Jaune',v:'envoie un mur à Verte'},{k:'echelle',a:'Toi',v:'as pris une échelle'}],
+      bloque: [{k:'trou',a:'Rouge',v:'t\'envoie un trou'},{k:'mur',a:'Jaune',v:'envoie un mur à Verte'},{k:'echelle',a:'Toi',v:'as pris une échelle'}],
+      attaque: [{k:'trou',a:'Rouge',v:'t\'envoie un trou'},{k:'mur',a:'Jaune',v:'envoie un mur à Verte'},{k:'echelle',a:'Toi',v:'as pris une échelle'}],
+      parade: [{k:'pont',a:'Pont',v:'utilisé contre Rouge'},{k:'trou',a:'Rouge',v:'t\'envoie un trou'},{k:'mur',a:'Jaune',v:'envoie un mur à Verte'}],
+      debloque: [{k:'pont',a:'Adam',v:'a pris un pont : débloqués'},{k:'trou',a:'Rouge',v:'t\'envoie un trou'},{k:'mur',a:'Jaune',v:'envoie un mur à Verte'}]
+    }[e];
+    return {
+      bg: { libre: '#F5F2EA', bloque: '#F5F2EA', attaque: '#E0362C', parade: '#fff', debloque: '#2563EB' }[e],
+      cardBg: e === 'debloque' ? '#DCE7FD' : '#fff',
+      robotState: blockedSelf ? 'bloque' : (e === 'parade' || e === 'debloque' ? 'succes' : 'normal'),
+      isLibre: e === 'libre', isBloque: e === 'bloque', isAttaque: e === 'attaque', isParade: e === 'parade', isDebloque: e === 'debloque',
+      lanes, log,
+      stock: Object.entries(st).map(([k, n]) => ({ k, n, op: n ? 1 : 0.35 }))
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<svg width="{{ size }}" height="{{ size }}" viewBox="0 0 32 32" style="display:block" stroke="#16161D" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+<sc-if value="{{ trou }}" hint-placeholder-val="{{ false }}">
+<path d="M2 12H30V28H2Z" fill="#D9C39E"></path>
+<path d="M5 19C5 15.5 10 14.5 16 14.5C22 14.5 27 15.5 27 19C27 23 22 25.5 16 25.5C10 25.5 5 23 5 19Z" fill="#16161D"></path>
+<path d="M9 21.5Q16 18 23 21.5" fill="none" stroke="#4A4A57" stroke-width="1.6"></path>
+</sc-if>
+<sc-if value="{{ mur }}" hint-placeholder-val="{{ false }}">
+<path d="M4 6H28V28H4Z" fill="#C4553A"></path>
+<path d="M4 13.3H28M4 20.6H28M16 6V13.3M10 13.3V20.6M22 13.3V20.6M16 20.6V28" stroke-width="1.6" fill="none"></path>
+</sc-if>
+<sc-if value="{{ rocher }}" hint-placeholder-val="{{ false }}">
+<path d="M3 27L7 14L14 7L23 9L29 18L28 27Z" fill="#8E949E"></path>
+<path d="M14 7L16 15L23 18M16 15L11 21" fill="none" stroke-width="1.6"></path>
+</sc-if>
+<sc-if value="{{ boue }}" hint-placeholder-val="{{ false }}">
+<path d="M3 22C3 17.5 8 16.5 12 17.5C15 14 21.5 14 24.5 17C28.5 17 30 20.5 29 24C28 27.5 4.5 27.5 3 22Z" fill="#7A4E2A"></path>
+<path d="M10 8.5A2.2 2.2 0 1 1 10 12.9A2.2 2.2 0 1 1 10 8.5Z" fill="#7A4E2A"></path>
+<path d="M20 6A1.6 1.6 0 1 1 20 9.2A1.6 1.6 0 1 1 20 6Z" fill="#7A4E2A"></path>
+<path d="M9 22.5Q12 20.5 15 22.5" fill="none" stroke="#B98A5E" stroke-width="1.6"></path>
+</sc-if>
+<sc-if value="{{ pont }}" hint-placeholder-val="{{ false }}">
+<path d="M2 10H30V15H27V27H22.5C22.5 22 19.5 19.5 16 19.5C12.5 19.5 9.5 22 9.5 27H5V15H2Z" fill="#D08C3E"></path>
+<path d="M5 15H27" fill="none" stroke-width="1.6"></path>
+</sc-if>
+<sc-if value="{{ echelle }}" hint-placeholder-val="{{ false }}">
+<path d="M8 3H12V29H8Z" fill="#F2B705"></path>
+<path d="M20 3H24V29H20Z" fill="#F2B705"></path>
+<path d="M12 8H20V11H12ZM12 14.5H20V17.5H12ZM12 21H20V24H12Z" fill="#F2B705"></path>
+</sc-if>
+<sc-if value="{{ pelleteuse }}" hint-placeholder-val="{{ false }}">
+<path d="M15 18L22.5 7.5L26 9.5L18.5 20.5Z" fill="#F2B705"></path>
+<path d="M23 8L30 11L28.5 18L24.5 14.5Z" fill="#16161D"></path>
+<path d="M4 14H15V24H4Z" fill="#F2B705"></path>
+<path d="M6.5 16.5H11V19.5H6.5Z" fill="#fff" stroke-width="1.4"></path>
+<path d="M4.5 24H17.5A3 3 0 0 1 17.5 30H4.5A3 3 0 0 1 4.5 24Z" fill="#16161D"></path>
+</sc-if>
+<sc-if value="{{ chenilles }}" hint-placeholder-val="{{ false }}">
+<path d="M6 12H26A7 7 0 0 1 26 26H6A7 7 0 0 1 6 12Z" fill="#16161D"></path>
+<path d="M7.5 16.2A2.8 2.8 0 1 1 7.5 21.8A2.8 2.8 0 1 1 7.5 16.2ZM16 16.2A2.8 2.8 0 1 1 16 21.8A2.8 2.8 0 1 1 16 16.2ZM24.5 16.2A2.8 2.8 0 1 1 24.5 21.8A2.8 2.8 0 1 1 24.5 16.2Z" fill="#B7BCC4" stroke="none"></path>
+<path d="M8 9.5H11M14.5 9.5H17.5M21 9.5H24" stroke-width="2.4"></path>
+</sc-if>
+</svg>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:120,&quot;height&quot;:120},&quot;kind&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;trou&quot;,&quot;mur&quot;,&quot;rocher&quot;,&quot;boue&quot;,&quot;pont&quot;,&quot;echelle&quot;,&quot;pelleteuse&quot;,&quot;chenilles&quot;],&quot;default&quot;:&quot;trou&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;size&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:32,&quot;tsType&quot;:&quot;number&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const n = this.props.kind ?? 'trou';
+    const o = { size: this.props.size ?? 32 };
+    ['trou','mur','rocher','boue','pont','echelle','pelleteuse','chenilles'].forEach(k => o[k] = n === k);
+    return o;
+  }
+}
+</script>
+</body>
+</html>

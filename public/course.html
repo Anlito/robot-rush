@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Robot Rush · Course</title>
+<link rel="icon" href="/assets/robots/robot-rouge-normal.svg">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="/css/commun.css">
+<link rel="stylesheet" href="/css/course.css">
+</head>
+<body>
+<div id="scene">
+  <header class="barre">
+    <div class="marque"><span id="logo"></span><span class="titre nom-jeu">Robot Rush</span><span id="nom-parcours"></span></div>
+    <div class="chrono titre" id="chrono">--:--</div>
+    <div class="rejoindre">Rejoindre <span class="mono" id="adresse"></span></div>
+  </header>
+
+  <section id="vue-lobby" class="vue" hidden>
+    <div class="lobby-tete">
+      <div>
+        <h1 class="titre">Rejoins ton équipe</h1>
+        <p class="sous-titre">Va sur <span class="mono url" id="adresse-lobby"></span> et tape le code</p>
+      </div>
+      <div class="connectes"><span class="titre" id="nb-connectes">0</span><span>élèves connectés</span></div>
+    </div>
+    <div class="cartes-codes" id="cartes-codes"></div>
+  </section>
+
+  <section id="vue-course" class="vue" hidden>
+    <div class="couloirs" id="couloirs"></div>
+    <aside class="colonne">
+      <div class="carte" id="carte-classement"><h2 class="titre">Classement</h2><ol id="classement"></ol></div>
+      <div class="carte carte-fil"><h2 class="titre">En direct</h2><ul id="fil"></ul></div>
+    </aside>
+  </section>
+
+  <section id="vue-fin" class="vue" hidden>
+    <div class="fin-gauche">
+      <p class="fin-sous" id="fin-sous"></p>
+      <h1 class="titre" id="fin-titre"></h1>
+      <div class="podium" id="podium"></div>
+      <div class="suivants" id="suivants"></div>
+    </div>
+    <aside class="fin-droite">
+      <h2 class="titre">Meilleurs joueurs</h2>
+      <div id="meilleurs"></div>
+    </aside>
+  </section>
+
+  <div id="voile-pause" class="voile" hidden><div class="titre">Pause</div></div>
+  <div id="hors-ligne" class="hors-ligne" hidden>Connexion au serveur perdue… reconnexion en cours</div>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/commun.js"></script>
+<script src="/js/course.js"></script>
+</body>
+</html>

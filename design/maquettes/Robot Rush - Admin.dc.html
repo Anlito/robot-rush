@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#CFC9BC;color:#16161D;font-family:'Atkinson Hyperlegible',sans-serif}a{color:#2563EB}a:hover{color:#16161D}*{box-sizing:border-box}</style>
+</helmet>
+<div style="display:grid;grid-template-columns:repeat(2,1440px);gap:100px 80px;padding:120px;width:max-content">
+
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:36px">C1 · Lancement de partie</div>
+<div data-screen-label="C1 Lancement" style="width:1440px;height:900px;background:#F7F6F2;display:flex;flex-direction:column;overflow:hidden;font-size:15px">
+<div style="height:60px;flex:none;background:#fff;border-bottom:1.5px solid #DDD6C8;display:flex;align-items:center;gap:28px;padding:0 24px">
+<div style="display:flex;align-items:center;gap:10px"><dc-import name="Robot" color="#16161D" symbol="etoile" size="{{ 32 }}" hint-size="32px,32px"></dc-import><b style="font-family:'Bricolage Grotesque',sans-serif;font-size:20px">Robot Rush</b><span style="color:#4A4A57">Admin</span></div>
+<div style="display:flex;gap:4px;height:100%">
+<sc-for list="{{ nav1 }}" as="n" hint-placeholder-count="3"><div style="display:flex;align-items:center;padding:0 14px;font-weight:700;border-bottom:3px solid {{ n.bc }};color:{{ n.c }}">{{ n.t }}</div></sc-for>
+</div>
+<div style="margin-left:auto;display:flex;gap:16px;align-items:center;color:#4A4A57"><span>Ouvrir <a href="#">/course</a> au projecteur</span><span>Déconnexion</span></div>
+</div>
+<div style="flex:1;display:grid;grid-template-columns:360px minmax(0,1fr);min-height:0">
+<div style="background:#fff;border-right:1.5px solid #DDD6C8;padding:20px 22px;display:flex;flex-direction:column;gap:18px;overflow:hidden">
+<div style="display:flex;flex-direction:column;gap:6px"><label style="font-weight:700">Parcours</label><div style="height:42px;border:1.5px solid #16161D;border-radius:10px;display:flex;align-items:center;justify-content:space-between;padding:0 12px">5e – Distributeur de céréales<span>▾</span></div><span style="font-size:13px;color:#4A4A57">14 questions · 4 types</span></div>
+<div style="display:flex;flex-direction:column;gap:6px"><label style="font-weight:700">Nombre d'équipes</label>
+<div style="display:grid;grid-template-columns:repeat(7,1fr);border:1.5px solid #16161D;border-radius:10px;overflow:hidden">
+<sc-for list="{{ nbTeams }}" as="n" hint-placeholder-count="7"><div style="height:38px;display:flex;align-items:center;justify-content:center;font-weight:700;background:{{ n.bg }};color:{{ n.c }};border-right:1px solid #DDD6C8">{{ n.v }}</div></sc-for>
+</div></div>
+<div style="display:flex;flex-direction:column;gap:2px"><label style="font-weight:700;margin-bottom:4px">Réglages</label>
+<sc-for list="{{ settings }}" as="s" hint-placeholder-count="8"><div style="display:grid;grid-template-columns:1fr 86px;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid #EEEAE1"><span>{{ s.k }}</span><div style="height:32px;border:1.5px solid #C9C2B3;border-radius:8px;display:flex;align-items:center;justify-content:flex-end;padding:0 10px;font-family:'JetBrains Mono',monospace;font-size:14px">{{ s.v }}</div></div></sc-for>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px"><div style="display:flex;justify-content:space-between"><label style="font-weight:700">Obstacles → solutions</label><a href="#" style="font-size:14px">Modifier</a></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+<sc-for list="{{ pairs }}" as="p" hint-placeholder-count="4"><div style="display:flex;align-items:center;gap:4px;border:1px solid #DDD6C8;border-radius:8px;padding:4px 6px;font-size:13px"><dc-import name="Icone" kind="{{ p.o }}" size="{{ 22 }}" hint-size="22px,22px"></dc-import>→<dc-import name="Icone" kind="{{ p.s }}" size="{{ 22 }}" hint-size="22px,22px"></dc-import><span>{{ p.l }}</span></div></sc-for>
+</div></div>
+</div>
+<div style="padding:20px 24px;display:flex;flex-direction:column;gap:16px;min-height:0">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="display:flex;flex-direction:column"><b style="font-family:'Bricolage Grotesque',sans-serif;font-size:26px">Salle d'attente</b><span style="color:#4A4A57">23 élèves connectés · les codes sont affichés au projecteur</span></div>
+<div style="margin-left:auto;display:flex;gap:8px">
+<div style="height:42px;padding:0 14px;border-radius:10px;display:flex;align-items:center;font-weight:700;text-decoration:underline">Régénérer les codes</div>
+<div style="height:42px;padding:0 18px;border:1.5px solid #C9C2B3;color:#9A968C;border-radius:10px;display:flex;align-items:center;font-weight:700">Pause</div>
+<div style="height:42px;padding:0 18px;border:1.5px solid #C9C2B3;color:#9A968C;border-radius:10px;display:flex;align-items:center;font-weight:700">Arrêter</div>
+<div style="height:42px;padding:0 22px;background:#16161D;color:#fff;border-radius:10px;display:flex;align-items:center;gap:8px;font-weight:700">▶ Démarrer la course</div>
+</div>
+</div>
+<div style="flex:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:1fr 1fr;gap:14px;min-height:0">
+<sc-for list="{{ teams }}" as="t" hint-placeholder-count="6">
+<div style="background:#fff;border:1.5px solid #16161D;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;min-height:0">
+<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:{{ t.color }};color:{{ t.on }};border-bottom:1.5px solid #16161D">
+<svg width="26" height="26" viewBox="-12 -12 24 24"><circle r="11" fill="#fff" stroke="#16161D" stroke-width="1.5"></circle><path d="{{ t.symD }}" fill="#16161D" transform="scale(1.3)"></path></svg>
+<b style="font-family:'Bricolage Grotesque',sans-serif;font-size:18px">{{ t.name }}</b>
+<span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:20px;background:#fff;color:#16161D;border-radius:6px;padding:0 8px;letter-spacing:.05em">{{ t.code }}</span>
+</div>
+<div style="padding:6px 8px;display:flex;flex-direction:column;gap:2px;overflow:hidden">
+<sc-for list="{{ t.students }}" as="s" hint-placeholder-count="4">
+<div style="display:flex;align-items:center;gap:8px;height:30px;padding:0 6px;border-radius:6px;background:{{ s.bg }}">
+<span style="width:8px;height:8px;border-radius:50%;background:{{ s.dot }}"></span><span style="flex:1;font-weight:{{ s.fw }}">{{ s.n }}</span>
+<span style="font-size:12px;color:#4A4A57">{{ s.note }}</span>
+<span title="Déplacer" style="width:26px;height:26px;border:1px solid #C9C2B3;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px">⇄</span>
+<span title="Retirer" style="width:26px;height:26px;border:1px solid {{ s.xb }};color:{{ s.xc }};border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700">×</span>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:36px">C2 · Questions — liste et éditeur (onglets cliquables)</div>
+<div data-screen-label="C2 Questions" style="width:1440px;height:900px;background:#F7F6F2;display:flex;flex-direction:column;overflow:hidden;font-size:15px">
+<div style="height:60px;flex:none;background:#fff;border-bottom:1.5px solid #DDD6C8;display:flex;align-items:center;gap:28px;padding:0 24px">
+<div style="display:flex;align-items:center;gap:10px"><dc-import name="Robot" color="#16161D" symbol="etoile" size="{{ 32 }}" hint-size="32px,32px"></dc-import><b style="font-family:'Bricolage Grotesque',sans-serif;font-size:20px">Robot Rush</b><span style="color:#4A4A57">Admin</span></div>
+<div style="display:flex;gap:4px;height:100%">
+<sc-for list="{{ nav2 }}" as="n" hint-placeholder-count="3"><div style="display:flex;align-items:center;padding:0 14px;font-weight:700;border-bottom:3px solid {{ n.bc }};color:{{ n.c }}">{{ n.t }}</div></sc-for>
+</div>
+<div style="margin-left:auto;display:flex;gap:8px"><div style="height:36px;padding:0 14px;border:1.5px solid #16161D;border-radius:10px;display:flex;align-items:center;font-weight:700">Importer JSON</div><div style="height:36px;padding:0 14px;border:1.5px solid #16161D;border-radius:10px;display:flex;align-items:center;font-weight:700">Exporter JSON</div></div>
+</div>
+<div style="flex:1;display:grid;grid-template-columns:560px minmax(0,1fr);min-height:0">
+<div style="background:#fff;border-right:1.5px solid #DDD6C8;display:flex;flex-direction:column;min-height:0">
+<div style="padding:14px 16px;display:flex;flex-direction:column;gap:10px;border-bottom:1.5px solid #DDD6C8">
+<div style="display:flex;gap:8px"><div style="flex:1;height:38px;border:1.5px solid #C9C2B3;border-radius:10px;display:flex;align-items:center;padding:0 12px;color:#4A4A57">Rechercher une question…</div><div style="height:38px;padding:0 14px;background:#16161D;color:#fff;border-radius:10px;display:flex;align-items:center;font-weight:700">+ Nouvelle</div></div>
+<div style="display:flex;gap:6px;flex-wrap:wrap;font-size:13px"><span style="padding:3px 10px;border-radius:999px;background:#16161D;color:#fff;font-weight:700">Tous · 20</span><span style="padding:3px 10px;border-radius:999px;border:1px solid #C9C2B3">QCM 5</span><span style="padding:3px 10px;border-radius:999px;border:1px solid #C9C2B3">Ordre 4</span><span style="padding:3px 10px;border-radius:999px;border:1px solid #C9C2B3">Calcul 4</span><span style="padding:3px 10px;border-radius:999px;border:1px solid #C9C2B3">Blocs 4</span><span style="padding:3px 10px;border-radius:999px;border:1px solid #C9C2B3">À compléter 3</span><span style="padding:3px 10px;border-radius:999px;border:1px solid #C9C2B3">Niveau ▾</span></div>
+</div>
+<div style="flex:1;overflow:hidden">
+<sc-for list="{{ questions }}" as="q" hint-placeholder-count="14">
+<div style="display:grid;grid-template-columns:30px 96px 1fr 40px 44px;align-items:center;gap:10px;padding:0 16px;height:44px;border-bottom:1px solid #EEEAE1;background:{{ q.bg }};font-size:14px">
+<span style="font-family:'JetBrains Mono',monospace;color:#4A4A57">{{ q.id }}</span>
+<span style="font-size:12px;font-weight:700;border:1px solid #16161D;border-radius:5px;padding:1px 6px;justify-self:start">{{ q.type }}</span>
+<span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ q.t }}</span>
+<span style="color:#4A4A57">{{ q.lvl }}</span>
+<span style="font-family:'JetBrains Mono',monospace;color:#4A4A57;text-align:right">{{ q.d }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="padding:18px 26px;display:flex;flex-direction:column;gap:14px;overflow:hidden">
+<div style="display:flex;align-items:center;gap:10px"><b style="font-family:'Bricolage Grotesque',sans-serif;font-size:24px">Question {{ curId }}</b><span style="color:#4A4A57">modifiée il y a 2 min</span><div style="margin-left:auto;display:flex;gap:8px"><div style="height:38px;padding:0 14px;border-radius:10px;display:flex;align-items:center;font-weight:700;color:#B42318">Supprimer</div><div style="height:38px;padding:0 14px;border:1.5px solid #16161D;border-radius:10px;display:flex;align-items:center;font-weight:700">Aperçu élève</div><div style="height:38px;padding:0 18px;background:#16161D;color:#fff;border-radius:10px;display:flex;align-items:center;font-weight:700">Enregistrer</div></div></div>
+<div style="display:grid;grid-template-columns:repeat(5,1fr);border:1.5px solid #16161D;border-radius:10px;overflow:hidden">
+<sc-for list="{{ typeTabs }}" as="tt" hint-placeholder-count="5"><div onClick="{{ tt.go }}" style="height:40px;display:flex;align-items:center;justify-content:center;font-weight:700;cursor:pointer;background:{{ tt.bg }};color:{{ tt.c }};border-right:1px solid #DDD6C8">{{ tt.t }}</div></sc-for>
+</div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 200px;gap:14px">
+<div style="display:flex;flex-direction:column;gap:6px"><label style="font-weight:700">Énoncé</label><div style="min-height:66px;border:1.5px solid #C9C2B3;border-radius:10px;padding:10px 12px;background:#fff;line-height:1.4">{{ cur.q }}</div></div>
+<div style="display:flex;flex-direction:column;gap:6px"><label style="font-weight:700">Image (option)</label><div style="flex:1;border:1.5px dashed #C9C2B3;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#4A4A57;font-size:13px;text-align:center;padding:6px">Glisser une image<br>PNG, JPG, SVG</div></div>
+</div>
+<div style="background:#fff;border:1.5px solid #DDD6C8;border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:10px">
+<b>{{ cur.label }}</b>
+<sc-if value="{{ isQcm }}" hint-placeholder-val="{{ true }}">
+<sc-for list="{{ qcmRows }}" as="r" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:26px 28px 1fr 130px;align-items:center;gap:10px">
+<svg width="22" height="22" viewBox="-10 -10 20 20"><rect x="-10" y="-10" width="20" height="20" rx="4" fill="{{ r.bg }}"></rect><path d="{{ r.d }}" fill="{{ r.fg }}" transform="scale(.6)"></path></svg>
+<span style="width:20px;height:20px;border-radius:50%;border:2px solid #16161D;display:flex;align-items:center;justify-content:center"><span style="width:10px;height:10px;border-radius:50%;background:{{ r.dot }}"></span></span>
+<div style="height:38px;border:1.5px solid #C9C2B3;border-radius:8px;display:flex;align-items:center;padding:0 10px;font-family:'JetBrains Mono',monospace">{{ r.t }}</div>
+<span style="font-size:13px;color:#15803D;font-weight:700">{{ r.ok }}</span>
+</div></sc-for>
+<span style="font-size:13px;color:#4A4A57">Les réponses sont mélangées à l'affichage. Le serveur garde la bonne réponse.</span>
+</sc-if>
+<sc-if value="{{ isOrdre }}" hint-placeholder-val="{{ false }}">
+<sc-for list="{{ ordreRows }}" as="r" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:20px 28px 1fr 28px;align-items:center;gap:10px"><span style="color:#9A968C">⠿</span><b style="font-family:'JetBrains Mono',monospace">{{ r.n }}</b><div style="height:38px;border:1.5px solid #C9C2B3;border-radius:8px;display:flex;align-items:center;padding:0 10px">{{ r.t }}</div><span style="color:#B42318;font-weight:700;text-align:center">×</span></div></sc-for>
+<span style="font-size:14px;font-weight:700;text-decoration:underline">+ Ajouter une étape</span>
+<span style="font-size:13px;color:#4A4A57">Saisir dans le bon ordre : les élèves les reçoivent mélangées.</span>
+</sc-if>
+<sc-if value="{{ isCalcul }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:180px 180px 1fr;gap:14px">
+<div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;color:#4A4A57">Réponse exacte</label><div style="height:42px;border:1.5px solid #16161D;border-radius:8px;display:flex;align-items:center;padding:0 12px;font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700">11</div></div>
+<div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;color:#4A4A57">Unité affichée (option)</label><div style="height:42px;border:1.5px solid #C9C2B3;border-radius:8px;display:flex;align-items:center;padding:0 12px;color:#9A968C">ex. cm, °</div></div>
+<div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;color:#4A4A57">Formats acceptés</label><div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;height:42px"><span style="border:1px solid #16161D;border-radius:999px;padding:3px 10px;font-size:13px">entiers</span><span style="border:1px solid #C9C2B3;border-radius:999px;padding:3px 10px;font-size:13px">virgule ou point</span></div></div>
+</div>
+</sc-if>
+<sc-if value="{{ isBlocs }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;color:#4A4A57">Blocs proposés à l'élève (module distributeur de céréales)</label>
+<div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ blocChips }}" as="b" hint-placeholder-count="7"><span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;padding:4px 10px;border-radius:6px;border:1.5px solid #16161D;background:{{ b.bg }};color:{{ b.fg }};opacity:{{ b.op }}">{{ b.t }}</span></sc-for></div></div>
+<div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;color:#4A4A57">Séquences acceptées</label>
+<div style="font-family:'JetBrains Mono',monospace;font-size:13px;border:1.5px solid #C9C2B3;border-radius:8px;padding:8px 10px;background:#F7F6F2;line-height:1.5">1 · répéter 5 { allumer LED ; attendre 1 s ; éteindre LED ; attendre 1 s }</div>
+<div style="font-family:'JetBrains Mono',monospace;font-size:13px;border:1.5px solid #C9C2B3;border-radius:8px;padding:8px 10px;background:#F7F6F2;line-height:1.5">2 · répéter 5 { éteindre LED ; attendre 1 s ; allumer LED ; attendre 1 s }</div>
+<span style="font-size:14px;font-weight:700;text-decoration:underline">+ Ajouter une variante (assembler dans l'aperçu)</span></div>
+</sc-if>
+<sc-if value="{{ isTrou }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;color:#4A4A57">Programme · écrire ___ pour chaque trou</label>
+<div style="font-family:'JetBrains Mono',monospace;font-size:14px;border:1.5px solid #16161D;border-radius:8px;padding:10px 12px;background:#16161D;color:#fff;line-height:1.6">si <span style="background:#F2B705;color:#16161D;padding:0 6px;border-radius:4px">___1</span> alors allumer la LED<br>sinon éteindre la LED</div></div>
+<div style="display:grid;grid-template-columns:70px 1fr 1fr;gap:10px;align-items:center;font-size:14px"><b>Trou 1</b><div style="height:36px;border:1.5px solid #15803D;border-radius:8px;display:flex;align-items:center;padding:0 10px">✓ bouton appuyé</div><div style="height:36px;border:1.5px solid #C9C2B3;border-radius:8px;display:flex;align-items:center;padding:0 10px;color:#4A4A57">bouton relâché · LED allumée · servo à 0°</div></div>
+<div style="display:flex;gap:8px;align-items:center;font-size:14px">Saisie élève : <span style="border:1px solid #16161D;background:#16161D;color:#fff;border-radius:999px;padding:3px 10px">Glisser-déposer</span><span style="border:1px solid #C9C2B3;border-radius:999px;padding:3px 10px">Liste déroulante</span></div>
+</sc-if>
+</div>
+<div style="display:grid;grid-template-columns:140px 140px minmax(0,1fr);gap:14px">
+<div style="display:flex;flex-direction:column;gap:6px"><label style="font-weight:700">Niveau</label><div style="height:40px;border:1.5px solid #C9C2B3;border-radius:10px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;background:#fff">{{ cur.lvl }}<span>▾</span></div></div>
+<div style="display:flex;flex-direction:column;gap:6px"><label style="font-weight:700">Durée</label><div style="height:40px;border:1.5px solid #C9C2B3;border-radius:10px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;background:#fff;font-family:'JetBrains Mono',monospace">{{ cur.d }}<span style="font-family:'Atkinson Hyperlegible',sans-serif;color:#4A4A57">s</span></div></div>
+<div style="display:flex;flex-direction:column;gap:6px"><label style="font-weight:700">Explication après réponse (option)</label><div style="height:40px;border:1.5px solid #C9C2B3;border-radius:10px;display:flex;align-items:center;padding:0 12px;background:#fff;white-space:nowrap;overflow:hidden">{{ cur.x }}</div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:36px">C3 · Éditeur de parcours</div>
+<div data-screen-label="C3 Parcours" style="width:1440px;height:900px;background:#F7F6F2;display:flex;flex-direction:column;overflow:hidden;font-size:15px">
+<div style="height:60px;flex:none;background:#fff;border-bottom:1.5px solid #DDD6C8;display:flex;align-items:center;gap:28px;padding:0 24px">
+<div style="display:flex;align-items:center;gap:10px"><dc-import name="Robot" color="#16161D" symbol="etoile" size="{{ 32 }}" hint-size="32px,32px"></dc-import><b style="font-family:'Bricolage Grotesque',sans-serif;font-size:20px">Robot Rush</b><span style="color:#4A4A57">Admin</span></div>
+<div style="display:flex;gap:4px;height:100%">
+<sc-for list="{{ nav3 }}" as="n" hint-placeholder-count="3"><div style="display:flex;align-items:center;padding:0 14px;font-weight:700;border-bottom:3px solid {{ n.bc }};color:{{ n.c }}">{{ n.t }}</div></sc-for>
+</div>
+<div style="margin-left:auto;display:flex;gap:8px"><div style="height:36px;padding:0 14px;border:1.5px solid #16161D;border-radius:10px;display:flex;align-items:center;font-weight:700">Importer JSON</div><div style="height:36px;padding:0 14px;border:1.5px solid #16161D;border-radius:10px;display:flex;align-items:center;font-weight:700">Exporter JSON</div></div>
+</div>
+<div style="flex:1;display:grid;grid-template-columns:280px minmax(0,1fr) 420px;min-height:0">
+<div style="background:#fff;border-right:1.5px solid #DDD6C8;padding:14px;display:flex;flex-direction:column;gap:6px">
+<div style="height:38px;background:#16161D;color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;margin-bottom:6px">+ Nouveau parcours</div>
+<sc-for list="{{ parcours }}" as="p" hint-placeholder-count="3"><div style="padding:10px 12px;border-radius:10px;background:{{ p.bg }};border:1.5px solid {{ p.bc }};display:flex;flex-direction:column;gap:2px"><b>{{ p.t }}</b><span style="font-size:13px;color:#4A4A57">{{ p.m }}</span></div></sc-for>
+</div>
+<div style="padding:18px 24px;display:flex;flex-direction:column;gap:16px;min-height:0">
+<div style="display:flex;align-items:center;gap:10px"><b style="font-family:'Bricolage Grotesque',sans-serif;font-size:24px">5e – Distributeur de céréales</b><div style="margin-left:auto;display:flex;gap:8px"><div style="height:38px;padding:0 14px;border:1.5px solid #16161D;border-radius:10px;display:flex;align-items:center;font-weight:700">Dupliquer</div><div style="height:38px;padding:0 18px;background:#16161D;color:#fff;border-radius:10px;display:flex;align-items:center;font-weight:700">Enregistrer</div></div></div>
+<div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:12px">
+<div style="display:flex;flex-direction:column;gap:6px"><label style="font-weight:700">Nom</label><div style="height:40px;border:1.5px solid #C9C2B3;border-radius:10px;display:flex;align-items:center;padding:0 12px;background:#fff">5e – Distributeur de céréales</div></div>
+<div style="display:flex;flex-direction:column;gap:6px"><label style="font-weight:700">Ordre</label><div style="height:40px;border:1.5px solid #C9C2B3;border-radius:10px;display:flex;align-items:center;gap:8px;padding:0 12px;background:#fff"><span style="width:34px;height:20px;border-radius:10px;background:#16161D;position:relative"><span style="position:absolute;right:2px;top:2px;width:16px;height:16px;border-radius:50%;background:#fff"></span></span>Aléatoire</div></div>
+<div style="display:flex;flex-direction:column;gap:6px"><label style="font-weight:700">Durée</label><div style="height:40px;border:1.5px solid #C9C2B3;border-radius:10px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;background:#fff;font-family:'JetBrains Mono',monospace">12<span style="font-family:'Atkinson Hyperlegible',sans-serif;color:#4A4A57">min</span></div></div>
+<div style="display:flex;flex-direction:column;gap:6px"><label style="font-weight:700">Piste</label><div style="height:40px;border:1.5px solid #C9C2B3;border-radius:10px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;background:#fff;font-family:'JetBrains Mono',monospace">30<span style="font-family:'Atkinson Hyperlegible',sans-serif;color:#4A4A57">cases</span></div></div>
+</div>
+<div style="display:flex;align-items:baseline;gap:10px"><b>Questions du parcours</b><span style="color:#4A4A57;font-size:14px">8 questions · QCM 3, Ordre 2, Calcul 1, Blocs 2 · chaque élève les reçoit sans répétition tant que possible</span></div>
+<div style="flex:1;background:#fff;border:1.5px solid #DDD6C8;border-radius:12px;overflow:hidden">
+<sc-for list="{{ inParcours }}" as="q" hint-placeholder-count="8">
+<div style="display:grid;grid-template-columns:20px 30px 96px 1fr 44px 28px;align-items:center;gap:10px;padding:0 14px;height:46px;border-bottom:1px solid #EEEAE1;font-size:14px">
+<span style="color:#9A968C">⠿</span><span style="font-family:'JetBrains Mono',monospace;color:#4A4A57">{{ q.id }}</span>
+<span style="font-size:12px;font-weight:700;border:1px solid #16161D;border-radius:5px;padding:1px 6px;justify-self:start">{{ q.type }}</span>
+<span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ q.t }}</span>
+<span style="font-family:'JetBrains Mono',monospace;color:#4A4A57;text-align:right">{{ q.d }}</span>
+<span style="color:#B42318;font-weight:700;text-align:center">×</span>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="background:#fff;border-left:1.5px solid #DDD6C8;padding:14px 16px;display:flex;flex-direction:column;gap:10px;min-height:0">
+<b>Banque de questions</b>
+<div style="height:38px;border:1.5px solid #C9C2B3;border-radius:10px;display:flex;align-items:center;padding:0 12px;color:#4A4A57">Rechercher…</div>
+<div style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+<sc-for list="{{ bank }}" as="q" hint-placeholder-count="12">
+<div style="display:grid;grid-template-columns:88px 1fr 30px;align-items:center;gap:8px;height:44px;border-bottom:1px solid #EEEAE1;font-size:14px">
+<span style="font-size:12px;font-weight:700;border:1px solid #16161D;border-radius:5px;padding:1px 6px;justify-self:start">{{ q.type }}</span>
+<span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ q.t }}</span>
+<span style="width:28px;height:28px;border:1.5px solid #16161D;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700">+</span>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:36px">C0 · Accès admin</div>
+<div data-screen-label="C0 Accès admin" style="width:1440px;height:900px;background:#F7F6F2;display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:15px">
+<div style="width:400px;background:#fff;border:1.5px solid #16161D;border-radius:14px;padding:28px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:center;gap:10px"><dc-import name="Robot" color="#16161D" symbol="etoile" size="{{ 40 }}" hint-size="40px,40px"></dc-import><b style="font-family:'Bricolage Grotesque',sans-serif;font-size:24px">Robot Rush · Admin</b></div>
+<div style="display:flex;flex-direction:column;gap:6px"><label style="font-weight:700">Mot de passe</label><div style="height:42px;border:1.5px solid #16161D;border-radius:10px;display:flex;align-items:center;padding:0 12px;letter-spacing:.2em">••••••••</div></div>
+<div style="height:44px;background:#16161D;color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700">Entrer</div>
+<span style="font-size:13px;color:#4A4A57;line-height:1.4">Défini dans la configuration du serveur. Les élèves n'ont jamais accès à cette page.</span>
+</div>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { qtype: 'qcm' };
+  static SYM = {
+    etoile: 'M0 -5L1.29 -1.78L4.76 -1.55L2.09 0.68L2.94 4.05L0 2.2L-2.94 4.05L-2.09 0.68L-4.76 -1.55L-1.29 -1.78Z',
+    triangle: 'M0 -5L5 4.2L-5 4.2Z',
+    cercle: 'M0 -4.6A4.6 4.6 0 1 1 0 4.6A4.6 4.6 0 1 1 0 -4.6Z',
+    carre: 'M-4 -4H4V4H-4Z',
+    losange: 'M0 -5.4L5 0L0 5.4L-5 0Z',
+    eclair: 'M1.5 -5.5L-4 1H-0.5L-1.5 5.5L4 -1H0.5Z'
+  };
+  nav(active) {
+    return ['Partie', 'Questions', 'Parcours'].map(t => ({ t, bc: t === active ? '#16161D' : 'transparent', c: t === active ? '#16161D' : '#4A4A57' }));
+  }
+  renderVals() {
+    const Q = [
+      [1,'QCM','Dans un programme Arduino, quelle partie s\'exécute en boucle indéfiniment ?','5e',30],
+      [2,'QCM','Quel composant permet de faire tourner un bras à un angle précis ?','5e',30],
+      [3,'QCM','« Si bouton appuyé alors allumer la LED sinon éteindre la LED » : bouton relâché ?','5e',30],
+      [4,'QCM','Qu\'est-ce qu\'un algorithme ?','5e',30],
+      [5,'QCM','Quels états peut prendre une broche numérique ?','4e',30],
+      [6,'Ordre','Distributeur : remets les étapes dans l\'ordre','5e',30],
+      [7,'Ordre','Développement : de l\'écriture au test','4e',30],
+      [8,'Ordre','Feu de circulation','5e',30],
+      [9,'Ordre','Clignotement de la LED','5e',30],
+      [10,'Calcul','score vaut 5, « ajouter 3 à score » deux fois','5e',30],
+      [11,'Calcul','« Répéter 4 fois : avancer de 25 cm »','5e',30],
+      [12,'Calcul','Servo à 0°, tourne de 45° trois fois','4e',30],
+      [13,'Calcul','LED 2 s allumée, 3 s éteinte : cycles en 30 s','4e',30],
+      [14,'Blocs','Quand le bouton est appuyé, allume la LED','5e',60],
+      [15,'Blocs','Servo à 90°, attendre 2 s, puis 0°','5e',60],
+      [16,'Blocs','Fais clignoter la LED 5 fois','4e',60],
+      [17,'Blocs','Si bouton appuyé, servo 90°, sinon 0°','4e',60],
+      [18,'À compléter','si ___ alors allumer la LED sinon éteindre','5e',60],
+      [19,'À compléter','digitalWrite(LED, ___);','3e',60],
+      [20,'À compléter','attendre ___ millisecondes','4e',60]
+    ].map(([id, type, t, lvl, d]) => ({ id, type, t, lvl, d: d + ' s' }));
+    const types = [['qcm','QCM',1],['ordre','Remise en ordre',6],['calcul','Calcul',10],['blocs','Blocs',16],['trou','À compléter',18]];
+    const qt = this.state.qtype;
+    const curId = types.find(t => t[0] === qt)[2];
+    const meta = {
+      qcm: { q: Q[0].t, label: 'Réponses (une seule bonne)', lvl: '5e', d: 30, x: 'loop() se répète tant que la carte est alimentée.' },
+      ordre: { q: 'Distributeur : remets les étapes dans l\'ordre.', label: 'Étapes dans le bon ordre', lvl: '5e', d: 30, x: 'On lit le bouton avant d\'agir sur le servo.' },
+      calcul: { q: 'La variable score vaut 5. On exécute « ajouter 3 à score » deux fois. Que vaut score ?', label: 'Réponse numérique', lvl: '5e', d: 30, x: '5 + 3 + 3 = 11' },
+      blocs: { q: 'Fais clignoter la LED 5 fois (1 s allumée, 1 s éteinte).', label: 'Blocs et solutions', lvl: '4e', d: 60, x: 'La boucle « répéter » évite d\'écrire 5 fois la même chose.' },
+      trou: { q: 'La LED doit être allumée uniquement quand on appuie. Complète le programme.', label: 'Programme à trous', lvl: '5e', d: 60, x: 'La condition teste l\'état du bouton.' }
+    }[qt];
+    const teamDefs = [
+      ['Rouge','#E0362C','etoile','#fff','R2YC'],['Bleue','#2563EB','triangle','#fff','M3RT'],['Verte','#16A34A','cercle','#16161D','H9WE'],
+      ['Jaune','#F2B705','carre','#16161D','B4ZN'],['Violette','#7C3AED','losange','#fff','T6QD'],['Orange','#F97316','eclair','#16161D','K7PX']
+    ];
+    const studs = [['Noah','Sacha','Malo','Jade'],['Lina','Adam','Yanis','Lou'],['Rayan','Chloé','Tom','Nina'],['Inès','Hugo','Mila','Pr0ut'],['Zoé','Ilyes','Lisa'],['Manon','Théo','Sofia','Ali']];
+    const teams = teamDefs.map(([name, color, s, on, code], i) => ({
+      name, color, on, code, symD: Component.SYM[s],
+      students: studs[i].map(n => {
+        const flag = n === 'Pr0ut', off = n === 'Lou';
+        return { n, bg: flag ? '#FCE3DF' : 'transparent', fw: flag ? 700 : 400, dot: off ? '#C9C2B3' : '#16A34A',
+          note: flag ? 'à retirer ?' : (off ? 'reconnexion…' : ''), xb: flag ? '#B42318' : '#C9C2B3', xc: flag ? '#B42318' : '#4A4A57' };
+      })
+    }));
+    const inIds = [1,2,4,6,9,10,14,15];
+    return {
+      nav1: this.nav('Partie'), nav2: this.nav('Questions'), nav3: this.nav('Parcours'),
+      nbTeams: [2,3,4,5,6,7,8].map(v => ({ v, bg: v === 6 ? '#16161D' : '#fff', c: v === 6 ? '#fff' : '#16161D' })),
+      settings: [['Longueur de la piste','30'],['Gain « Avancer »','2'],['Attente mauvaise rép.','3 s'],['Durée de blocage','15 s'],['Protection après blocage','3 s'],['Stock max par solution','3'],['Durée de la partie','12 min'],['Temps / question','30 / 60 s'],['Délai choix d\'action','8 s']].map(([k, v]) => ({ k, v })),
+      pairs: [['trou','pont','Trou'],['mur','echelle','Mur'],['rocher','pelleteuse','Rocher'],['boue','chenilles','Boue']].map(([o, s, l]) => ({ o, s, l })),
+      teams,
+      questions: Q.slice(0, 18).map(q => ({ ...q, bg: q.id === curId ? '#DCE7FD' : 'transparent' })),
+      typeTabs: types.map(([k, t]) => ({ t, bg: k === qt ? '#16161D' : '#fff', c: k === qt ? '#fff' : '#16161D', go: () => this.setState({ qtype: k }) })),
+      isQcm: qt === 'qcm', isOrdre: qt === 'ordre', isCalcul: qt === 'calcul', isBlocs: qt === 'blocs', isTrou: qt === 'trou',
+      cur: meta, curId,
+      qcmRows: [
+        { t: 'setup()', bg: '#2563EB', fg: '#fff', d: 'M0 -8L8.5 7H-8.5Z' },
+        { t: 'loop()', bg: '#F97316', fg: '#16161D', d: 'M0 -9L9 0L0 9L-9 0Z', good: true },
+        { t: 'main()', bg: '#7C3AED', fg: '#fff', d: 'M0 -8A8 8 0 1 1 0 8A8 8 0 1 1 0 -8Z' },
+        { t: 'start()', bg: '#15803D', fg: '#fff', d: 'M-7.5 -7.5H7.5V7.5H-7.5Z' }
+      ].map(r => ({ ...r, dot: r.good ? '#15803D' : 'transparent', ok: r.good ? 'Bonne réponse' : '' })),
+      ordreRows: ['Lire l\'état du bouton','Tourner le servo à 90°','Attendre 2 secondes','Remettre le servo à 0°'].map((t, i) => ({ n: i + 1, t })),
+      blocChips: [['répéter ( ) fois','#F2B705','#16161D',1],['si [ ] alors','#F2B705','#16161D',1],['allumer LED','#0891B2','#fff',1],['éteindre LED','#0891B2','#fff',1],['servo à 90°','#0891B2','#fff',0.35],['attendre 1 s','#7C3AED','#fff',1],['attendre 2 s','#7C3AED','#fff',1]].map(([t, bg, fg, op]) => ({ t, bg, fg, op })),
+      parcours: [
+        { t: '5e – Distributeur de céréales', m: '8 questions · 12 min · 30 cases', bg: '#DCE7FD', bc: '#2563EB' },
+        { t: '4e – Capteurs', m: '11 questions · 12 min · 30 cases', bg: '#fff', bc: '#DDD6C8' },
+        { t: '3e – Algorithmique', m: '14 questions · 15 min · 36 cases', bg: '#fff', bc: '#DDD6C8' }
+      ],
+      inParcours: Q.filter(q => inIds.includes(q.id)),
+      bank: Q.filter(q => !inIds.includes(q.id))
+    };
+  }
+}
+</script>
+</body>
+</html>

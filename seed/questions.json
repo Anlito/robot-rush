@@ -1,0 +1,130 @@
+[
+  {
+    "id": "q-001", "type": "qcm", "niveau": "5e", "duree_s": null,
+    "enonce": "Dans un programme Arduino, quelle partie s'exécute en boucle indéfiniment ?",
+    "image": null,
+    "explication": "setup() s'exécute une seule fois au démarrage ; loop() se répète sans fin.",
+    "donnees": { "choix": ["setup()", "loop()", "main()", "start()"], "bonne": 1 }
+  },
+  {
+    "id": "q-002", "type": "qcm", "niveau": "5e", "duree_s": null,
+    "enonce": "Quel composant permet de faire tourner un bras à un angle précis ?",
+    "image": null,
+    "explication": "Le servo-moteur se positionne à un angle donné, de 0 à 180°.",
+    "donnees": { "choix": ["LED", "Servo-moteur", "Bouton poussoir", "Buzzer"], "bonne": 1 }
+  },
+  {
+    "id": "q-003", "type": "qcm", "niveau": "5e", "duree_s": null,
+    "enonce": "« Si bouton appuyé alors allumer la LED sinon éteindre la LED » : que se passe-t-il quand le bouton est relâché ?",
+    "image": null,
+    "explication": "Bouton relâché : la condition est fausse, c'est la partie « sinon » qui s'exécute.",
+    "donnees": { "choix": ["La LED reste allumée", "La LED s'éteint", "La LED clignote", "Rien ne change"], "bonne": 1 }
+  },
+  {
+    "id": "q-004", "type": "qcm", "niveau": "5e", "duree_s": null,
+    "enonce": "Qu'est-ce qu'un algorithme ?",
+    "image": null,
+    "explication": "Un algorithme est une suite d'instructions qui permet de résoudre un problème.",
+    "donnees": { "choix": ["Une suite d'instructions pour résoudre un problème", "Un type de capteur", "Un câble de connexion", "Un langage de dessin"], "bonne": 0 }
+  },
+  {
+    "id": "q-005", "type": "qcm", "niveau": "4e", "duree_s": null,
+    "enonce": "Quels états peut prendre une broche numérique ?",
+    "image": null,
+    "explication": "Une broche numérique n'a que deux états : HAUT (HIGH) ou BAS (LOW).",
+    "donnees": { "choix": ["HAUT ou BAS (HIGH / LOW)", "De 0 à 1023", "De 0 à 180", "ROUGE ou VERT"], "bonne": 0 }
+  },
+  {
+    "id": "q-006", "type": "ordre", "niveau": "5e", "duree_s": null,
+    "enonce": "Distributeur : remets les étapes dans l'ordre.",
+    "image": null, "explication": null,
+    "donnees": { "elements": ["Lire l'état du bouton", "Tourner le servo à 90°", "Attendre 2 secondes", "Remettre le servo à 0°"] }
+  },
+  {
+    "id": "q-007", "type": "ordre", "niveau": "5e", "duree_s": null,
+    "enonce": "Développement : remets les étapes dans l'ordre.",
+    "image": null, "explication": null,
+    "donnees": { "elements": ["Écrire le programme", "Vérifier le programme", "Téléverser sur la carte", "Tester"] }
+  },
+  {
+    "id": "q-008", "type": "ordre", "niveau": "5e", "duree_s": null,
+    "enonce": "Feu de circulation : remets les couleurs dans l'ordre, en partant du rouge.",
+    "image": null, "explication": null,
+    "donnees": { "elements": ["Rouge", "Vert", "Orange"] }
+  },
+  {
+    "id": "q-009", "type": "ordre", "niveau": "5e", "duree_s": null,
+    "enonce": "Clignotement : remets les instructions dans l'ordre.",
+    "image": null, "explication": null,
+    "donnees": { "elements": ["Allumer la LED", "Attendre 1 s", "Éteindre la LED", "Attendre 1 s"] }
+  },
+  {
+    "id": "q-010", "type": "calcul", "niveau": "5e", "duree_s": null,
+    "enonce": "La variable score vaut 5. On exécute « ajouter 3 à score » deux fois. Que vaut score ?",
+    "image": null, "explication": "5 + 3 + 3 = 11.",
+    "donnees": { "reponse": 11, "unite": null }
+  },
+  {
+    "id": "q-011", "type": "calcul", "niveau": "5e", "duree_s": null,
+    "enonce": "« Répéter 4 fois : avancer de 25 cm ». Distance totale en cm ?",
+    "image": null, "explication": "4 × 25 = 100 cm.",
+    "donnees": { "reponse": 100, "unite": "cm" }
+  },
+  {
+    "id": "q-012", "type": "calcul", "niveau": "5e", "duree_s": null,
+    "enonce": "Un servo est à 0°. Il tourne de 45° trois fois de suite. Angle final en degrés ?",
+    "image": null, "explication": "3 × 45 = 135°.",
+    "donnees": { "reponse": 135, "unite": "°" }
+  },
+  {
+    "id": "q-013", "type": "calcul", "niveau": "4e", "duree_s": null,
+    "enonce": "Une LED reste allumée 2 s puis éteinte 3 s, en boucle. Combien de cycles complets en 30 s ?",
+    "image": null, "explication": "Un cycle dure 2 + 3 = 5 s ; 30 ÷ 5 = 6 cycles.",
+    "donnees": { "reponse": 6, "unite": null }
+  },
+  {
+    "id": "q-014", "type": "blocs", "niveau": "5e", "duree_s": null,
+    "enonce": "Quand le bouton est appuyé, allume la LED.",
+    "image": null, "explication": null,
+    "donnees": { "a_definir": "étape 3 : format aligné sur le module de blocs du distributeur de céréales", "solution": "si [bouton appuyé] alors [allumer LED]" }
+  },
+  {
+    "id": "q-015", "type": "blocs", "niveau": "5e", "duree_s": null,
+    "enonce": "Tourne le servo à 90°, attends 2 secondes, puis ramène-le à 0°.",
+    "image": null, "explication": null,
+    "donnees": { "a_definir": "étape 3", "solution": "servo 90° → attendre 2 s → servo 0°" }
+  },
+  {
+    "id": "q-016", "type": "blocs", "niveau": "5e", "duree_s": null,
+    "enonce": "Fais clignoter la LED 5 fois (1 s allumée, 1 s éteinte).",
+    "image": null, "explication": null,
+    "donnees": { "a_definir": "étape 3", "solution": "répéter 5 fois { allumer LED, attendre 1 s, éteindre LED, attendre 1 s }" }
+  },
+  {
+    "id": "q-017", "type": "blocs", "niveau": "5e", "duree_s": null,
+    "enonce": "Si le bouton est appuyé, servo à 90°, sinon servo à 0°.",
+    "image": null, "explication": null,
+    "donnees": { "a_definir": "étape 3", "solution": "si [bouton appuyé] alors [servo 90°] sinon [servo 0°]" }
+  },
+  {
+    "id": "q-018", "type": "completer", "niveau": "5e", "duree_s": null,
+    "enonce": "La LED doit être allumée uniquement quand on appuie sur le bouton.",
+    "image": null, "explication": null,
+    "donnees": { "texte": "si ___ alors allumer la LED sinon éteindre la LED", "mode": "liste",
+      "trous": [{ "bonne": "bouton appuyé", "distracteurs": ["bouton relâché", "LED allumée", "servo à 0°"] }] }
+  },
+  {
+    "id": "q-019", "type": "completer", "niveau": "4e", "duree_s": null,
+    "enonce": "Complète pour allumer la LED.",
+    "image": null, "explication": "HIGH met la broche à l'état haut : la LED s'allume.",
+    "donnees": { "texte": "digitalWrite(LED, ___);", "mode": "liste",
+      "trous": [{ "bonne": "HIGH", "distracteurs": ["LOW", "0", "OUTPUT"] }] }
+  },
+  {
+    "id": "q-020", "type": "completer", "niveau": "5e", "duree_s": null,
+    "enonce": "Complète pour attendre 2 secondes.",
+    "image": null, "explication": "1 s = 1000 ms, donc 2 s = 2000 ms.",
+    "donnees": { "texte": "attendre ___ millisecondes", "mode": "liste",
+      "trous": [{ "bonne": "2000", "distracteurs": ["2", "20", "200"] }] }
+  }
+]

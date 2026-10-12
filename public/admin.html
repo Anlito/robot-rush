@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Robot Rush · Professeur</title>
+<link rel="icon" href="/assets/robots/robot-verte-normal.svg">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="/css/commun.css">
+<link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+
+<!-- C0 · Accès -->
+<main id="ecran-acces" class="acces" hidden>
+  <form class="carte-acces" id="form-acces">
+    <h1 class="titre">Robot Rush · Professeur</h1>
+    <label for="mdp">Mot de passe</label>
+    <input id="mdp" type="password" autocomplete="current-password" required>
+    <p class="erreur" id="erreur-acces" role="alert"></p>
+    <button class="btn btn-primaire" type="submit">Entrer</button>
+  </form>
+</main>
+
+<div id="ecran-admin" hidden>
+  <header class="barre-admin">
+    <span class="titre logo">Robot Rush</span>
+    <nav class="onglets"><a class="actif" href="#">Partie</a><span class="bientot" title="Étape 4">Questions</span><span class="bientot" title="Étape 4">Parcours</span></nav>
+    <a class="lien" href="/course" target="_blank" rel="noopener">Ouvrir /course au projecteur ↗</a>
+  </header>
+
+  <div class="mise-en-page">
+    <!-- Colonne de lancement -->
+    <aside class="colonne-reglages">
+      <form id="form-config">
+        <h2>Lancement</h2>
+        <label for="parcours">Parcours</label>
+        <select id="parcours"></select>
+        <p class="aide" id="info-parcours"></p>
+
+        <label>Nombre d'équipes</label>
+        <div class="segmente" id="nb-equipes"></div>
+
+        <h3>Réglages</h3>
+        <div class="reglages" id="reglages"></div>
+        <label class="interrupteur"><input type="checkbox" id="solutionGarantie">
+          <span>Pendant un blocage, le tirage contient toujours la solution qui débloque</span></label>
+        <p class="aide">Décoché : hasard total (plus difficile).</p>
+
+        <h3>Obstacles → solutions</h3>
+        <ul class="paires" id="paires"></ul>
+        <p class="aide">Modifiables à l'étape 4 (admin complet).</p>
+        <p class="erreur" id="erreur-config" role="alert"></p>
+      </form>
+    </aside>
+
+    <main class="principal">
+      <div class="tete-principal">
+        <div>
+          <h1 class="titre" id="titre-etat">Salle d'attente</h1>
+          <p class="sous" id="sous-etat"></p>
+        </div>
+        <div class="actions">
+          <button class="btn" id="btn-codes">Régénérer les codes</button>
+          <button class="btn" id="btn-pause" disabled>Pause</button>
+          <button class="btn btn-danger" id="btn-arreter" disabled>Arrêter</button>
+          <button class="btn btn-primaire" id="btn-demarrer">▶ Démarrer la course</button>
+        </div>
+      </div>
+      <p class="message" id="message" role="status"></p>
+      <div class="fin-actions" id="fin-actions" hidden>
+        <button class="btn btn-primaire" id="btn-rejouer">Nouvelle partie, mêmes équipes</button>
+        <button class="btn" id="btn-nouvelle">Nouvelle partie, nouveaux codes</button>
+      </div>
+      <div class="cartes-equipes" id="equipes"></div>
+    </main>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/commun.js"></script>
+<script src="/js/admin.js"></script>
+</body>
+</html>
