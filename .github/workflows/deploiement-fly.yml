@@ -1,0 +1,17 @@
+# Déploiement sur Fly.io depuis GitHub (facultatif) : onglet « Actions » → « Déploiement Fly.io » → « Run workflow ».
+# Nécessite le secret FLY_API_TOKEN dans les réglages du dépôt (voir DEPLOIEMENT.md).
+name: Déploiement Fly.io
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deployer:
+    runs-on: ubuntu-latest
+    concurrency: deploiement-fly
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

@@ -448,7 +448,8 @@
     rendreZone();
   }
 
-  socket.on('etat', (e) => { etat = e; afficher(); });
+  // Les paires obstacle / solution ne sont renvoyées que lorsqu'elles changent : on garde les précédentes.
+  socket.on('etat', (e) => { etat = { ...e, paires: e.paires || (etat && etat.paires) || [] }; afficher(); });
   socket.on('moi', (m) => {
     if (m === null && stockage.lire()) { stockage.ecrire(null); socket.auth.jeton = null; }
     moi = m;

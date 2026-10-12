@@ -617,7 +617,7 @@ class Partie extends EventEmitter {
 
   // ---------- Vues envoyées aux navigateurs ----------
 
-  vuePublique({ avecCodes = false, avecEleves = false } = {}) {
+  vuePublique({ avecCodes = false, avecEleves = false, fil = 8 } = {}) {
     const parEquipe = this.equipes.map(() => []);
     for (const j of this.joueurs.values()) parEquipe[j.equipeId].push(j);
     return {
@@ -638,7 +638,7 @@ class Partie extends EventEmitter {
         eleves: avecEleves ? parEquipe[e.id].map((j) => j.pseudo) : undefined,
       })),
       nbEleves: this.joueurs.size,
-      fil: this.fil.slice(0, 8),
+      fil: this.fil.slice(0, fil),
       resultat: this.resultat,
     };
   }

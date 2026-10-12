@@ -122,7 +122,15 @@
     if (socket) socket.disconnect();
     socket = RR.connecter({ role: 'admin', motDePasse: mdp });
     socket.on('admin:refuse', ({ erreur }) => { session.ecrire(null); montrerAcces(erreur); });
-    socket.on('admin:donnees', (d) => { donnees = d; session.ecrire(mdp); el('#avert-mdp').hidden = !d.motDePasseParDefaut; remplirParcours(); });
+    socket.on('admin:donnees', (d) => {
+      donnees = d;
+      session.ecrire(mdp);
+      el('#avert-mdp').hidden = !d.motDePasseParDefaut || Boolean(d.hebergement);
+      el('#avert-stockage').hidden = !d.stockageEphemere;
+      // En ligne, l'aide « réseau du collège, pare-feu » du mode local ne sert à rien.
+      el('.aide-connexion').hidden = Boolean(d.hebergement);
+      remplirParcours();
+    });
     socket.on('etat', (e) => { etat = e; afficher(); });
     socket.on('banque', (b) => { Admin.banque = b; for (const f of ecouteursBanque) f(b); });
     socket.on('disconnect', () => message('Connexion au serveur perdue… reconnexion en cours. Vérifiez que la fenêtre Robot Rush est toujours ouverte sur ce PC.', true));

@@ -15,12 +15,32 @@ function lireConfigServeur() {
       console.error(`Le fichier config-serveur.json est mal écrit (${e.message}). Il est ignoré.`);
     }
   }
+  const h = hebergement();
   return {
     port: Number(process.env.PORT || fichierConfig.port) || 3000,
     motDePasse: process.env.ADMIN_PASSWORD || fichierConfig.motDePasse || null,
-    adressePublique: (process.env.PUBLIC_URL || fichierConfig.adressePublique || '').replace(/\/$/, '') || null,
+    adressePublique: (process.env.PUBLIC_URL || fichierConfig.adressePublique || h.adresse || '').replace(/\/$/, '') || null,
     ouvrirNavigateur: process.env.OUVRIR_NAVIGATEUR === '1' || fichierConfig.ouvrirNavigateur === true,
+    hebergement: h.nom,
   };
+}
+
+/**
+ * Hébergement en ligne reconnu grâce aux variables qu'il fournit lui-même :
+ * nom, adresse publique, et dossier de données permanent (volume) s'il y en a un.
+ */
+function hebergement() {
+  const e = process.env;
+  if (e.RENDER === 'true' || e.RENDER_EXTERNAL_URL) {
+    return { nom: 'Render', adresse: e.RENDER_EXTERNAL_URL || null, volume: null };
+  }
+  if (e.RAILWAY_ENVIRONMENT || e.RAILWAY_PUBLIC_DOMAIN || e.RAILWAY_PROJECT_ID) {
+    return { nom: 'Railway', adresse: e.RAILWAY_PUBLIC_DOMAIN ? `https://${e.RAILWAY_PUBLIC_DOMAIN}` : null, volume: e.RAILWAY_VOLUME_MOUNT_PATH || null };
+  }
+  if (e.FLY_APP_NAME) {
+    return { nom: 'Fly.io', adresse: `https://${e.FLY_APP_NAME}.fly.dev`, volume: null };
+  }
+  return { nom: null, adresse: null, volume: null };
 }
 
 // Cartes réseau virtuelles (machines virtuelles, WSL, VPN…) : jamais l'adresse à donner aux élèves.
@@ -78,4 +98,4 @@ function ouvrirNavigateur(url) {
   exec(commande, () => { /* sans navigateur : on ignore */ });
 }
 
-module.exports = { lireConfigServeur, adressesLocales, ecouter, ouvrirNavigateur };
+module.exports = { lireConfigServeur, hebergement, adressesLocales, ecouter, ouvrirNavigateur };

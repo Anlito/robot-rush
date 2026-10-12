@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="/fonts/polices.css?v=4">
 <link rel="stylesheet" href="/css/commun.css?v=4">
 <link rel="stylesheet" href="/css/admin.css?v=4">
-<link rel="stylesheet" href="/css/admin-banque.css?v=4">
+<link rel="stylesheet" href="/css/admin-banque.css?v=5">
 </head>
 <body>
 
@@ -40,6 +40,9 @@
       <button class="lien-bouton" id="btn-deconnexion" type="button">Déconnexion</button></div>
   </header>
   <p class="bandeau-message" id="bandeau-message" role="status" hidden></p>
+  <p class="avert-stockage" id="avert-stockage" hidden><b>Attention :</b> sur cet hébergement, les questions et parcours créés ici
+    sont effacés à chaque redémarrage du serveur. Exportez votre banque (bouton « Exporter JSON ») après chaque modification
+    et déposez le fichier sous le nom <code>banque.json</code> dans le dépôt GitHub : il sera rechargé automatiquement (voir DEPLOIEMENT.md).</p>
 
   <div class="mise-en-page vue-admin" id="vue-partie">
     <!-- Colonne de lancement -->
@@ -138,7 +141,7 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/commun.js?v=4"></script>
 <script src="/js/blocs.js?v=4"></script>
-<script src="/js/admin.js?v=4"></script>
+<script src="/js/admin.js?v=5"></script>
 <script src="/js/admin-questions.js?v=4"></script>
 <script src="/js/admin-parcours.js?v=5"></script>
 <script src="/js/admin-fichiers.js?v=4"></script>

@@ -22,6 +22,15 @@ Le script vérifie Node.js, installe les composants la première fois, crée `co
 puis lance le serveur et ouvre l'espace professeur. Tout fonctionne hors ligne : polices, icônes, QR code
 et bibliothèques sont dans le projet.
 
+## En ligne : Railway, Render ou Fly.io
+
+**Guide pas à pas : [DEPLOIEMENT.md](DEPLOIEMENT.md)** (comparatif des coûts et limites, mise en place depuis GitHub,
+mot de passe, volume pour garder les questions, banque de départ `banque.json` pour Render gratuit).
+
+Fichiers prêts : `railway.json`, `render.yaml`, `fly.toml`, `Dockerfile`. Le serveur reconnaît l'hébergeur,
+affiche son adresse publique aux élèves, utilise le volume permanent s'il existe, et garde l'espace professeur
+fermé tant que `ADMIN_PASSWORD` n'est pas défini. Les tests tournent sur GitHub à chaque envoi (`.github/workflows`).
+
 ## Lancer en ligne de commande
 
 Il faut [Node.js](https://nodejs.org) 18 ou plus.
@@ -45,7 +54,9 @@ ou par variables d'environnement, prioritaires :
 | `motDePasse` | `ADMIN_PASSWORD` | mot de passe de l'espace professeur | `robot` (avertissement affiché) |
 | `adressePublique` | `PUBLIC_URL` | adresse affichée aux élèves (hébergement en ligne) | adresse du PC sur le réseau local |
 | `ouvrirNavigateur` | `OUVRIR_NAVIGATEUR=1` | ouvrir l'espace professeur au démarrage | non |
-| | `DATA_DIR` | dossier des données | `data/` |
+| | `DATA_DIR` | dossier des données | `data/` (ou le volume Railway) |
+
+Une route `/sante` renvoie l'état du serveur (utilisée par les hébergeurs et le test de charge).
 
 ## Tester sans classe
 
@@ -63,6 +74,15 @@ Tests automatisés de la logique de jeu :
 ```bash
 npm test
 ```
+
+Test de charge : 60 élèves factices jouent une partie complète, plus vite qu'en classe, sur un serveur de test
+lancé à part (vos données ne sont pas touchées). Rapport dans [docs/test-charge.md](docs/test-charge.md).
+
+```bash
+npm run test-charge
+```
+
+Options : `--eleves 80 --duree 120 --equipes 8`, ou `--adresse https://… --mdp …` pour tester un serveur en ligne.
 
 ## Règles (réglages par défaut, tous modifiables dans l'admin)
 
@@ -167,7 +187,8 @@ public/          pages /course, /jouer, /admin, /test, styles, scripts, SVG, pol
   vendor/blockly/  Blockly, copié depuis le projet céréales
 seed/            questions et parcours de départ
 test/            tests de la logique de jeu (node --test)
-tools/           élèves factices
+tools/           élèves factices, test de charge
+render.yaml, railway.json, fly.toml, Dockerfile   déploiement en ligne
 demarrer.bat     lancement Windows (double-clic) ; demarrer.command (Mac), demarrer.sh (Linux)
 design/          maquettes Claude Design (référence de l'interface)
 docs/            brief et cahier des charges
@@ -185,4 +206,5 @@ Les navigateurs ne reçoivent jamais la bonne réponse avant d'avoir répondu.
 3. **Autres types de questions** (fait) : remise en ordre, calcul, blocs (Blockly du distributeur de céréales), programme à compléter.
 4. **Admin complet** (fait) : éditeur de questions des 5 types avec aperçu, éditeur de parcours, obstacles modifiables,
    export / import JSON, sauvegarde automatique et copies de sécurité.
-5. Déploiement en ligne depuis GitHub, test de charge (60 clients).
+5. **Déploiement** (fait) : Railway, Render et Fly.io prêts depuis GitHub, tests automatiques sur GitHub,
+   test de charge à 60 élèves (voir docs/test-charge.md).

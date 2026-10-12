@@ -1,0 +1,11 @@
+node_modules
+data
+.git
+.github
+config-serveur.json
+node
+design
+docs
+test
+tools
+*.log

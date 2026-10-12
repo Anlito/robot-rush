@@ -9,7 +9,11 @@ const { REGLAGES_DEFAUT, PAIRES_DEFAUT } = require('./constantes');
 // Aucune donnée d'élève n'est écrite sur le disque : les pseudos restent en mémoire le temps de la partie.
 
 const RACINE = path.join(__dirname, '..');
-const DOSSIER = path.resolve(process.env.DATA_DIR || path.join(RACINE, 'data'));
+// Volume permanent de Railway reconnu automatiquement ; sinon DATA_DIR, sinon ./data.
+const DOSSIER = path.resolve(process.env.DATA_DIR || process.env.RAILWAY_VOLUME_MOUNT_PATH || path.join(RACINE, 'data'));
+// Banque de départ facultative (fichier exporté depuis l'admin, déposé à la racine du dépôt) :
+// utile sur un hébergement sans disque permanent, où data/ repart de zéro à chaque redémarrage.
+const BANQUE_INITIALE = path.join(RACINE, 'banque.json');
 const DOSSIER_IMAGES = path.join(DOSSIER, 'images');
 const DOSSIER_SAUVEGARDES = path.join(DOSSIER, 'sauvegardes');
 const SEED = path.join(RACINE, 'seed');
@@ -27,12 +31,15 @@ function lireJson(fichier) {
 
 const aujourdhui = () => new Date().toISOString().slice(0, 10);
 
+const crees = new Set(); // fichiers créés à ce lancement (premier démarrage, ou disque effacé)
+
 function charger(cle) {
   const { nom, defaut } = FICHIERS[cle];
   const fichier = path.join(DOSSIER, nom);
   if (!fs.existsSync(fichier)) {
     const valeur = defaut();
     sauver(cle, valeur);
+    crees.add(cle);
     return valeur;
   }
   try {
@@ -77,4 +84,15 @@ function sauver(cle, valeur) {
   fs.renameSync(tmp, fichier);
 }
 
-module.exports = { charger, sauver, DOSSIER, DOSSIER_IMAGES };
+/** Contenu de banque.json s'il faut l'utiliser : seulement quand la banque vient d'être créée. */
+function banqueInitiale() {
+  if (!crees.has('questions') || !fs.existsSync(BANQUE_INITIALE)) return null;
+  try {
+    return lireJson(BANQUE_INITIALE);
+  } catch (e) {
+    console.error(`  Le fichier banque.json est illisible (${e.message}) : questions de test utilisées à la place.`);
+    return null;
+  }
+}
+
+module.exports = { charger, sauver, banqueInitiale, DOSSIER, DOSSIER_IMAGES };

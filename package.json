@@ -6,7 +6,9 @@
   "private": true,
   "scripts": {
     "start": "node server/index.js",
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "test-charge": "node tools/test-charge.js",
+    "eleves-factices": "node tools/eleves-factices.js"
   },
   "engines": {
     "node": ">=20"

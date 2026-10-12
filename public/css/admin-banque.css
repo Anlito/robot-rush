@@ -162,3 +162,5 @@ textarea { font: inherit; border: 1.5px solid var(--bordure-champ); border-radiu
   .ligne-q { grid-template-columns: 30px 80px minmax(0, 1fr) 40px; }
   .ligne-q .duree { display: none; }
 }
+
+.avert-stockage { margin: 0; padding: 10px 24px; background: #FCF0C8; border-bottom: 1.5px solid var(--jaune); font-size: 14px; line-height: 1.4; }

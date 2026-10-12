@@ -1,0 +1,39 @@
+# Fly.io : voir DEPLOIEMENT.md. Remplacer « robot-rush » par un nom libre (il devient l'adresse : <nom>.fly.dev).
+app = "robot-rush"
+primary_region = "cdg"   # Paris
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  DATA_DIR = "/data"     # volume permanent : les questions sont gardées
+  PORT = "3000"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  # La machine s'arrête quand plus personne n'est connecté (rien à payer) et redémarre à la première visite.
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [http_service.concurrency]
+    type = "connections"
+    soft_limit = 200
+    hard_limit = 250
+
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval = "30s"
+    method = "GET"
+    path = "/sante"
+    timeout = "5s"
+
+[[mounts]]
+  source = "robot_rush_data"
+  destination = "/data"
+
+[[vm]]
+  memory = "256mb"
+  cpu_kind = "shared"
+  cpus = 1

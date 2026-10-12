@@ -34,6 +34,22 @@ const banque = new Banque({
 });
 const config = stockage.charger('config');
 
+// Premier lancement (ou disque effacé) avec un banque.json dans le dépôt : on part de cette banque.
+const initiale = stockage.banqueInitiale();
+if (initiale) {
+  try {
+    const r = banque.importer(initiale, { mode: 'remplacer' });
+    console.log(`  Banque de départ chargée depuis banque.json : ${r.questions} question(s), ${r.parcours} parcours.`);
+  } catch (e) {
+    console.error(`  banque.json non utilisé : ${e.message}`);
+  }
+}
+
+// En ligne, sans volume permanent, data/ est effacé à chaque redémarrage (Render gratuit, par exemple).
+const STOCKAGE_EPHEMERE = Boolean(CONFIG_SERVEUR.hebergement) && !process.env.DATA_DIR && !reseau.hebergement().volume;
+// En ligne, l'admin est accessible depuis tout internet : le mot de passe par défaut est refusé.
+const MOT_DE_PASSE_MANQUANT = Boolean(CONFIG_SERVEUR.hebergement) && !CONFIG_SERVEUR.motDePasse;
+
 function trouverParcours(id) {
   return banque.unParcours(id) || banque.parcours[0] || null;
 }
@@ -105,6 +121,19 @@ app.get('/', (req, res) => res.redirect('/jouer'));
 for (const page of ['course', 'jouer', 'admin', 'test']) {
   app.get(`/${page}`, (req, res) => res.sendFile(path.join(PUBLIC, `${page}.html`)));
 }
+// État de santé : utilisé par les hébergeurs (vérification après déploiement) et par le test de charge.
+app.get('/sante', (req, res) => {
+  const m = process.memoryUsage();
+  res.set('Cache-Control', 'no-store').json({
+    ok: true,
+    etat: partie.etat,
+    eleves: partie.joueurs.size,
+    connexions: io.engine.clientsCount,
+    memoireMo: Math.round(m.rss / 1048576),
+    tasMo: Math.round(m.heapUsed / 1048576),
+    depuisS: Math.round(process.uptime()),
+  });
+});
 // QR code de l'adresse élèves, généré sur place (aucun service externe).
 app.get('/qr.svg', async (req, res) => {
   try {
@@ -139,23 +168,46 @@ const io = new Server(serveur, { pingInterval: 10000, pingTimeout: 8000, maxHttp
 const socketsParJeton = new Map(); // jeton → Set<socket>
 let publicSale = true;
 const joueursSales = new Set();
-let minuterie = null;
+// L'état personnel d'un élève part vite (réponse juste, choix d'action) ; l'état de la course,
+// envoyé à tous, au plus 5 fois par seconde : moins de réseau et moins de calcul sur les vieux postes.
+const DELAI_JOUEURS = 40;
+const INTERVALLE_PUBLIC = 200;
+let minuterieJoueurs = null;
+let minuteriePublic = null;
+let dernierPublic = 0;
+let dernieresPaires = '';
 
 function planifier() {
-  if (!minuterie) minuterie = setTimeout(diffuser, 40);
+  if (joueursSales.size && !minuterieJoueurs) minuterieJoueurs = setTimeout(diffuserJoueurs, DELAI_JOUEURS);
+  if (publicSale && !minuteriePublic) {
+    minuteriePublic = setTimeout(diffuserPublic, Math.max(DELAI_JOUEURS, dernierPublic + INTERVALLE_PUBLIC - Date.now()));
+  }
 }
 
 function vueCourse() { return { ...partie.vuePublique({ avecCodes: true, avecEleves: true }), adresse: adresse() }; }
 function vueAdmin() { return { ...partie.vueAdmin(), adresse: adresse() }; }
 
-function diffuser() {
-  minuterie = null;
-  if (publicSale) {
-    publicSale = false;
-    io.to('course').emit('etat', vueCourse());
-    io.to('eleves').emit('etat', partie.vuePublique());
-    io.to('admin').emit('etat', vueAdmin());
-  }
+/** Vue des élèves : fil réduit, paires obstacle / solution seulement quand elles changent (le navigateur garde les précédentes). */
+function vueEleves({ complete = false } = {}) {
+  const vue = partie.vuePublique({ fil: 5 });
+  const paires = JSON.stringify(vue.paires);
+  if (!complete && paires === dernieresPaires) delete vue.paires;
+  if (!complete) dernieresPaires = paires;
+  return vue;
+}
+
+function diffuserPublic() {
+  minuteriePublic = null;
+  dernierPublic = Date.now();
+  if (!publicSale) return;
+  publicSale = false;
+  io.to('course').emit('etat', vueCourse());
+  io.to('eleves').emit('etat', vueEleves());
+  io.to('admin').emit('etat', vueAdmin());
+}
+
+function diffuserJoueurs() {
+  minuterieJoueurs = null;
   for (const jeton of joueursSales) {
     const vue = partie.vueEleve(jeton);
     for (const s of socketsParJeton.get(jeton) || []) s.emit('moi', vue);
@@ -215,6 +267,8 @@ function donneesAdmin() {
       return { id: p.id, nom: p.nom, nb: p.questions.length, nbTypes: types.size, reglages: p.reglages };
     }),
     motDePasseParDefaut: MOT_DE_PASSE === 'robot',
+    hebergement: CONFIG_SERVEUR.hebergement,
+    stockageEphemere: STOCKAGE_EPHEMERE,
   };
 }
 
@@ -256,6 +310,12 @@ io.on('connection', (socket) => {
   }
 
   if (role === 'admin') {
+    if (MOT_DE_PASSE_MANQUANT) {
+      socket.emit('admin:refuse', { erreur: `Mot de passe professeur non configuré sur ${CONFIG_SERVEUR.hebergement}. `
+        + 'Ajoutez la variable ADMIN_PASSWORD dans les réglages du service (voir DEPLOIEMENT.md), puis redéployez.' });
+      socket.disconnect(true);
+      return;
+    }
     if (!motDePasseValide(motDePasse)) {
       socket.emit('admin:refuse', { erreur: 'Mot de passe incorrect.' });
       socket.disconnect(true);
@@ -349,7 +409,7 @@ io.on('connection', (socket) => {
 
   // Élève
   socket.join('eleves');
-  socket.emit('etat', partie.vuePublique());
+  socket.emit('etat', vueEleves({ complete: true }));
   if (jeton && partie.joueurs.has(jeton)) {
     partie.connecter(jeton);
     associer(socket, jeton);
@@ -394,6 +454,13 @@ reseau.ecouter(serveur, CONFIG_SERVEUR.port).then((p) => {
   adresseEnCache = null;
   const a = adresse();
   const ligne = '='.repeat(60);
+  if (CONFIG_SERVEUR.hebergement) {
+    // En ligne : journal de l'hébergeur, pas de fenêtre à garder ouverte.
+    console.log(`Robot Rush en ligne sur ${CONFIG_SERVEUR.hebergement} : ${a.complete} (port ${p}).`);
+    console.log(`Données : ${stockage.DOSSIER}${STOCKAGE_EPHEMERE ? ' (NON permanentes : effacées à chaque redémarrage)' : ''}`);
+    if (MOT_DE_PASSE_MANQUANT) console.log('ATTENTION : variable ADMIN_PASSWORD absente, l\'espace professeur reste fermé.');
+    return;
+  }
   console.log(ligne);
   console.log('  ROBOT RUSH est lancé. Laissez cette fenêtre ouverte pendant le cours.');
   console.log(ligne);

@@ -1,0 +1,16 @@
+# Render : « New + » → « Blueprint » → choisir le dépôt GitHub. Voir DEPLOIEMENT.md.
+services:
+  - type: web
+    name: robot-rush
+    runtime: node
+    plan: free            # gratuit : s'endort après 15 min, fichiers effacés au redémarrage
+    region: frankfurt     # le plus proche de la France
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /sante
+    autoDeploy: true      # chaque envoi sur main redéploie
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: ADMIN_PASSWORD
+        sync: false       # Render le demande à la création : choisissez un mot de passe
