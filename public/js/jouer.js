@@ -192,7 +192,8 @@
   // ---------- Zone principale ----------
   function cleCourante() {
     const q = moi.question;
-    return [moi.phase, etat.etat === 'lobby' ? 'lobby' : '', q ? `${q.id}#${q.numero}` : '', JSON.stringify(moi.tirage),
+    // L'équipe et le pseudo en font partie : un élève déplacé par le professeur doit voir sa nouvelle équipe.
+    return [moi.pseudo, moi.equipeId, moi.phase, etat.etat === 'lobby' ? 'lobby' : '', q ? `${q.id}#${q.numero}` : '', JSON.stringify(moi.tirage),
       moi.retour && moi.retour.correct, moi.phase === 'fin' && etat.resultat ? 'res' : ''].join('|');
   }
 
