@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Robot Rush · Jouer</title>
 <link rel="icon" href="/assets/robots/robot-bleue-normal.svg">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="/fonts/polices.css">
 <link rel="stylesheet" href="/css/commun.css">
 <link rel="stylesheet" href="/css/jouer.css">
 </head>
@@ -14,19 +14,23 @@
 <!-- B1 · Connexion -->
 <main id="ecran-connexion" hidden>
   <form class="carte-connexion" id="form-connexion" autocomplete="off">
-    <h1 class="titre">Robot Rush</h1>
-    <label class="etiquette-champ" for="c0">Code de ton équipe</label>
-    <div class="cases-code">
-      <input id="c0" class="case" maxlength="1" inputmode="text" aria-label="Caractère 1 du code">
-      <input class="case" maxlength="1" inputmode="text" aria-label="Caractère 2 du code">
-      <input class="case" maxlength="1" inputmode="text" aria-label="Caractère 3 du code">
-      <input class="case" maxlength="1" inputmode="text" aria-label="Caractère 4 du code">
+    <div class="titre-connexion"><span id="robot-connexion"></span><span>Robot Rush</span></div>
+    <div class="groupe">
+      <label for="c0">Code de ton équipe</label>
+      <div class="cases-code">
+        <input id="c0" class="case" maxlength="4" autocapitalize="characters" spellcheck="false" aria-label="Caractère 1 du code">
+        <input class="case" maxlength="4" autocapitalize="characters" spellcheck="false" aria-label="Caractère 2 du code">
+        <input class="case" maxlength="4" autocapitalize="characters" spellcheck="false" aria-label="Caractère 3 du code">
+        <input class="case" maxlength="4" autocapitalize="characters" spellcheck="false" aria-label="Caractère 4 du code">
+      </div>
+      <div id="confirmation" class="confirmation" hidden></div>
     </div>
-    <div id="confirmation" class="confirmation" hidden></div>
-    <label class="etiquette-champ" for="pseudo">Ton pseudo</label>
-    <input id="pseudo" class="champ-pseudo" maxlength="16" placeholder="Ex. : Lina">
-    <p id="erreur-connexion" class="erreur" role="alert"></p>
-    <button class="bouton-jeu bouton-rejoindre titre" type="submit">Rejoindre la course</button>
+    <div class="groupe">
+      <label for="pseudo">Ton pseudo</label>
+      <input id="pseudo" class="champ-pseudo" maxlength="16" placeholder="Ton prénom ou un surnom">
+    </div>
+    <p id="erreur-connexion" class="erreur" role="alert" hidden></p>
+    <button class="bouton-noir bouton-rejoindre" type="submit">Rejoindre la course</button>
     <p class="mention">Les codes n'utilisent ni O, 0, I ni 1. Si tu actualises la page, tu retrouves ton équipe et ton pseudo.</p>
   </form>
 </main>
@@ -34,15 +38,15 @@
 <!-- Jeu -->
 <div id="ecran-jeu" hidden>
   <header class="bandeau" id="bandeau">
-    <section class="bloc bloc-equipe" id="bloc-equipe"></section>
-    <section class="bloc bloc-piste"><ul id="mini-piste"></ul></section>
-    <section class="bloc bloc-stock"><div class="petit-titre">Stock de l'équipe</div><div id="stock"></div></section>
-    <section class="bloc bloc-fil"><div class="petit-titre">Dernières actions</div><ul id="fil"></ul></section>
+    <section class="bloc bloc-equipe" id="bloc-equipe" aria-live="polite"></section>
+    <section class="bloc bloc-piste" id="mini-piste" aria-label="Positions des équipes"></section>
+    <section class="bloc bloc-stock"><span class="petit-titre">Stock de l'équipe</span><div class="grille-stock" id="stock"></div></section>
+    <section class="bloc bloc-fil"><span class="petit-titre">Dernières actions</span><div id="fil"></div></section>
   </header>
   <main class="zone" id="zone"></main>
 </div>
 
-<div id="voile-pause" class="voile" hidden><div class="titre">Pause</div><p>Le professeur a mis la course en pause.</p></div>
+<div id="voile-pause" class="voile" hidden><div class="voile-carte">Pause</div><p>Le professeur a mis la course en pause.</p></div>
 <div id="hors-ligne" class="hors-ligne" hidden>Connexion perdue… reconnexion en cours</div>
 
 <script src="/socket.io/socket.io.js"></script>

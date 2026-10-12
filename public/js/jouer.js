@@ -1,18 +1,20 @@
-/* Écran élève /jouer */
+/* Écran élève /jouer (maquettes B1 à B11) */
 'use strict';
 
 (() => {
-  const { robot, pastille, icone, esc, el, decompte } = RR;
+  const { robot, pastille, pion, coche, majuscule, icone, esc, el, decompte } = RR;
   const CLE_JETON = 'robotrush.jeton';
   const ALPHABET = /[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]/;
-  const FORMES = {
-    A: '<path d="M28 6L52 48H4Z"/>',
-    B: '<path d="M28 4L52 28L28 52L4 28Z"/>',
-    C: '<circle cx="28" cy="28" r="23"/>',
-    D: '<rect x="6" y="6" width="44" height="44" rx="3"/>',
-  };
-  const LETTRES = ['A', 'B', 'C', 'D'];
-  const TYPES = { qcm: 'QCM', ordre: 'Remise en ordre', calcul: 'Calcul', blocs: 'Blocs', completer: 'À compléter' };
+  // Boutons QCM : couleur + forme + lettre (design/README.md)
+  const REPONSES = [
+    { fond: '#2563EB', texte: '#fff', forme: 'M0 -8L8.5 7H-8.5Z', lettre: 'A' },
+    { fond: '#F97316', texte: '#16161D', forme: 'M0 -9L9 0L0 9L-9 0Z', lettre: 'B' },
+    { fond: '#7C3AED', texte: '#fff', forme: 'M0 -8A8 8 0 1 1 0 8A8 8 0 1 1 0 -8Z', lettre: 'C' },
+    { fond: '#15803D', texte: '#fff', forme: 'M-7.5 -7.5H7.5V7.5H-7.5Z', lettre: 'D' },
+  ];
+  const TYPES = { qcm: 'QCM', ordre: 'Remise en ordre', calcul: 'Calcul', blocs: 'Blocs à assembler', completer: 'Programme à compléter' };
+  const DUREE_FLASH = 600;
+  const DUREE_MESSAGE = 4000;
 
   const stockage = {
     lire() { try { return localStorage.getItem(CLE_JETON); } catch { return null; } },
@@ -21,8 +23,8 @@
 
   let etat = null;        // état public de la course
   let moi;                // état personnel (null = pas encore dans une équipe)
-  let cleZone = null;     // évite de reconstruire la zone de question à chaque mise à jour
-  let alerte = null;      // { type, texte, jusqua }
+  let cleZone = null;     // évite de reconstruire la zone à chaque mise à jour
+  let alerte = null;      // { type, texte, obstacle, solution, jusqua }
   let obstacleChoisi = null;
   let messageConnexion = '';
 
@@ -31,27 +33,32 @@
   // ---------- Utilitaires ----------
   const monEquipe = () => (etat && moi ? etat.equipes[moi.equipeId] : null);
   const paire = (id) => etat.paires.find((p) => p.obstacle.id === id || p.solution.id === id);
+  const pluriel = (n, mot) => `${n} ${mot}${n > 1 ? 's' : ''}`;
   function envoyer(evenement, donnees) {
     return new Promise((resolve) => socket.emit(evenement, donnees, (r) => resolve(r || { ok: false, erreur: 'Pas de réponse du serveur.' })));
   }
   function messageZone(texte) { const m = el('#message-zone'); if (m) m.textContent = texte || ''; }
+  function rang(e) { return etat.equipes.filter((x) => x.position > e.position).length + 1; }
+  const ordinal = (n) => (n === 1 ? '1re' : `${n}e`);
 
   // ---------- B1 · Connexion ----------
+  el('#robot-connexion').innerHTML = robot({ couleur: '#2563EB', symbole: 'triangle', etat: 'succes', taille: 64 });
   const cases = [...document.querySelectorAll('.case')];
-  function codeSaisi() { return cases.map((c) => c.value).join(''); }
+  const codeSaisi = () => cases.map((c) => c.value).join('');
   async function verifierCode() {
     const conf = el('#confirmation');
     const code = codeSaisi();
     if (code.length < 4) { conf.hidden = true; return; }
     const r = await envoyer('verifierCode', { code });
+    if (code !== codeSaisi()) return; // saisie modifiée entre-temps
     conf.hidden = false;
     if (r.equipe) {
       const e = r.equipe;
       conf.className = 'confirmation';
-      conf.style.background = e.couleur; conf.style.color = e.texte;
-      conf.innerHTML = `${pastille(e.symbole, 32)} Tu rejoins l'équipe ${esc(e.nom)} · ${e.nbEleves} coéquipier${e.nbEleves > 1 ? 's' : ''}`;
+      conf.style.background = e.clair; conf.style.borderColor = e.couleur;
+      conf.innerHTML = `${coche(22)}<span>Tu rejoins l'<b>équipe ${esc(e.nom)}</b></span>${pastille(e.symbole, 22)}<span>· ${pluriel(e.nbEleves, 'coéquipier')}</span>`;
     } else {
-      conf.className = 'confirmation inconnu'; conf.style.background = ''; conf.style.color = '';
+      conf.className = 'confirmation inconnu'; conf.style.background = ''; conf.style.borderColor = '';
       conf.textContent = 'Code inconnu : vérifie les 4 caractères au tableau.';
     }
   }
@@ -59,7 +66,7 @@
     c.addEventListener('input', () => {
       const v = c.value.toUpperCase().split('').filter((x) => ALPHABET.test(x));
       c.value = v[0] || '';
-      // Collage de plusieurs caractères : on répartit sur les cases suivantes.
+      // Collage de plusieurs caractères : on remplit les cases suivantes.
       for (let k = 1; k < v.length && i + k < cases.length; k++) cases[i + k].value = v[k];
       const suivante = cases.find((x) => !x.value);
       if (c.value) (suivante || el('#pseudo')).focus();
@@ -67,71 +74,115 @@
     });
     c.addEventListener('keydown', (ev) => {
       if (ev.key === 'Backspace' && !c.value && i > 0) { cases[i - 1].value = ''; cases[i - 1].focus(); ev.preventDefault(); verifierCode(); }
+      if (ev.key === 'ArrowLeft' && i > 0) cases[i - 1].focus();
+      if (ev.key === 'ArrowRight' && i < 3) cases[i + 1].focus();
     });
+    c.addEventListener('focus', () => c.select());
   });
   el('#form-connexion').addEventListener('submit', async (ev) => {
     ev.preventDefault();
-    const bouton = ev.submitter || el('.bouton-rejoindre');
+    const bouton = el('.bouton-rejoindre');
+    const erreur = el('#erreur-connexion');
+    if (codeSaisi().length < 4) { erreur.hidden = false; erreur.textContent = 'Tape les 4 caractères du code de ton équipe.'; cases.find((x) => !x.value).focus(); return; }
     bouton.disabled = true;
     const r = await envoyer('rejoindre', { code: codeSaisi(), pseudo: el('#pseudo').value });
     bouton.disabled = false;
-    if (!r.ok) { el('#erreur-connexion').textContent = r.erreur; return; }
+    if (!r.ok) { erreur.hidden = false; erreur.textContent = r.erreur; return; }
+    erreur.hidden = true;
     stockage.ecrire(r.jeton);
     socket.auth.jeton = r.jeton;
   });
 
   // ---------- Bandeau d'état ----------
+  function blocEtat(e) {
+    const now = performance.now();
+    const a = alerte && alerte.jusqua > now ? alerte : null;
+    if (a && a.type === 'attaque') {
+      return `<div class="etat etat-attaque"><span class="ico">${icone(a.obstacle, 32)}</span>
+        <div class="lignes"><span class="grand">Attaque !</span><span class="petit">${esc(a.texte)}</span></div></div>`;
+    }
+    if (a && a.type === 'parade') {
+      return `<div class="etat etat-parade"><span class="ico">${icone(a.solution, 32)}</span>
+        <div class="lignes"><span class="grand">Paré !</span><span class="petit">${esc(a.texte)}</span></div></div>`;
+    }
+    if (a && a.type === 'debloque' && !e.blocage) {
+      return `<div class="etat"><svg width="30" height="30" viewBox="0 0 30 30" style="flex:none"><path d="M5 15H23M16 8L23 15L16 22" stroke="#16161D" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="lignes"><span class="grand">C'est reparti !</span><span class="petit">${esc(a.texte)}</span></div></div>`;
+    }
+    if (e.blocage) {
+      const p = paire(e.blocage.obstacle);
+      const enMaj = (x) => x.un.replace(x.nom, x.nom.toUpperCase());
+      return `<div class="etat etat-bloque"><div class="encart"><span class="ico">${icone(p.obstacle.id, 30)}</span>
+        <div class="lignes"><span class="l1">Bloquée par ${esc(enMaj(p.obstacle))}</span><span class="l2">Prends ${esc(enMaj(p.solution))} !</span></div>
+        ${decompte(e.blocage.restantMs, { suffixe: ' s', classe: 'compte' })}</div></div>`;
+    }
+    if (a && a.type === 'info') {
+      return `<div class="etat"><div class="lignes"><span class="petit">${esc(a.texte)}</span></div></div>`;
+    }
+    return `<div class="etat etat-libre">${coche(30)}<b>Libre</b>
+      <span class="gris" style="font-size:15px">${e.position} / ${etat.reglages.longueur} · ${ordinal(rang(e))}</span></div>`;
+  }
+
+  // Dernières actions, racontées du point de vue de l'élève.
+  function ligneFil(f, e) {
+    const eq = (id) => etat.equipes[id];
+    const qui = (pseudo) => (pseudo === moi.pseudo ? ['Toi', 'as'] : [pseudo, 'a']);
+    const p = paire(f.obstacle || f.solution);
+    let icon = f.type === 'attaque' || f.type === 'repart' ? f.obstacle : f.solution;
+    let html;
+    if (f.type === 'attaque' && f.cible === e.id) html = `<b>${esc(eq(f.equipe).nom)}</b> t'envoie ${esc(p.obstacle.un)}`;
+    else if (f.type === 'attaque' && f.equipe === e.id && f.pseudo) {
+      const [n, v] = qui(f.pseudo); html = `<b>${esc(n)}</b> ${v} envoyé ${esc(p.obstacle.un)} à ${esc(eq(f.cible).nom)}`;
+    } else if (f.type === 'stock' && f.equipe === e.id && f.pseudo) {
+      const [n, v] = qui(f.pseudo); html = `<b>${esc(n)}</b> ${v} pris ${esc(p.solution.un)}`;
+    } else if (f.type === 'debloque' && f.equipe === e.id && f.pseudo) {
+      const [n, v] = qui(f.pseudo); html = `<b>${esc(n)}</b> ${v} pris ${esc(p.solution.un)} : débloqués`;
+    } else if (f.type === 'parade' && f.equipe === e.id) {
+      html = `<b>${esc(majuscule(p.solution.nom))}</b> utilisé contre ${esc(eq(f.source).nom)}`;
+    } else if (f.type === 'repart' && f.equipe === e.id) {
+      html = '<b>Fin du blocage</b> : c\'est reparti';
+    } else {
+      html = esc(f.texte);
+      for (const x of etat.equipes) html = html.replace(new RegExp(`\\b${x.nom}\\b`), `<b>${x.nom}</b>`);
+    }
+    if (!icon) icon = null;
+    return `<div class="ligne-fil">${icon ? icone(icon, 22) : ''}<span>${html}</span></div>`;
+  }
+
   function rendreBandeau() {
     const e = monEquipe();
     if (!e) return;
     document.body.style.setProperty('--equipe', e.couleur);
-    const now = performance.now();
-    const a = alerte && alerte.jusqua > now ? alerte : null;
-    let corps;
-    if (a && a.type === 'attaque') {
-      corps = `<div class="etat-equipe etat-message">${icone(a.obstacle, 40)}<span><span class="grand">Attaque !</span>${esc(a.texte)}</span></div>`;
-    } else if (a && a.type !== 'attaque' && !e.blocage) {
-      const ic = a.solution ? icone(a.solution, 40) : '';
-      const titre = a.type === 'parade' ? 'Paré !' : a.type === 'debloque' ? "C'est reparti !" : '';
-      corps = `<div class="etat-equipe etat-message">${ic}<span>${titre ? `<span class="grand">${titre}</span>` : ''}${esc(a.texte.replace(/^(Paré ! |C'est reparti ! )/, ''))}</span></div>`;
-    } else if (e.blocage) {
-      const p = paire(e.blocage.obstacle);
-      corps = `<div class="etat-equipe etat-bloque"><div class="encart-bloque">${icone(p.obstacle.id, 32)}
-        <div><div class="l1">Bloquée par ${esc(p.obstacle.un.replace(p.obstacle.nom, p.obstacle.nom.toUpperCase()))}</div>
-        <div class="l2">Prenez ${esc(p.solution.un.replace(p.solution.nom, p.solution.nom.toUpperCase()))} !</div></div>
-        ${decompte(e.blocage.restantMs, { suffixe: ' s', classe: 'compte' })}</div></div>`;
-    } else {
-      corps = `<div class="etat-equipe etat-libre"><span class="coche">✓</span><span class="mot">Libre</span>
-        <span class="pos">${e.position} / ${etat.reglages.longueur}</span></div>`;
-    }
-    el('#bloc-equipe').innerHTML = `<div class="entete-equipe" style="background:${e.couleur};color:${e.texte}">
-      ${robot({ couleur: e.couleur, symbole: e.symbole, etat: e.blocage ? 'bloque' : 'normal', taille: 34 })}
-      <span class="nom">Équipe ${esc(e.nom)}</span><span class="pseudo">${esc(moi.pseudo)}</span></div>${corps}`;
+    const a = alerte && alerte.jusqua > performance.now() ? alerte : null;
+    const robotEtat = e.blocage ? 'bloque' : a && ['parade', 'debloque'].includes(a.type) ? 'succes' : 'normal';
+    const bloc = el('#bloc-equipe');
+    bloc.style.background = a && a.type === 'debloque' && !e.blocage ? e.clair : '';
+    bloc.innerHTML = `<div class="entete-equipe" style="background:${e.couleur};color:${e.texte}">
+      ${robot({ couleur: e.couleur, symbole: e.symbole, etat: robotEtat, taille: 34 })}
+      <b>Équipe ${esc(e.nom)}</b><span class="pseudo">${esc(moi.pseudo)}</span></div>${blocEtat(e)}`;
 
-    // Mini-piste
+    // Mini-piste : toutes les équipes, triées par position.
     const L = etat.reglages.longueur;
-    el('#mini-piste').innerHTML = etat.equipes.slice().sort((x, y) => y.position - x.position).map((x) => {
+    const piste = el('#mini-piste');
+    piste.classList.toggle('serre', etat.equipes.length >= 7);
+    piste.innerHTML = etat.equipes.slice().sort((x, y) => y.position - x.position).map((x) => {
       const soi = x.id === e.id;
-      const pct = (x.position / L) * 100;
-      return `<li class="${soi ? 'moi' : ''}" style="${soi ? `background:${x.clair}` : ''}">
-        <span>${soi ? 'Toi' : esc(x.nom)}</span>
-        <span class="mini-rail"><span class="mini-pion" style="left:${pct}%;background:${x.couleur}">${pastille(x.symbole, 12, 'transparent')}</span>
-        ${x.blocage ? `<span class="etiquette-bloquee" style="left:${pct}%">bloquée</span>` : ''}</span></li>`;
+      const pct = `${((x.position / L) * 100).toFixed(1)}%`;
+      return `<div class="ligne-piste ${soi ? 'moi' : ''}" style="background:${soi ? x.clair : 'transparent'}">
+        <span class="nom">${soi ? 'Toi' : esc(x.nom)}</span>
+        <div class="mini-rail"><div class="trait"></div><div class="damier"></div>
+          <span style="position:absolute;left:${pct};top:0">${pion(x, 20, soi)}</span>
+          ${x.blocage ? `<span class="tag-bloquee" style="left:${pct}">bloquée</span>` : ''}</div></div>`;
     }).join('');
 
-    // Stock
     el('#stock').innerHTML = etat.paires.map((p) => {
       const n = e.stock[p.solution.id] || 0;
-      return `<div class="case-stock ${n ? '' : 'vide'}" title="${esc(p.solution.nom)}">${icone(p.solution.id, 32)}<span class="n">${n}</span><span class="max">/${etat.reglages.stockMax}</span></div>`;
+      return `<div class="case-stock ${n ? '' : 'vide'}" title="${esc(majuscule(p.solution.nom))} : contre ${esc(p.obstacle.le)}">
+        ${icone(p.solution.id, 32)}<b>${n}</b><span>/${etat.reglages.stockMax}</span></div>`;
     }).join('');
 
-    // Dernières actions (personnalisées quand elles concernent mon équipe)
-    el('#fil').innerHTML = etat.fil.filter((f) => f.type !== 'depart').slice(0, 3).map((f) => {
-      let texte = esc(f.texte);
-      if (f.type === 'attaque' && f.cible === e.id) texte = `<b>${esc(etat.equipes[f.equipe].nom)}</b> vous envoie ${esc(paire(f.obstacle).obstacle.un)}`;
-      const id = f.type === 'attaque' || f.type === 'repart' ? f.obstacle : f.solution;
-      return `<li>${id ? icone(id, 22) : ''}<span>${texte}</span></li>`;
-    }).join('') || '<li>—</li>';
+    el('#fil').innerHTML = etat.fil.filter((f) => !['depart', 'fin', 'arrivee'].includes(f.type)).slice(0, 3)
+      .map((f) => ligneFil(f, e)).join('') || '<div class="ligne-fil gris">Rien pour l\'instant.</div>';
   }
 
   function flash(type) {
@@ -142,14 +193,14 @@
     if (type === 'attaque') b.classList.add('flash-attaque');
     else if (type === 'parade') b.classList.add('flash-parade');
     else if (type === 'debloque') b.style.background = monEquipe().couleur;
-    setTimeout(() => { b.classList.remove('flash-attaque', 'flash-parade'); b.style.background = ''; }, 600);
+    setTimeout(() => { b.classList.remove('flash-attaque', 'flash-parade'); b.style.background = ''; }, DUREE_FLASH);
   }
 
   // ---------- Zone principale ----------
   function cleCourante() {
-    if (!moi) return 'aucun';
     const q = moi.question;
-    return [moi.phase, etat.etat === 'lobby' ? 'lobby' : '', q ? `${q.id}#${q.numero}` : '', JSON.stringify(moi.tirage), moi.retour && moi.retour.correct].join('|');
+    return [moi.phase, etat.etat === 'lobby' ? 'lobby' : '', q ? `${q.id}#${q.numero}` : '', JSON.stringify(moi.tirage),
+      moi.retour && moi.retour.correct, moi.phase === 'fin' && etat.resultat ? 'res' : ''].join('|');
   }
 
   function rendreZone() {
@@ -157,48 +208,63 @@
     if (cle !== cleZone) {
       cleZone = cle;
       obstacleChoisi = null;
-      const zone = el('#zone');
       const rendus = { question: zoneQuestion, action: zoneAction, solution: zoneSolution, attaque: zoneAttaque, erreur: zoneErreur, fin: zoneFin };
-      zone.innerHTML = (rendus[moi.phase] || zoneAttente)();
+      el('#zone').innerHTML = (rendus[moi.phase] || zoneAttente)();
       RR.majDecomptes();
     }
     if (moi.phase === 'action') majOptions();
-    if (moi.phase === 'attaque' && obstacleChoisi) rendreCibles();
+    if (moi.phase === 'attaque') majCibles();
+  }
+
+  function minuteur(restantMs, legende = '', petit = false) {
+    return `<div class="minuteur ${petit ? 'petit' : ''}"><div class="cercle">${decompte(restantMs)}</div>${legende ? `<span class="legende" id="legende-minuteur">${legende}</span>` : ''}</div>`;
   }
 
   function zoneAttente() {
     const e = monEquipe();
-    const texte = etat.etat === 'lobby' ? 'En attente du départ de la course…' : etat.etat === 'terminee' ? 'Course terminée.' : 'Une question arrive…';
-    return `<div class="carte-centre">${robot({ couleur: e.couleur, symbole: e.symbole, taille: 120 })}
-      <h2>Équipe ${esc(e.nom)}</h2><p style="font-size:24px;margin:0">${texte}</p>
-      <p style="font-size:18px;color:var(--encre-2)">Regarde le tableau : le professeur va lancer la course.</p></div>`;
+    const lobby = etat.etat === 'lobby';
+    return `<div class="centre"><div class="carte-info">${robot({ couleur: e.couleur, symbole: e.symbole, taille: 150 })}
+      <div class="textes"><span class="grand-titre">${lobby ? 'Tu es dans l\'équipe ' + esc(e.nom) : 'Une question arrive…'}</span>
+      <p>${lobby ? 'La course n\'a pas encore commencé. Regarde le tableau : le professeur va donner le départ.' : 'Un instant.'}</p>
+      ${lobby ? `<p class="gris">Après chaque bonne réponse, tu choisiras : <b>avancer</b>, prendre une <b>solution</b> pour ton équipe, ou <b>attaquer</b> une autre équipe.</p>` : ''}
+      </div></div></div>`;
+  }
+
+  function enteteQuestion(q) {
+    const long = ['blocs', 'completer'].includes(q.type);
+    return `<div class="entete-q"><span class="puce-type">${TYPES[q.type] || q.type}</span>
+      <span class="numero-q">Question ${q.numero}${long ? ` · ${Math.round(q.dureeMs / 1000)} s` : ''}</span>
+      <div class="barre-temps"><div id="barre-q" style="transform:scaleX(${q.restantMs / q.dureeMs})"></div></div>
+      <b class="secondes" data-fin="${RR.fin(q.restantMs)}" data-suffixe=" s" data-barre="${q.dureeMs}" data-cible="barre-q">${Math.ceil(q.restantMs / 1000)} s</b></div>`;
   }
 
   function zoneQuestion() {
     const q = moi.question;
-    let corps = '';
+    let corps;
     if (q.type === 'qcm') {
-      corps = `<div class="grille-qcm">${q.choix.map((c, i) => `
-        <button class="bouton-jeu rep rep-${LETTRES[i]}" data-rep="${i}" aria-label="Réponse ${LETTRES[i]} : ${esc(c)}">
-          <svg class="forme" width="56" height="56" viewBox="0 0 56 56" fill="currentColor" stroke="#16161D" stroke-width="3">${FORMES[LETTRES[i]]}</svg>
-          <span>${esc(c)}</span></button>`).join('')}</div>`;
+      corps = `<div class="grille-qcm">${q.choix.map((c, i) => {
+        const r = REPONSES[i];
+        return `<button class="rep" data-rep="${i}" style="background:${r.fond};color:${r.texte}" aria-label="Réponse ${r.lettre} : ${esc(c)}">
+          <svg width="56" height="56" viewBox="-10 -10 20 20"><path d="${r.forme}" fill="${r.texte}"/></svg><span>${esc(c)}</span></button>`;
+      }).join('')}</div>`;
     } else {
       corps = '<p>Ce type de question arrive à l\'étape 3.</p>';
     }
-    return `<div class="entete-q"><span class="puce-type">${TYPES[q.type] || q.type}</span><span class="numero-q">Question ${q.numero}</span>
-      <div class="barre-temps"><div id="barre-q" style="transform:scaleX(${q.restantMs / q.dureeMs})"></div></div>
-      <span class="secondes" data-fin="${RR.fin(q.restantMs)}" data-suffixe=" s" data-barre="${q.dureeMs}" data-cible="barre-q">${Math.ceil(q.restantMs / 1000)} s</span></div>
-      <div class="enonce">${esc(q.enonce)}</div>
-      ${q.image ? `<img class="image-q" src="${esc(q.image)}" alt="">` : ''}
-      ${corps}<div class="message-zone" id="message-zone"></div>`;
+    return `${enteteQuestion(q)}<h2 class="enonce">${esc(q.enonce)}</h2>
+      ${q.image ? `<img class="image-q" src="${esc(q.image)}" alt="">` : ''}${corps}<div class="message-zone" id="message-zone"></div>`;
   }
 
-  async function repondre(reponse) {
+  async function repondre(reponse, bouton) {
     document.querySelectorAll('.rep').forEach((b) => { b.disabled = true; });
+    if (bouton) bouton.classList.add('choisie');
     const r = await envoyer('repondre', { questionId: moi.question.id, reponse });
-    if (!r.ok) { messageZone(r.erreur); document.querySelectorAll('.rep').forEach((b) => { b.disabled = false; }); }
+    if (!r.ok) {
+      messageZone(r.erreur);
+      document.querySelectorAll('.rep').forEach((b) => { b.disabled = false; b.classList.remove('choisie'); });
+    }
   }
 
+  // Options calculées à partir de l'état public (le serveur revérifie tout).
   function optionsLocales() {
     const e = monEquipe();
     return {
@@ -210,35 +276,36 @@
 
   function zoneAction() {
     const e = monEquipe();
-    const solutions = etat.paires.slice(0, 2).map((p) => icone(p.solution.id, 64)).join('');
-    const obstacles = etat.paires.slice(0, 2).map((p) => icone(p.obstacle.id, 64)).join('');
-    return `<div class="tete-action">${robot({ couleur: e.couleur, symbole: e.symbole, etat: 'succes', taille: 96 })}
-      <div><h2>Bonne réponse !</h2>${moi.retour && moi.retour.explication ? `<p class="explication">${esc(moi.retour.explication)}</p>` : ''}</div>
-      <div class="cercle-decompte"><div class="cercle">${decompte(moi.restantMs)}</div><span id="defaut-texte">puis « Avancer »</span></div></div>
+    const [p1, p2] = etat.paires;
+    return `<div class="tete">${robot({ couleur: e.couleur, symbole: e.symbole, etat: 'succes', taille: 96 })}
+      <div class="textes"><span class="grand-titre">Bonne réponse !</span>${moi.retour && moi.retour.explication ? `<span class="sous">${esc(moi.retour.explication)}</span>` : ''}</div>
+      ${minuteur(moi.restantMs, 'puis « Avancer »')}</div>
       <div class="cartes-action">
-        <button class="bouton-jeu carte-action carte-avancer" data-action="avancer">
-          <svg width="88" height="88" viewBox="0 0 88 88"><path d="M10 36H52V16L80 44L52 72V52H10Z" fill="#fff" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg>
-          <h3>Avancer</h3><p>+${etat.reglages.gainAvancer} cases</p><span class="motif"></span><span class="touche">Touche 1</span></button>
-        <button class="bouton-jeu carte-action carte-solution" data-action="solution">
-          <div class="icones">${solutions}</div><h3>Solution</h3><p>pour le stock de l'équipe</p><span class="motif"></span><span class="touche">Touche 2</span></button>
-        <button class="bouton-jeu carte-action carte-attaque" data-action="attaque">
-          <div class="icones">${obstacles}</div><h3>Attaquer</h3><p>une autre équipe</p><span class="motif"></span><span class="touche">Touche 3</span></button>
+        <button class="carte-action carte-avancer" data-action="avancer">
+          <svg width="88" height="88" viewBox="0 0 40 40"><path d="M6 20H32M22 9L33 20L22 31" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="titre-carte">Avancer</span><span class="desc">Le robot avance de ${pluriel(etat.reglages.gainAvancer, 'case')}.</span><span class="touche" data-touche="1"></span></button>
+        <button class="carte-action carte-solution" data-action="solution">
+          <div class="icones">${icone(p1.solution.id, 64)}${icone(p2.solution.id, 64)}</div>
+          <span class="titre-carte">Solution</span><span class="desc">Ajoute une parade au stock de l'équipe.</span><span class="touche" data-touche="2"></span></button>
+        <button class="carte-action carte-attaque" data-action="attaque">
+          <div class="icones">${icone(p1.obstacle.id, 64)}${icone(p2.obstacle.id, 64)}</div>
+          <span class="titre-carte">Attaquer</span><span class="desc">Envoie un obstacle à une autre équipe.</span><span class="touche" data-touche="3"></span></button>
       </div><div class="message-zone" id="message-zone"></div>`;
   }
 
   function majOptions() {
     const o = optionsLocales();
-    const motifs = { avancer: 'Robot bloqué', solution: 'Stock plein', attaque: 'Aucune cible possible' };
-    for (const action of ['avancer', 'solution', 'attaque']) {
+    const defaut = o.avancer ? 'avancer' : o.solution ? 'solution' : null;
+    const motifs = { avancer: 'Robot bloqué : impossible d\'avancer', solution: 'Stock plein', attaque: 'Aucune équipe attaquable' };
+    for (const [i, action] of ['avancer', 'solution', 'attaque'].entries()) {
       const b = el(`[data-action="${action}"]`);
       if (!b) continue;
       b.disabled = !o[action];
-      b.querySelector('.motif').textContent = o[action] ? '' : motifs[action];
+      b.classList.toggle('defaut', action === defaut);
+      b.querySelector('.touche').textContent = !o[action] ? motifs[action] : action === defaut ? `Choix par défaut · touche ${i + 1}` : `Touche ${i + 1}`;
     }
-    const av = el('[data-action="avancer"]');
-    if (av) av.classList.toggle('defaut', o.avancer);
-    const d = el('#defaut-texte');
-    if (d) d.textContent = o.avancer ? 'puis « Avancer »' : o.solution ? 'puis une solution' : '';
+    const l = el('#legende-minuteur');
+    if (l) l.textContent = defaut === 'avancer' ? 'puis « Avancer »' : defaut === 'solution' ? 'puis une solution' : '';
   }
 
   async function choisirAction(action) {
@@ -251,15 +318,16 @@
   function zoneSolution() {
     const e = monEquipe();
     const max = etat.reglages.stockMax;
-    return `<div class="tete-action"><div><h2>Choisis une solution</h2><p class="explication">Elle va dans le stock de l'équipe.</p></div>
-      <div class="cercle-decompte"><div class="cercle">${decompte(moi.restantMs)}</div></div></div>
-      <div class="cartes-tirage">${moi.tirage.solutions.map((id, i) => {
+    return `<div class="tete"><div class="textes"><span class="grand-titre" style="font-size:48px">Choisis une solution</span>
+      <span class="sous">Elle rejoint le stock partagé de l'équipe ${esc(e.nom)} (${max} maximum par type).</span></div>${minuteur(moi.restantMs, '', true)}</div>
+      <div class="cartes-solution">${moi.tirage.solutions.map((id, i) => {
         const p = paire(id);
         const n = e.stock[id] || 0;
         const debloque = e.blocage && e.blocage.obstacle === p.obstacle.id;
-        return `<button class="bouton-jeu carte-tirage" data-solution="${esc(id)}">${icone(id, 140)}
-          <span class="nom">${esc(p.solution.nom[0].toUpperCase() + p.solution.nom.slice(1))}</span>
-          <span class="info">${debloque ? '<b>Débloque votre robot !</b>' : `contre ${esc(p.obstacle.le)} · stock ${n} → ${Math.min(max, n + 1)}${n + 1 >= max ? ' (plein)' : ''}`}</span>
+        return `<button class="carte-solution-choix" data-solution="${esc(id)}">${icone(id, 180)}
+          <span class="nom">${esc(majuscule(p.solution.nom))}</span>
+          <span class="info">${debloque ? '<span class="debloque">Débloque votre robot !</span>'
+            : `contre ${esc(p.obstacle.le.replace(p.obstacle.nom, ''))}<b>${esc(p.obstacle.nom)}</b> · stock ${n} → ${Math.min(max, n + 1)}${n + 1 >= max ? ' (plein)' : ''}`}</span>
           <span class="touche">Touche ${i + 1}</span></button>`;
       }).join('')}</div><div class="message-zone" id="message-zone"></div>`;
   }
@@ -270,32 +338,47 @@
   }
 
   function zoneAttaque() {
-    return `<div class="tete-action"><div><h2>Attaquer</h2><p class="explication">Choisis un obstacle${etat.equipes.length > 2 ? ', puis l\'équipe visée' : ''}.</p></div>
-      <div class="cercle-decompte"><div class="cercle">${decompte(moi.restantMs)}</div></div></div>
-      <div class="cartes-tirage" style="max-height:240px">${moi.tirage.obstacles.map((id, i) => {
+    const deux = etat.equipes.length === 2;
+    return `<div class="tete"><div class="textes"><span class="grand-titre" style="font-size:48px">Attaquer</span>
+      <span class="sous">${deux ? 'Choisis l\'obstacle : il part aussitôt chez l\'autre équipe.' : '1. Choisis l\'obstacle. 2. Clique sur l\'équipe visée.'}</span></div>
+      ${minuteur(moi.restantMs, '', true)}</div>
+      <div class="obstacles">${moi.tirage.obstacles.map((id, i) => {
         const p = paire(id);
-        return `<button class="bouton-jeu carte-tirage obstacle" data-obstacle="${esc(id)}">${icone(id, 110)}
-          <span class="nom">${esc(p.obstacle.nom[0].toUpperCase() + p.obstacle.nom.slice(1))}</span><span class="touche">Touche ${i + 1}</span></button>`;
+        const pare = p.solution.un.replace(/^(un|une|des|de la) /, (m) => ({ 'un ': 'par un ', 'une ': 'par une ', 'des ': 'par des ', 'de la ': 'par de la ' }[m]));
+        return `<button class="carte-obstacle" data-obstacle="${esc(id)}"><span class="ico">${icone(id, 100)}</span>
+          <span><span class="nom">${esc(majuscule(p.obstacle.nom))}</span><span class="info">paré${p.obstacle.id === 'boue' ? 'e' : ''} ${esc(pare)} · touche ${i + 1}</span></span>
+          <span class="coche">${coche(44, '#16161D')}</span></button>`;
       }).join('')}</div>
-      <div id="cibles-zone"></div><div class="message-zone" id="message-zone"></div>`;
+      ${deux ? '' : '<div class="titre-cibles" id="titre-cibles">Choisis d\'abord l\'obstacle.</div><div class="cibles" id="cibles"></div>'}
+      <div class="message-zone" id="message-zone"></div>`;
   }
 
-  function rendreCibles() {
+  function majCibles() {
+    const zone = el('#cibles');
+    if (!zone) return;
     const e = monEquipe();
-    const p = paire(obstacleChoisi);
+    const adversaires = etat.equipes.filter((x) => x.id !== e.id);
+    const tete = Math.max(...etat.equipes.map((x) => x.position));
     document.querySelectorAll('[data-obstacle]').forEach((b) => b.classList.toggle('choisi', b.dataset.obstacle === obstacleChoisi));
-    el('#cibles-zone').innerHTML = `<div class="titre-cibles">Envoyer ${esc(p.obstacle.le)} à…</div><div class="cibles">${etat.equipes.filter((x) => x.id !== e.id).map((x) => {
-      const indispo = x.blocage ? 'déjà bloquée' : x.protegeRestantMs > 0 ? 'protégée' : '';
-      return `<button class="bouton-jeu cible" data-cible="${x.id}" ${indispo ? 'disabled' : ''} style="background:${x.couleur};color:${x.texte}">
-        ${robot({ couleur: x.couleur, symbole: x.symbole, etat: x.blocage ? 'bloque' : 'normal', taille: 64 })}
-        <span><span class="nom">${esc(x.nom)}</span><br><span class="info">${indispo || `case ${x.position}`}</span></span></button>`;
-    }).join('')}</div>`;
+    el('#titre-cibles').textContent = obstacleChoisi ? `Envoyer ${paire(obstacleChoisi).obstacle.le} à…` : 'Choisis d\'abord l\'obstacle, puis l\'équipe visée.';
+    zone.style.gridTemplateColumns = `repeat(${Math.min(adversaires.length, 7)}, 1fr)`;
+    zone.innerHTML = adversaires.map((x, i) => {
+      const note = x.blocage ? 'déjà bloquée' : x.protegeRestantMs > 0 ? `protégée ${Math.ceil(x.protegeRestantMs / 1000)} s`
+        : `${x.position} / ${etat.reglages.longueur}${x.position === tete && x.position > 0 ? ' · en tête' : ''}`;
+      const indispo = Boolean(x.blocage) || x.protegeRestantMs > 0;
+      return `<button class="cible" data-cible="${x.id}" ${indispo || !obstacleChoisi ? 'disabled' : ''} style="background:${x.couleur};color:${x.texte}${!indispo && !obstacleChoisi ? ';opacity:.7' : ''}">
+        ${robot({ couleur: x.couleur, symbole: x.symbole, etat: x.blocage ? 'bloque' : 'normal', taille: 80 })}
+        <span class="nom">${esc(x.nom)}</span><span class="note">${note}</span></button>`;
+    }).join('');
+    // La protection expire sans nouvel état : on rafraîchit.
+    const prochaine = Math.min(...adversaires.filter((x) => x.protegeRestantMs > 0).map((x) => x.protegeRestantMs));
+    if (Number.isFinite(prochaine)) { clearTimeout(majCibles.t); majCibles.t = setTimeout(() => { if (moi && moi.phase === 'attaque') majCibles(); }, prochaine + 50); }
   }
 
   async function choisirObstacle(id) {
     obstacleChoisi = id;
     if (etat.equipes.length === 2) { await attaquer(null); return; }
-    rendreCibles();
+    majCibles();
   }
 
   async function attaquer(cible) {
@@ -306,14 +389,13 @@
   function zoneErreur() {
     const e = monEquipe();
     const r = moi.retour || {};
-    return `<div class="carte-centre">${robot({ couleur: e.couleur, symbole: e.symbole, etat: 'bloque', taille: 150 })}
-      <h2>${r.tempsDepasse ? 'Temps écoulé !' : 'Pas cette fois.'}</h2>
-      <div class="reponses">
-        ${r.tempsDepasse ? '' : `<div><span class="label">Ta réponse</span>${esc(r.donnee ?? '—')}</div>`}
-        <div class="bonne"><span class="label">Bonne réponse</span>${esc(r.bonne)}</div></div>
-      ${r.explication ? `<p style="font-size:20px;margin:0">${esc(r.explication)}</p>` : ''}
-      <div class="barre-3s"><div style="animation-duration:${moi.restantMs}ms"></div></div>
-      <p style="margin:0">Nouvelle question dans ${decompte(moi.restantMs, { suffixe: ' s' })}</p></div>`;
+    const donnee = r.tempsDepasse ? 'Temps écoulé.' : `Tu as répondu <b>${esc(r.donnee ?? '—')}</b>.`;
+    return `<div class="centre"><div class="carte-erreur">${robot({ couleur: e.couleur, symbole: e.symbole, etat: 'bloque', taille: 150 })}
+      <div class="textes"><span class="grand-titre">${r.tempsDepasse ? 'Trop tard !' : 'Pas cette fois.'}</span>
+      <div class="reponses">${donnee} La bonne réponse : <b class="bonne">${esc(r.bonne)}</b></div>
+      ${r.explication ? `<div class="explication">${esc(r.explication)}</div>` : ''}
+      <div class="attente"><div class="barre"><div style="animation-duration:${moi.restantMs}ms"></div></div>
+      <span>Nouvelle question dans ${decompte(moi.restantMs, { suffixe: ' s' })}</span></div></div></div></div>`;
   }
 
   function zoneFin() {
@@ -323,33 +405,35 @@
     const ligne = r.classement.find((c) => c.equipe === e.id);
     const premiers = r.classement.filter((c) => c.rang === 1);
     const titre = premiers.length === 1 ? `L'équipe ${etat.equipes[premiers[0].equipe].nom} gagne !` : 'Égalité en tête !';
-    return `<div class="carte-centre">${robot({ couleur: e.couleur, symbole: e.symbole, etat: ligne.rang === 1 ? 'succes' : 'normal', taille: 140 })}
-      <h2>${esc(titre)}</h2>
-      <p style="font-size:26px;margin:0">Ton équipe termine <b>${ligne.rang === 1 ? '1re' : `${ligne.rang}e`}</b> (${ligne.position} cases).</p>
-      <p style="font-size:20px;margin:0">Toi : ${moi.stats.justes} réponse${moi.stats.justes > 1 ? 's' : ''} juste${moi.stats.justes > 1 ? 's' : ''} ·
-        ${moi.stats.attaques} attaque${moi.stats.attaques > 1 ? 's' : ''} · ${moi.stats.solutions} solution${moi.stats.solutions > 1 ? 's' : ''}</p></div>`;
+    const s = moi.stats;
+    return `<div class="centre"><div class="carte-info">${robot({ couleur: e.couleur, symbole: e.symbole, etat: ligne.rang === 1 ? 'succes' : 'normal', taille: 150 })}
+      <div class="textes"><span class="grand-titre">${esc(titre)}</span>
+      <p>Ton équipe termine <b>${ordinal(ligne.rang)}</b>${ligne.rang === 1 && premiers.length > 1 ? ' ex æquo' : ''} (${ligne.position} / ${etat.reglages.longueur}).</p>
+      <div class="stats-perso"><div><b>${s.justes}</b>${s.justes > 1 ? 'réponses justes' : 'réponse juste'}</div>
+      <div><b>${s.attaques}</b>${s.attaques > 1 ? 'attaques' : 'attaque'}</div><div><b>${s.solutions}</b>${s.solutions > 1 ? 'solutions' : 'solution'}</div></div>
+      <p class="gris">Regarde le podium au tableau.</p></div></div></div>`;
   }
 
   // Clics (délégation) et clavier
   el('#zone').addEventListener('click', (ev) => {
     const b = ev.target.closest('button');
     if (!b || b.disabled) return;
-    if (b.dataset.rep !== undefined) repondre(Number(b.dataset.rep));
+    if (b.dataset.rep !== undefined) repondre(Number(b.dataset.rep), b);
     else if (b.dataset.action) choisirAction(b.dataset.action);
     else if (b.dataset.solution) choisirSolution(b.dataset.solution);
     else if (b.dataset.obstacle) choisirObstacle(b.dataset.obstacle);
     else if (b.dataset.cible) attaquer(Number(b.dataset.cible));
   });
   document.addEventListener('keydown', (ev) => {
-    if (!moi || ev.target.tagName === 'INPUT' || ev.repeat) return;
+    if (!moi || ev.target.tagName === 'INPUT' || ev.repeat || ev.ctrlKey || ev.altKey || ev.metaKey) return;
     const n = Number(ev.key);
     if (!Number.isInteger(n) || n < 1) return;
-    const cibles = {
+    const selecteur = {
       question: '[data-rep]', action: '[data-action]', solution: '[data-solution]',
       attaque: obstacleChoisi ? '[data-cible]' : '[data-obstacle]',
     }[moi.phase];
-    if (!cibles) return;
-    const b = document.querySelectorAll(cibles)[n - 1];
+    if (!selecteur) return;
+    const b = document.querySelectorAll(selecteur)[n - 1];
     if (b && !b.disabled) b.click();
   });
 
@@ -361,7 +445,12 @@
     el('#ecran-jeu').hidden = !connecte;
     RR.pause = etat.etat === 'pause';
     el('#voile-pause').hidden = !(connecte && etat.etat === 'pause');
-    if (!connecte) { el('#erreur-connexion').textContent = messageConnexion; return; }
+    if (!connecte) {
+      const erreur = el('#erreur-connexion');
+      erreur.hidden = !messageConnexion;
+      erreur.textContent = messageConnexion;
+      return;
+    }
     rendreBandeau();
     rendreZone();
   }
@@ -371,13 +460,15 @@
     if (m === null && stockage.lire()) { stockage.ecrire(null); socket.auth.jeton = null; }
     moi = m;
     afficher();
-    if (!m) setTimeout(() => cases[0].focus(), 0);
+    if (!m) setTimeout(() => { if (!codeSaisi()) cases[0].focus(); }, 0);
   });
   socket.on('alerte', (a) => {
-    alerte = { ...a, jusqua: performance.now() + 4000 };
+    // L'attaque s'affiche le temps du flash, puis le bandeau passe à « Bloquée ».
+    const duree = a.type === 'attaque' ? 1500 : DUREE_MESSAGE;
+    alerte = { ...a, jusqua: performance.now() + duree };
     flash(a.type);
     afficher();
-    setTimeout(afficher, 4050);
+    setTimeout(afficher, duree + 50);
   });
   socket.on('retire', ({ motif }) => {
     stockage.ecrire(null);

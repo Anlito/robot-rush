@@ -397,3 +397,19 @@ test('nouvelle partie avec les mêmes équipes : tout est remis à zéro, élèv
   p.nouvellePartie({ garderEquipes: false });
   assert.equal(p.joueurs.size, 0);
 });
+
+test('pseudos signalés : mots isolés, variantes leet, sans faux positifs', () => {
+  const { pseudoSignale } = require('../server/jeu');
+  for (const p of ['Pr0ut', 'gros caca', 'GrosCaca', 'CON', 'Merdouille']) assert.equal(pseudoSignale(p), true, p);
+  for (const p of ['Constance', 'Pascal', 'Lina', 'Noah', 'Scott', 'Bitcoin']) assert.equal(pseudoSignale(p), false, p);
+});
+
+test('fil : le pseudo de l\'élève accompagne les actions de son équipe', () => {
+  const { p, j } = nouvellePartie();
+  p.demarrer();
+  prendre(p, j.eleve0, 'pont');
+  assert.equal(p.fil[0].pseudo, 'eleve0');
+  attaquer(p, j.eleve1, 'trou', 0);
+  assert.equal(p.fil[0].type, 'parade');
+  assert.match(p.fil[0].texte, /franchit le trou avec son pont/);
+});

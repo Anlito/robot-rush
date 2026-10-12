@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Robot Rush · Professeur</title>
 <link rel="icon" href="/assets/robots/robot-verte-normal.svg">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="/fonts/polices.css">
 <link rel="stylesheet" href="/css/commun.css">
 <link rel="stylesheet" href="/css/admin.css">
 </head>
@@ -14,64 +14,86 @@
 <!-- C0 · Accès -->
 <main id="ecran-acces" class="acces" hidden>
   <form class="carte-acces" id="form-acces">
-    <h1 class="titre">Robot Rush · Professeur</h1>
-    <label for="mdp">Mot de passe</label>
-    <input id="mdp" type="password" autocomplete="current-password" required>
-    <p class="erreur" id="erreur-acces" role="alert"></p>
-    <button class="btn btn-primaire" type="submit">Entrer</button>
+    <div class="titre-acces"><span id="robot-acces"></span><b>Robot Rush · Admin</b></div>
+    <div class="champ"><label for="mdp">Mot de passe</label>
+      <input id="mdp" type="password" autocomplete="current-password" required></div>
+    <p class="erreur" id="erreur-acces" role="alert" hidden></p>
+    <button class="btn btn-primaire btn-large" type="submit">Entrer</button>
+    <span class="aide">Défini dans la configuration du serveur (fichier <code>config-serveur.json</code>). Les élèves n'ont jamais accès à cette page.</span>
   </form>
 </main>
 
 <div id="ecran-admin" hidden>
   <header class="barre-admin">
-    <span class="titre logo">Robot Rush</span>
-    <nav class="onglets"><a class="actif" href="#">Partie</a><span class="bientot" title="Étape 4">Questions</span><span class="bientot" title="Étape 4">Parcours</span></nav>
-    <a class="lien" href="/course" target="_blank" rel="noopener">Ouvrir /course au projecteur ↗</a>
+    <div class="logo"><span id="robot-logo"></span><b>Robot Rush</b><span class="gris">Admin</span></div>
+    <nav class="onglets">
+      <a class="onglet actif" href="#">Partie</a>
+      <span class="onglet inactif" title="Arrive à l'étape 4">Questions</span>
+      <span class="onglet inactif" title="Arrive à l'étape 4">Parcours</span>
+    </nav>
+    <div class="liens"><span>Ouvrir <a href="/course" target="_blank" rel="noopener">/course</a> au projecteur</span>
+      <button class="lien-bouton" id="btn-deconnexion" type="button">Déconnexion</button></div>
   </header>
 
   <div class="mise-en-page">
     <!-- Colonne de lancement -->
-    <aside class="colonne-reglages">
-      <form id="form-config">
-        <h2>Lancement</h2>
-        <label for="parcours">Parcours</label>
-        <select id="parcours"></select>
-        <p class="aide" id="info-parcours"></p>
+    <aside class="colonne">
+      <div class="champ"><label for="parcours">Parcours</label>
+        <select id="parcours"></select><span class="aide" id="info-parcours"></span></div>
 
-        <label>Nombre d'équipes</label>
-        <div class="segmente" id="nb-equipes"></div>
+      <div class="champ"><label>Nombre d'équipes</label><div class="segmente" id="nb-equipes"></div></div>
 
-        <h3>Réglages</h3>
-        <div class="reglages" id="reglages"></div>
-        <label class="interrupteur"><input type="checkbox" id="solutionGarantie">
-          <span>Pendant un blocage, le tirage contient toujours la solution qui débloque</span></label>
-        <p class="aide">Décoché : hasard total (plus difficile).</p>
+      <div class="champ"><label>Réglages</label><div id="reglages"></div>
+        <label class="case-a-cocher"><input type="checkbox" id="solutionGarantie">
+          <span>Solution garantie : pendant un blocage, le tirage contient toujours la solution qui débloque <span class="gris">(décoché : hasard total)</span></span></label>
+      </div>
 
-        <h3>Obstacles → solutions</h3>
-        <ul class="paires" id="paires"></ul>
-        <p class="aide">Modifiables à l'étape 4 (admin complet).</p>
-        <p class="erreur" id="erreur-config" role="alert"></p>
-      </form>
+      <div class="champ"><div class="ligne-titre"><label>Obstacles → solutions</label><span class="lien-inactif" title="Arrive à l'étape 4">Modifier</span></div>
+        <div class="paires" id="paires"></div></div>
+      <p class="erreur" id="erreur-config" role="alert" hidden></p>
+      <p class="aide avert-mdp" id="avert-mdp" hidden>Le mot de passe est encore « robot ». Pour le changer : ouvrir le fichier <code>config-serveur.json</code> du dossier Robot Rush avec le Bloc-notes, modifier <code>motDePasse</code>, puis relancer le jeu.</p>
     </aside>
 
     <main class="principal">
-      <div class="tete-principal">
-        <div>
-          <h1 class="titre" id="titre-etat">Salle d'attente</h1>
-          <p class="sous" id="sous-etat"></p>
-        </div>
+      <div class="tete">
+        <div class="tete-textes"><b class="tete-titre" id="titre-etat">Salle d'attente</b><span class="gris" id="sous-etat"></span></div>
         <div class="actions">
-          <button class="btn" id="btn-codes">Régénérer les codes</button>
-          <button class="btn" id="btn-pause" disabled>Pause</button>
-          <button class="btn btn-danger" id="btn-arreter" disabled>Arrêter</button>
-          <button class="btn btn-primaire" id="btn-demarrer">▶ Démarrer la course</button>
+          <button class="lien-bouton" id="btn-codes" type="button">Régénérer les codes</button>
+          <button class="btn" id="btn-pause" type="button" disabled>Pause</button>
+          <button class="btn btn-danger" id="btn-arreter" type="button" disabled>Arrêter</button>
+          <button class="btn btn-primaire" id="btn-demarrer" type="button">▶ Démarrer la course</button>
         </div>
       </div>
-      <p class="message" id="message" role="status"></p>
+      <p class="message" id="message" role="status" hidden></p>
       <div class="fin-actions" id="fin-actions" hidden>
-        <button class="btn btn-primaire" id="btn-rejouer">Nouvelle partie, mêmes équipes</button>
-        <button class="btn" id="btn-nouvelle">Nouvelle partie, nouveaux codes</button>
+        <b>Course terminée.</b>
+        <button class="btn btn-primaire" id="btn-rejouer" type="button">Nouvelle partie, mêmes équipes</button>
+        <button class="btn" id="btn-nouvelle" type="button">Nouvelle partie, nouveaux codes</button>
       </div>
+
+      <!-- Adresse à donner aux élèves -->
+      <section class="carte-adresse" id="carte-adresse">
+        <img class="qr" id="qr" src="/qr.svg" alt="QR code de l'adresse élèves">
+        <div class="adresse-textes">
+          <span class="gris">Adresse à donner aux élèves</span>
+          <b class="adresse-courte mono" id="adresse-courte"></b>
+          <span class="adresse-complete">Adresse complète : <span class="mono" id="adresse-complete"></span></span>
+          <span class="adresse-autres" id="adresse-autres"></span>
+          <span class="alerte-reseau" id="alerte-reseau" hidden>Aucun réseau détecté : branchez le PC au réseau du collège (câble ou Wi-Fi), puis attendez quelques secondes.</span>
+        </div>
+        <details class="aide-connexion">
+          <summary>Si les élèves n'arrivent pas à se connecter</summary>
+          <ol>
+            <li><b>Même réseau</b> : les postes élèves et ce PC doivent être sur le même réseau (même Wi-Fi ou réseau du collège). Un téléphone en 4G ne fonctionnera pas.</li>
+            <li><b>Adresse exacte</b> : taper l'adresse ci-dessus en entier, avec les deux-points et le numéro (ex. <span class="mono">192.168.1.25:3000</span>), sans « www » ni « https ».</li>
+            <li><b>Pare-feu Windows</b> : au premier lancement, Windows demande d'autoriser Node.js. Il faut cocher « Réseaux privés » et accepter. Sinon : Paramètres → Confidentialité et sécurité → Sécurité Windows → Pare-feu → Autoriser une application → Node.js (réseaux privés).</li>
+            <li><b>Tester un poste</b> : ouvrir <span class="mono" id="adresse-test"></span> sur un poste élève. La page doit afficher « Connexion réussie ».</li>
+            <li><b>Plusieurs adresses</b> : si le PC a plusieurs cartes réseau, essayer l'autre adresse indiquée sous l'adresse principale.</li>
+            <li><b>Réseau bloqué</b> : certains réseaux isolent les postes entre eux. Demander au référent numérique d'autoriser le port affiché, ou utiliser un point d'accès Wi-Fi dédié à la classe.</li>
+          </ol>
+        </details>
+      </section>
+
       <div class="cartes-equipes" id="equipes"></div>
     </main>
   </div>

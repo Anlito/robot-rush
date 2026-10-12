@@ -3,7 +3,7 @@
 const { EventEmitter } = require('node:events');
 const crypto = require('node:crypto');
 const {
-  ALPHABET_CODES, LONGUEUR_CODE, EQUIPES, REGLAGES_DEFAUT, BORNES_REGLAGES, LIBELLES_REGLAGES, PAIRES_DEFAUT, TYPES_LONGS,
+  ALPHABET_CODES, LONGUEUR_CODE, EQUIPES, REGLAGES_DEFAUT, BORNES_REGLAGES, LIBELLES_REGLAGES, PAIRES_DEFAUT, TYPES_LONGS, MOTS_SIGNALES,
 } = require('./constantes');
 const { TYPES, typeJouable, melanger } = require('./types');
 
@@ -15,6 +15,17 @@ const ETATS = { LOBBY: 'lobby', EN_COURS: 'en_cours', PAUSE: 'pause', TERMINEE: 
 const TAILLE_FIL = 20;
 const DUREE_SUCCES_MS = 1000;
 const LONGUEUR_PSEUDO = 16;
+
+/** Pseudo probablement inapproprié : signalé au professeur, jamais refusé automatiquement. */
+function pseudoSignale(pseudo) {
+  const normal = String(pseudo).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+    .replace(/0/g, 'o').replace(/1/g, 'i').replace(/3/g, 'e').replace(/4/g, 'a').replace(/5/g, 's').replace(/7/g, 't');
+  const mots = normal.split(/[^a-z]+/).filter(Boolean);
+  const colle = mots.join('');
+  // Mots courts : seulement s'ils sont isolés (« con » ne doit pas signaler « Constance ») ;
+  // mots de 4 lettres ou plus : aussi à l'intérieur du pseudo (« GrosCaca »).
+  return MOTS_SIGNALES.some((m) => mots.includes(m) || (m.length >= 4 && colle.includes(m)));
+}
 
 function nettoyerReglages(entree, base = REGLAGES_DEFAUT) {
   const r = { ...base };
@@ -171,6 +182,7 @@ class Partie extends EventEmitter {
       indexSuivant: 0,
       numero: 0,
       stats: { justes: 0, attaques: 0, solutions: 0 },
+      signale: pseudoSignale(p),
     };
     this.joueurs.set(j.jeton, j);
     if (this.etat === ETATS.EN_COURS || this.etat === ETATS.PAUSE) this.donnerQuestion(j);
@@ -204,6 +216,13 @@ class Partie extends EventEmitter {
   supprimerJoueur(jeton, motif) {
     this.joueurs.delete(jeton);
     this.emit('retire', jeton, motif);
+  }
+
+  signalerEleve(jeton, signale) {
+    const j = this.joueurs.get(jeton);
+    if (!j) erreur('Élève introuvable.');
+    j.signale = Boolean(signale);
+    this.emit('change');
   }
 
   deplacerEleve(jeton, equipeId) {
@@ -306,7 +325,7 @@ class Partie extends EventEmitter {
         e.blocage = null;
         e.protegeJusqua = this.t + this.reglages.protection * 1000;
         this.ajouterFil({ type: 'repart', equipe: e.id, obstacle: obstacle.id, texte: `${e.nom} repart après ${obstacle.le}` });
-        this.emit('alerte', e.id, { type: 'debloque', texte: `C'est reparti ! Fin du blocage · protégés ${this.reglages.protection} s` });
+        this.emit('alerte', e.id, { type: 'debloque', texte: `Fin du blocage · protégés ${this.reglages.protection} s` });
         this.emit('change');
       }
     }
@@ -472,17 +491,16 @@ class Partie extends EventEmitter {
     j.stats.solutions++;
     if (e.blocage && this.solutionDe(e.blocage.obstacle).id === solutionId) {
       // La solution qui débloque est consommée aussitôt.
-      const obstacle = this.obstacle(e.blocage.obstacle);
       e.blocage = null;
       e.protegeJusqua = this.t + this.reglages.protection * 1000;
       e.succesJusqua = this.t + DUREE_SUCCES_MS;
-      this.ajouterFil({ type: 'debloque', equipe: e.id, solution: sol.id, texte: `${e.nom} prend ${sol.un} et repart` });
+      this.ajouterFil({ type: 'debloque', equipe: e.id, solution: sol.id, pseudo: j.pseudo, texte: `${e.nom} prend ${sol.un} et repart` });
       this.emit('alerte', e.id, { type: 'debloque', solution: sol.id,
-        texte: `C'est reparti ! ${j.pseudo} a pris ${sol.un} contre ${obstacle.le} · protégés ${this.reglages.protection} s` });
+        texte: `${j.pseudo} a pris ${sol.un} · protégés ${this.reglages.protection} s` });
     } else {
       // Stock plein : le tirage l'exclut, mais l'état a pu changer entre-temps.
       e.stock[sol.id] = Math.min(this.reglages.stockMax, (e.stock[sol.id] || 0) + 1);
-      this.ajouterFil({ type: 'stock', equipe: e.id, solution: sol.id, texte: `${e.nom} stocke ${sol.un}` });
+      this.ajouterFil({ type: 'stock', equipe: e.id, solution: sol.id, pseudo: j.pseudo, texte: `${e.nom} stocke ${sol.un}` });
     }
     this.emit('change');
   }
@@ -498,29 +516,29 @@ class Partie extends EventEmitter {
     if (!c || c.id === e.id) erreur('Choisis une équipe adverse.');
     if (c.blocage) erreur(`L'équipe ${c.nom} est déjà bloquée.`);
     if (c.protegeJusqua > this.t) erreur(`L'équipe ${c.nom} est protégée quelques secondes.`);
-    this.appliquerObstacle(c, obstacle, e);
+    this.appliquerObstacle(c, obstacle, e, j.pseudo);
     j.stats.attaques++;
     this.donnerQuestion(j);
     return {};
   }
 
-  appliquerObstacle(cible, obstacleId, source) {
+  appliquerObstacle(cible, obstacleId, source, pseudo = null) {
     const obs = this.obstacle(obstacleId);
     const sol = this.solutionDe(obstacleId);
     if (cible.stock[sol.id] > 0) {
       cible.stock[sol.id]--;
       cible.succesJusqua = this.t + DUREE_SUCCES_MS;
       this.ajouterFil({ type: 'parade', equipe: cible.id, source: source.id, obstacle: obs.id, solution: sol.id,
-        texte: `${cible.nom} franchit ${obs.le} avec ${sol.un}` });
+        texte: `${cible.nom} franchit ${obs.le} avec ${sol.sa || sol.un}` });
       this.emit('alerte', cible.id, { type: 'parade', obstacle: obs.id, solution: sol.id,
-        texte: `Paré ! ${sol.le[0].toUpperCase()}${sol.le.slice(1)} de votre stock a franchi ${obs.le} de ${source.nom}` });
+        texte: `${source.nom} t'envoie ${obs.un} : paré avec ${sol.un} du stock` });
       this.emit('alerte', source.id, { type: 'info', texte: `${cible.nom} avait ${sol.un} en stock : attaque parée` });
     } else {
       cible.blocage = { obstacle: obs.id, finA: this.t + this.reglages.dureeBlocage * 1000, par: source.id };
-      this.ajouterFil({ type: 'attaque', equipe: source.id, cible: cible.id, obstacle: obs.id,
+      this.ajouterFil({ type: 'attaque', equipe: source.id, cible: cible.id, obstacle: obs.id, pseudo,
         texte: `${source.nom} envoie ${obs.un} à ${cible.nom} !` });
       this.emit('alerte', cible.id, { type: 'attaque', obstacle: obs.id, solution: sol.id,
-        texte: `${source.nom} vous envoie ${obs.un} ! Prenez ${sol.un}` });
+        texte: `${source.nom} t'envoie ${obs.un}` });
       // Un élève de l'équipe ciblée qui allait avancer ne le peut plus : son écran doit se mettre à jour.
       for (const j of this.joueurs.values()) if (j.equipeId === cible.id && j.phase === 'action') this.emit('joueur', j.jeton);
     }
@@ -650,7 +668,7 @@ class Partie extends EventEmitter {
     const pub = this.vuePublique({ avecCodes: true });
     const parEquipe = this.equipes.map(() => []);
     for (const j of this.joueurs.values()) {
-      parEquipe[j.equipeId].push({ jeton: j.jeton, pseudo: j.pseudo, connecte: j.connecte, stats: j.stats });
+      parEquipe[j.equipeId].push({ jeton: j.jeton, pseudo: j.pseudo, connecte: j.connecte, stats: j.stats, signale: j.signale });
     }
     pub.equipes.forEach((e) => { e.eleves = parEquipe[e.id]; });
     return {
@@ -662,4 +680,4 @@ class Partie extends EventEmitter {
   }
 }
 
-module.exports = { Partie, ErreurJeu, ETATS, nettoyerReglages };
+module.exports = { Partie, ErreurJeu, ETATS, nettoyerReglages, pseudoSignale };

@@ -47,12 +47,34 @@ const RR = (() => {
     </svg>`;
   }
 
-  /** Pastille : cercle blanc + symbole encre. */
-  function pastille(symbole, taille = 32, fond = '#fff') {
-    return `<svg width="${taille}" height="${taille}" viewBox="-7 -7 14 14" aria-hidden="true">
-      <circle r="6.2" fill="${fond}" stroke="${INK}" stroke-width="0.9"/>
-      <path d="${SYMBOLES[symbole] || ''}" fill="${INK}" transform="scale(0.8)"/></svg>`;
+  /** Pastille : cercle blanc + symbole encre (étiquettes d'équipe). */
+  function pastille(symbole, taille = 32) {
+    return `<svg class="pastille" width="${taille}" height="${taille}" viewBox="-12 -12 24 24" aria-hidden="true" style="flex:none">
+      <circle r="11" fill="#fff" stroke="${INK}" stroke-width="1.5"/>
+      <path d="${SYMBOLES[symbole] || ''}" fill="${INK}" transform="scale(1.25)"/></svg>`;
   }
+
+  /** Carré couleur d'équipe + symbole (classement, podium). */
+  function carre(e, taille = 32) {
+    return `<svg width="${taille}" height="${taille}" viewBox="-12 -12 24 24" aria-hidden="true" style="flex:none">
+      <rect x="-11" y="-11" width="22" height="22" rx="5" fill="${e.couleur}" stroke="${INK}" stroke-width="1.5"/>
+      <path d="${SYMBOLES[e.symbole] || ''}" fill="${e.texte}" transform="scale(1.3)"/></svg>`;
+  }
+
+  /** Pion rond couleur d'équipe + symbole (mini-piste élève). */
+  function pion(e, taille = 20, epais = false) {
+    return `<svg width="${taille}" height="${taille}" viewBox="-12 -12 24 24" aria-hidden="true">
+      <circle r="11" fill="${e.couleur}" stroke="${INK}" stroke-width="${epais ? 3 : 1.5}"/>
+      <path d="${SYMBOLES[e.symbole] || ''}" fill="${e.texte}" transform="scale(1.2)"/></svg>`;
+  }
+
+  /** Coche verte dans un cercle. */
+  function coche(taille = 30, fond = '#16A34A') {
+    return `<svg width="${taille}" height="${taille}" viewBox="0 0 30 30" aria-hidden="true" style="flex:none"><circle cx="15" cy="15" r="13" fill="${fond}" stroke="${INK}" stroke-width="2"/>
+      <path d="M9 15.5L13 19.5L21 11" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  }
+
+  const majuscule = (t) => (t ? t[0].toUpperCase() + t.slice(1) : t);
 
   /** Icône d'obstacle ou de solution ; icône générique pour une paire ajoutée par le professeur. */
   function icone(id, taille = 32) {
@@ -92,6 +114,7 @@ const RR = (() => {
           barre.style.transform = `scaleX(${Math.max(0, restant / total)})`;
           barre.classList.toggle('urgent', restant < 5000);
         }
+        n.classList.toggle('urgent', restant < 5000);
       }
     });
   }
@@ -108,7 +131,7 @@ const RR = (() => {
   }
 
   return {
-    robot, pastille, icone, esc, el, decompte, format, fin, secondes, connecter, majDecomptes,
+    robot, pastille, carre, pion, coche, majuscule, icone, esc, el, decompte, format, fin, secondes, connecter, majDecomptes,
     set pause(v) { enPause = v; }, get pause() { return enPause; },
   };
 })();

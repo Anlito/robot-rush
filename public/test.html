@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Robot Rush · Test de connexion</title>
+<link rel="icon" href="/assets/robots/robot-verte-normal.svg">
+<link rel="stylesheet" href="/fonts/polices.css">
+<link rel="stylesheet" href="/css/commun.css">
+<style>
+  body { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .carte { width: min(640px, 100%); background: var(--blanc); border: 3px solid var(--encre); border-radius: 22px; padding: 32px 36px; display: flex; flex-direction: column; gap: 18px; }
+  .tete { display: flex; align-items: center; gap: 16px; }
+  h1 { margin: 0; font-family: var(--f-titre); font-weight: 800; font-size: 40px; line-height: 1.05; }
+  .verifs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .verifs li { display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start; font-size: 18px; line-height: 1.35; }
+  .pastille-etat { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--encre); display: flex; align-items: center; justify-content: center; font-weight: 800; color: #fff; background: var(--bordure-champ); }
+  .ok .pastille-etat { background: var(--correct-2); }
+  .ko .pastille-etat { background: var(--alerte); }
+  .attente .pastille-etat { background: var(--jaune); color: var(--encre); }
+  .detail { display: block; font-size: 15px; color: var(--encre-2); }
+  .bilan { border-radius: 12px; padding: 14px 16px; font-size: 18px; font-weight: 700; border: 2px solid var(--encre); }
+  .bilan.ok { background: var(--solution); }
+  .bilan.ko { background: var(--obstacle); }
+  .gris { color: var(--encre-2); font-size: 15px; margin: 0; }
+  button { align-self: flex-start; height: 48px; padding: 0 22px; border-radius: 12px; border: none; background: var(--encre); color: #fff; font-weight: 700; font-size: 17px; cursor: pointer; }
+</style>
+</head>
+<body>
+<main class="carte">
+  <div class="tete"><span id="robot"></span><h1 id="titre">Test de connexion…</h1></div>
+  <ul class="verifs">
+    <li id="v-page" class="ok"><span class="pastille-etat">✓</span><span>Page chargée depuis le PC du professeur<span class="detail" id="d-page"></span></span></li>
+    <li id="v-temps-reel" class="attente"><span class="pastille-etat">…</span><span>Temps réel (WebSocket)<span class="detail" id="d-temps-reel">Vérification en cours…</span></span></li>
+    <li id="v-delai" class="attente"><span class="pastille-etat">…</span><span>Rapidité du réseau<span class="detail" id="d-delai">Mesure en cours…</span></span></li>
+  </ul>
+  <div class="bilan" id="bilan" hidden></div>
+  <button type="button" id="relancer">Refaire le test</button>
+  <p class="gris">Cette page ne change rien à la partie. Ouvrez-la depuis un poste élève avant le cours pour vérifier le réseau de la salle.</p>
+</main>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/commun.js"></script>
+<script>
+'use strict';
+(() => {
+  const { el, robot } = RR;
+  el('#d-page').textContent = location.host;
+  function marquer(id, statut, texte) {
+    const li = el(`#v-${id}`);
+    li.className = statut;
+    li.querySelector('.pastille-etat').textContent = statut === 'ok' ? '✓' : statut === 'ko' ? '✕' : '…';
+    el(`#d-${id}`).textContent = texte;
+  }
+  function bilan(ok, texte) {
+    el('#titre').textContent = ok ? 'Connexion réussie' : 'Connexion incomplète';
+    el('#robot').innerHTML = robot({ couleur: ok ? '#16A34A' : '#E0362C', symbole: ok ? 'cercle' : 'etoile', etat: ok ? 'succes' : 'bloque', taille: 72 });
+    const b = el('#bilan');
+    b.hidden = false;
+    b.className = `bilan ${ok ? 'ok' : 'ko'}`;
+    b.textContent = texte;
+  }
+
+  let socket = null;
+  function tester() {
+    if (socket) socket.disconnect();
+    el('#bilan').hidden = true;
+    el('#titre').textContent = 'Test de connexion…';
+    el('#robot').innerHTML = robot({ couleur: '#F2B705', symbole: 'carre', taille: 72 });
+    marquer('temps-reel', 'attente', 'Vérification en cours…');
+    marquer('delai', 'attente', 'Mesure en cours…');
+    // On force le WebSocket : c'est lui que le jeu utilise en priorité.
+    socket = io({ auth: { role: 'test' }, transports: ['websocket'], reconnection: false, timeout: 6000 });
+    const echec = setTimeout(() => {
+      marquer('temps-reel', 'ko', 'Pas de réponse en temps réel. Le réseau ou un proxy bloque peut-être les WebSockets.');
+      marquer('delai', 'ko', 'Non mesuré.');
+      bilan(false, 'Le temps réel ne passe pas. Essayez un autre navigateur, ou demandez au référent numérique d\'autoriser les WebSockets vers ce PC. Le jeu peut fonctionner en mode dégradé, mais plus lentement.');
+      // Mode dégradé : le jeu sait aussi passer par des requêtes classiques.
+      socket.disconnect();
+    }, 7000);
+    socket.on('connect', async () => {
+      marquer('temps-reel', 'ok', `Connecté (${socket.io.engine.transport.name}).`);
+      const mesures = [];
+      for (let i = 0; i < 5; i++) {
+        const t0 = performance.now();
+        await new Promise((r) => socket.emit('ping-test', i, r));
+        mesures.push(performance.now() - t0);
+      }
+      clearTimeout(echec);
+      const moyenne = Math.round(mesures.reduce((a, b) => a + b, 0) / mesures.length);
+      const lent = moyenne > 300;
+      marquer('delai', lent ? 'attente' : 'ok', `${moyenne} ms en moyenne${lent ? ' : réseau lent, le jeu restera jouable.' : ' : parfait.'}`);
+      bilan(true, 'Ce poste peut jouer à Robot Rush. Tapez la même adresse sans « /test » le jour du cours.');
+    });
+    socket.on('connect_error', () => {
+      clearTimeout(echec);
+      marquer('temps-reel', 'ko', 'Connexion refusée par le réseau.');
+      marquer('delai', 'ko', 'Non mesuré.');
+      bilan(false, 'La page s\'affiche mais le temps réel est bloqué. Vérifiez le pare-feu du PC professeur (réseaux privés) ou le proxy du collège.');
+    });
+  }
+  el('#relancer').addEventListener('click', tester);
+  tester();
+})();
+</script>
+</body>
+</html>

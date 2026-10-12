@@ -10,30 +10,42 @@ avec un obstacle. La course est projetée en classe.
 | `/course` | vidéoprojecteur | piste de toutes les équipes, chrono, fil d'actions, codes avant la partie, podium |
 | `/jouer` (ou `/`) | élèves | code d'équipe + pseudo, questions, choix d'action, bandeau d'état permanent |
 | `/admin` | professeur | parcours, équipes, réglages, codes, élèves, Démarrer / Pause / Arrêter |
+| `/test` | professeur, depuis un poste élève | diagnostic du réseau : « Connexion réussie », temps réel, rapidité |
 
-## Lancer en local
+## Mode local : le jeu sur le PC du professeur, sans internet
 
-Il faut [Node.js](https://nodejs.org) 20 ou plus.
+**Guide pas à pas pour les enseignants : [MODE-LOCAL.md](MODE-LOCAL.md)** (installation de Node.js ou version portable,
+double-clic sur `demarrer.bat`, pare-feu Windows, adresse et QR code pour les élèves, page `/test`, dépannage).
+
+En bref : double-cliquer sur `demarrer.bat` (Mac : `demarrer.command`, Linux : `demarrer.sh`).
+Le script vérifie Node.js, installe les composants la première fois, crée `config-serveur.json`,
+puis lance le serveur et ouvre l'espace professeur. Tout fonctionne hors ligne : polices, icônes, QR code
+et bibliothèques sont dans le projet.
+
+## Lancer en ligne de commande
+
+Il faut [Node.js](https://nodejs.org) 18 ou plus.
 
 ```bash
 npm install
 npm start
 ```
 
-La console affiche l'adresse à donner aux élèves (par exemple `http://192.168.1.20:3000`),
-l'adresse du projecteur et celle de l'espace professeur.
+Le serveur écoute sur toutes les cartes réseau (`0.0.0.0`). La console affiche l'adresse à donner aux élèves
+(l'adresse locale en 192.168.x.x ou 10.x.x.x est privilégiée, les cartes virtuelles sont écartées),
+l'adresse du projecteur, de l'espace professeur et de la page de diagnostic.
+Si le port est occupé, le serveur prend le suivant et l'affiche.
 
-- **Mot de passe professeur** : variable d'environnement `ADMIN_PASSWORD`. Sans elle, le mot de passe est `robot`
-  (un avertissement s'affiche dans la console).
-- **Port** : variable `PORT` (3000 par défaut).
-- **Adresse affichée aux élèves** : variable `PUBLIC_URL` (sinon l'adresse du PC sur le réseau local).
-- **Données** : variable `DATA_DIR` (dossier `data/` par défaut).
+Réglages du serveur, dans `config-serveur.json` (modèle : `config-serveur.exemple.json`)
+ou par variables d'environnement, prioritaires :
 
-Sous Windows (PowerShell), pour changer le mot de passe :
-
-```powershell
-$env:ADMIN_PASSWORD = "mon-mot-de-passe"; npm start
-```
+| Fichier | Variable | Rôle | Défaut |
+|---|---|---|---|
+| `port` | `PORT` | port d'écoute | 3000 |
+| `motDePasse` | `ADMIN_PASSWORD` | mot de passe de l'espace professeur | `robot` (avertissement affiché) |
+| `adressePublique` | `PUBLIC_URL` | adresse affichée aux élèves (hébergement en ligne) | adresse du PC sur le réseau local |
+| `ouvrirNavigateur` | `OUVRIR_NAVIGATEUR=1` | ouvrir l'espace professeur au démarrage | non |
+| | `DATA_DIR` | dossier des données | `data/` |
 
 ## Tester sans classe
 
@@ -87,10 +99,12 @@ server/
   types.js       types de questions : préparation (sans la réponse) et validation côté serveur
   constantes.js  équipes, réglages par défaut, paires obstacle / solution
   stockage.js    fichiers JSON
-public/          pages /course, /jouer, /admin, styles, scripts, SVG
+  reseau.js      adresse IP locale, port de secours, config-serveur.json
+public/          pages /course, /jouer, /admin, /test, styles, scripts, SVG, polices embarquées
 seed/            questions et parcours de départ
 test/            tests de la logique de jeu (node --test)
 tools/           élèves factices
+demarrer.bat     lancement Windows (double-clic) ; demarrer.command (Mac), demarrer.sh (Linux)
 design/          maquettes Claude Design (référence de l'interface)
 docs/            brief et cahier des charges
 ```
@@ -102,7 +116,8 @@ Les navigateurs ne reçoivent jamais la bonne réponse avant d'avoir répondu.
 
 1. **Cœur du jeu** (fait) : serveur, salle d'attente avec codes, écran élève avec bandeau d'état, projecteur 2 à 8 équipes,
    règles complètes, questions QCM.
-2. Interface finale à partir des maquettes.
+2. **Interface finale** (fait) : écrans fidèles aux maquettes, animations, polices embarquées ;
+   **mode local** : scripts de lancement, adresse et QR code, page /test, fonctionnement hors ligne.
 3. Autres types de questions : ordre, calcul, blocs (module du distributeur de céréales), programme à compléter.
 4. Admin complet : éditeur de questions et de parcours, export / import JSON.
-5. Déploiement en ligne depuis GitHub, mode local de secours, test de charge (60 clients).
+5. Déploiement en ligne depuis GitHub, test de charge (60 clients).

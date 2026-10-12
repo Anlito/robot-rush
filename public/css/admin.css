@@ -1,68 +1,109 @@
-/* Admin : sobre, texte 15 px, contours 1,5 px, pas de socle */
+/* Admin /admin (maquettes C0, C1) : sobre, texte 15 px, contours 1,5 px, pas de socle */
 body { background: var(--fond-admin); font-size: 15px; }
-h1, h2, h3 { margin: 0; }
-.erreur { color: var(--danger); font-weight: 700; min-height: 1.2em; margin: 8px 0; }
-.aide { font-size: 13px; color: var(--encre-2); margin: 4px 0 0; }
+.gris { color: var(--encre-2); }
+.erreur { color: var(--danger); font-weight: 700; margin: 0; }
+.aide { font-size: 13px; color: var(--encre-2); line-height: 1.4; }
+a { color: #2563EB; }
+a:hover { color: var(--encre); }
+code, .mono { font-family: var(--f-mono); }
 
-.btn { height: 40px; padding: 0 16px; border: 1.5px solid var(--encre); border-radius: 10px; background: var(--blanc); cursor: pointer; font-weight: 700; }
-.btn:disabled { border-color: var(--bordure-champ); color: var(--bordure-champ); cursor: not-allowed; }
-.btn-primaire { background: var(--encre); color: var(--blanc); }
-.btn-primaire:disabled { background: var(--bordure-champ); color: var(--blanc); }
-.btn-danger { color: var(--danger); border-color: var(--danger); }
-input, select { font: inherit; height: 36px; border: 1.5px solid var(--bordure-champ); border-radius: 10px; padding: 0 10px; background: var(--blanc); }
-input:focus, select:focus, .btn:focus-visible { outline: 3px solid #2563EB; outline-offset: 1px; }
+.btn { height: 42px; padding: 0 18px; border: 1.5px solid var(--encre); border-radius: 10px; background: var(--blanc); cursor: pointer; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.btn:disabled { border-color: var(--bordure-champ); color: #9A968C; background: transparent; cursor: not-allowed; }
+.btn-primaire { background: var(--encre); color: var(--blanc); padding: 0 22px; }
+.btn-primaire:disabled { background: var(--bordure-champ); color: var(--blanc); border-color: var(--bordure-champ); }
+.btn-danger:not(:disabled) { color: var(--danger); border-color: var(--danger); }
+.btn-large { height: 44px; justify-content: center; }
+.lien-bouton { height: 42px; padding: 0 14px; border: none; background: none; font-weight: 700; text-decoration: underline; cursor: pointer; }
+.lien-bouton:disabled { color: #9A968C; cursor: not-allowed; }
+input, select { font: inherit; color: inherit; }
+input:focus-visible, select:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid #2563EB; outline-offset: 2px; }
 
+/* ----- C0 · Accès ----- */
 .acces { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-.carte-acces { width: 400px; background: var(--blanc); border: 1.5px solid var(--encre); border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 8px; }
-.carte-acces h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+.carte-acces { width: 400px; background: var(--blanc); border: 1.5px solid var(--encre); border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 16px; }
+.titre-acces { display: flex; align-items: center; gap: 10px; }
+.titre-acces b { font-family: var(--f-titre); font-size: 24px; }
+.champ { display: flex; flex-direction: column; gap: 6px; }
+.champ > label, .ligne-titre label { font-weight: 700; }
+#mdp { height: 42px; border: 1.5px solid var(--encre); border-radius: 10px; padding: 0 12px; letter-spacing: .1em; }
 
-.barre-admin { height: 60px; background: var(--blanc); border-bottom: 1.5px solid var(--encre); display: flex; align-items: center; gap: 32px; padding: 0 24px; }
-.logo { font-size: 22px; font-weight: 800; }
-.onglets { display: flex; gap: 24px; height: 100%; }
-.onglets a, .onglets span { display: flex; align-items: center; color: var(--encre); text-decoration: none; font-weight: 700; border-bottom: 3px solid transparent; }
-.onglets a.actif { border-bottom-color: var(--encre); }
-.onglets .bientot { color: var(--bordure-champ); cursor: default; }
-.lien { margin-left: auto; color: var(--encre); font-weight: 700; }
+/* ----- Barre ----- */
+.barre-admin { height: 60px; background: var(--blanc); border-bottom: 1.5px solid var(--trait); display: flex; align-items: center; gap: 28px; padding: 0 24px; }
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo b { font-family: var(--f-titre); font-size: 20px; }
+.onglets { display: flex; gap: 4px; height: 100%; }
+.onglet { display: flex; align-items: center; padding: 0 14px; font-weight: 700; border-bottom: 3px solid transparent; color: var(--encre-2); text-decoration: none; }
+.onglet.actif { border-bottom-color: var(--encre); color: var(--encre); }
+.onglet.inactif { color: #B5AFA3; cursor: default; }
+.liens { margin-left: auto; display: flex; gap: 16px; align-items: center; color: var(--encre-2); }
+.liens .lien-bouton { height: auto; padding: 0; text-decoration: none; color: var(--encre-2); font-weight: 400; }
+.liens .lien-bouton:hover { color: var(--encre); text-decoration: underline; }
 
-.mise-en-page { display: grid; grid-template-columns: 360px 1fr; min-height: calc(100vh - 60px); }
-.colonne-reglages { border-right: 1.5px solid var(--trait); padding: 20px 24px; background: var(--blanc); }
-.colonne-reglages h2 { font-size: 22px; font-weight: 800; font-family: var(--f-titre); margin-bottom: 12px; }
-.colonne-reglages h3 { font-size: 15px; margin: 20px 0 8px; }
-.colonne-reglages label { display: block; font-weight: 700; margin: 12px 0 6px; }
-.colonne-reglages select { width: 100%; }
-.segmente { display: flex; border: 1.5px solid var(--encre); border-radius: 10px; overflow: hidden; }
-.segmente button { flex: 1; height: 36px; border: none; border-right: 1.5px solid var(--encre); background: var(--blanc); cursor: pointer; font-weight: 700; }
+.mise-en-page { display: grid; grid-template-columns: 360px minmax(0, 1fr); min-height: calc(100vh - 60px); }
+
+/* ----- Colonne de lancement ----- */
+.colonne { background: var(--blanc); border-right: 1.5px solid var(--trait); padding: 20px 22px; display: flex; flex-direction: column; gap: 18px; }
+#parcours { height: 42px; border: 1.5px solid var(--encre); border-radius: 10px; padding: 0 10px; background: var(--blanc); }
+.segmente { display: grid; grid-template-columns: repeat(7, 1fr); border: 1.5px solid var(--encre); border-radius: 10px; overflow: hidden; }
+.segmente button { height: 38px; border: none; border-right: 1px solid var(--trait); background: var(--blanc); font-weight: 700; cursor: pointer; }
 .segmente button:last-child { border-right: none; }
 .segmente button.actif { background: var(--encre); color: var(--blanc); }
-.segmente button:disabled { cursor: not-allowed; opacity: .6; }
-.reglages { display: grid; grid-template-columns: 1fr 76px; gap: 6px 10px; align-items: center; }
-.reglages label { margin: 0; font-weight: 400; }
-.reglages input { width: 76px; text-align: right; font-family: var(--f-mono); }
-.interrupteur { display: flex !important; gap: 8px; align-items: flex-start; font-weight: 400 !important; margin-top: 14px !important; }
-.interrupteur input { height: 18px; width: 18px; flex: none; margin-top: 2px; }
-.paires { list-style: none; padding: 0; margin: 0; }
-.paires li { display: flex; align-items: center; gap: 6px; padding: 3px 0; }
+.segmente button:disabled:not(.actif) { color: #B5AFA3; cursor: not-allowed; }
+.ligne-reglage { display: grid; grid-template-columns: 1fr 86px; align-items: center; gap: 10px; padding: 5px 0; border-bottom: 1px solid #EEEAE1; }
+.ligne-reglage label { font-weight: 400; }
+.saisie-unite { height: 32px; border: 1.5px solid var(--bordure-champ); border-radius: 8px; display: flex; align-items: center; padding: 0 8px; background: var(--blanc); }
+.saisie-unite:focus-within { border-color: var(--encre); }
+.saisie-unite input { width: 100%; min-width: 0; border: none; outline: none; text-align: right; font-family: var(--f-mono); font-size: 14px; background: transparent; padding: 0; }
+.saisie-unite span { font-size: 13px; color: var(--encre-2); margin-left: 4px; }
+.saisie-unite:has(input:disabled) { background: var(--fond-admin); color: #9A968C; }
+.champ > .case-a-cocher { display: flex; gap: 8px; align-items: flex-start; margin-top: 10px; line-height: 1.35; cursor: pointer; font-weight: 400; }
+.case-a-cocher input { width: 18px; height: 18px; margin: 1px 0 0; flex: none; accent-color: var(--encre); }
+.ligne-titre { display: flex; justify-content: space-between; align-items: baseline; }
+.lien-inactif { font-size: 14px; color: #B5AFA3; cursor: default; }
+.paires { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.paire { display: flex; align-items: center; gap: 4px; border: 1px solid var(--trait); border-radius: 8px; padding: 4px 6px; font-size: 13px; }
 
-.principal { padding: 20px 28px; }
-.tete-principal { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
-.tete-principal h1 { font-size: 26px; font-weight: 800; }
-.sous { margin: 4px 0 0; color: var(--encre-2); }
-.actions { display: flex; gap: 8px; }
-.message { min-height: 1.4em; font-weight: 700; margin: 12px 0; }
-.message.erreur { color: var(--danger); }
-.fin-actions { display: flex; gap: 8px; margin-bottom: 16px; }
-.cartes-equipes { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
-.carte-equipe { background: var(--blanc); border: 1.5px solid var(--encre); border-radius: 12px; overflow: hidden; }
-.carte-equipe .tete { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1.5px solid var(--encre); }
-.carte-equipe .nom { font-family: var(--f-titre); font-size: 18px; font-weight: 800; }
-.carte-equipe .code { margin-left: auto; font-family: var(--f-mono); font-size: 20px; font-weight: 700; background: var(--blanc); color: var(--encre); padding: 0 8px; border-radius: 6px; border: 1.5px solid var(--encre); }
-.carte-equipe .infos { padding: 6px 12px; font-size: 13px; color: var(--encre-2); border-bottom: 1px solid var(--trait); }
-.carte-equipe ul { list-style: none; margin: 0; padding: 4px 0; }
-.carte-equipe li { display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 12px; }
-.carte-equipe li .point { width: 10px; height: 10px; border-radius: 50%; background: var(--correct-2); flex: none; }
-.carte-equipe li .point.absent { background: var(--bordure-champ); }
-.carte-equipe li .pseudo { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.carte-equipe li .stats { font-family: var(--f-mono); font-size: 12px; color: var(--encre-2); }
-.carte-equipe li select { height: 26px; width: 34px; padding: 0 2px; border-radius: 6px; cursor: pointer; }
-.carte-equipe li .retirer { height: 26px; width: 26px; border: 1.5px solid var(--bordure-champ); border-radius: 6px; background: var(--blanc); cursor: pointer; color: var(--danger); font-weight: 700; }
-.carte-equipe .vide { color: var(--encre-2); font-style: italic; padding: 6px 12px; }
+/* ----- Zone principale ----- */
+.principal { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.tete { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.tete-textes { display: flex; flex-direction: column; }
+.tete-titre { font-family: var(--f-titre); font-size: 26px; }
+.actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.message { margin: 0; padding: 10px 14px; border-radius: 10px; background: var(--moi); border: 1.5px solid #2563EB; font-weight: 700; }
+.message.erreur { background: var(--obstacle); border-color: var(--danger); color: var(--danger); }
+.fin-actions { display: flex; gap: 10px; align-items: center; padding: 12px 14px; border: 1.5px solid var(--encre); border-radius: 12px; background: var(--blanc); }
+
+.carte-adresse { background: var(--blanc); border: 1.5px solid var(--encre); border-radius: 12px; padding: 12px 16px; display: grid; grid-template-columns: auto 1fr; gap: 6px 18px; align-items: center; }
+.carte-adresse .qr { width: 124px; height: 124px; border: 1.5px solid var(--trait); border-radius: 8px; grid-row: span 2; }
+.adresse-textes { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.adresse-courte { font-size: 34px; line-height: 1.15; word-break: break-all; }
+.adresse-complete, .adresse-autres { font-size: 14px; color: var(--encre-2); }
+.alerte-reseau { color: var(--danger); font-weight: 700; }
+.aide-connexion summary { cursor: pointer; font-weight: 700; color: #1D4ED8; }
+.aide-connexion ol { margin: 8px 0 0; padding-left: 20px; line-height: 1.45; display: flex; flex-direction: column; gap: 4px; }
+
+.cartes-equipes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.carte-equipe { background: var(--blanc); border: 1.5px solid var(--encre); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+.carte-equipe .entete { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-bottom: 1.5px solid var(--encre); }
+.carte-equipe .entete b { font-family: var(--f-titre); font-size: 18px; }
+.carte-equipe .code { margin-left: auto; font-family: var(--f-mono); font-weight: 700; font-size: 20px; background: #fff; color: var(--encre); border-radius: 6px; padding: 0 8px; letter-spacing: .05em; }
+.carte-equipe .infos { padding: 6px 14px; font-size: 13px; color: var(--encre-2); border-bottom: 1px solid #EEEAE1; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.carte-equipe .infos .bloquee { background: var(--encre); color: var(--jaune); font-weight: 700; border-radius: 4px; padding: 0 6px; }
+.eleves { padding: 6px 8px; display: flex; flex-direction: column; gap: 2px; }
+.eleve { display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 6px; border-radius: 6px; }
+.eleve.signale { background: var(--obstacle); }
+.eleve.signale .pseudo { font-weight: 700; }
+.eleve .point { width: 8px; height: 8px; border-radius: 50%; background: var(--correct-2); flex: none; }
+.eleve .point.absent { background: var(--bordure-champ); }
+.eleve .pseudo { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.eleve .note { font-size: 12px; color: var(--encre-2); white-space: nowrap; }
+.eleve .stats { font-family: var(--f-mono); font-size: 12px; color: var(--encre-2); }
+.mini-bouton { width: 26px; height: 26px; border: 1px solid var(--bordure-champ); border-radius: 6px; background: var(--blanc); display: flex; align-items: center; justify-content: center; font-size: 13px; cursor: pointer; padding: 0; flex: none; }
+.mini-bouton.retirer { font-size: 14px; font-weight: 700; color: var(--encre-2); }
+.eleve.signale .mini-bouton.retirer { border-color: var(--danger); color: var(--danger); }
+.mini-bouton.drapeau.actif { background: var(--obstacle); border-color: var(--danger); }
+select.mini-bouton { appearance: none; text-align: center; text-align-last: center; color: var(--encre); }
+.carte-equipe .vide { color: var(--encre-2); font-style: italic; padding: 8px 14px; margin: 0; }
+
+@media (max-width: 1250px) { .cartes-equipes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.avert-mdp { margin: 0; padding: 8px 10px; border: 1.5px solid var(--jaune); background: #FCF0C8; border-radius: 8px; color: var(--encre); }

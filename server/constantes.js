@@ -47,16 +47,24 @@ const BORNES_REGLAGES = {
   delaiAction: [3, 30],
 };
 
-// Paires obstacle / solution. « un » et « le » servent à écrire les messages du fil d'actions.
+// Paires obstacle / solution. « un », « le » et « sa » servent à écrire les messages du fil d'actions.
 const PAIRES_DEFAUT = [
   { obstacle: { id: 'trou', nom: 'trou', un: 'un trou', le: 'le trou' },
-    solution: { id: 'pont', nom: 'pont', un: 'un pont', le: 'le pont' } },
+    solution: { id: 'pont', nom: 'pont', un: 'un pont', le: 'le pont', sa: 'son pont' } },
   { obstacle: { id: 'mur', nom: 'mur', un: 'un mur', le: 'le mur' },
-    solution: { id: 'echelle', nom: 'échelle', un: 'une échelle', le: "l'échelle" } },
+    solution: { id: 'echelle', nom: 'échelle', un: 'une échelle', le: "l'échelle", sa: 'son échelle' } },
   { obstacle: { id: 'rocher', nom: 'rocher', un: 'un rocher', le: 'le rocher' },
-    solution: { id: 'pelleteuse', nom: 'pelleteuse', un: 'une pelleteuse', le: 'la pelleteuse' } },
+    solution: { id: 'pelleteuse', nom: 'pelleteuse', un: 'une pelleteuse', le: 'la pelleteuse', sa: 'sa pelleteuse' } },
   { obstacle: { id: 'boue', nom: 'boue', un: 'de la boue', le: 'la boue' },
-    solution: { id: 'chenilles', nom: 'chenilles', un: 'des chenilles', le: 'les chenilles' } },
+    solution: { id: 'chenilles', nom: 'chenilles', un: 'des chenilles', le: 'les chenilles', sa: 'ses chenilles' } },
+];
+
+// Pseudos signalés automatiquement au professeur (il décide de retirer ou non).
+// Comparaison sans accents, chiffres « leet » remplacés (0→o, 1→i, 3→e, 4→a, 5→s, 7→t).
+const MOTS_SIGNALES = [
+  'merde', 'merd', 'putain', 'pute', 'connard', 'connasse', 'conne', 'con', 'salope', 'salaud', 'encule', 'enfoire',
+  'bite', 'couille', 'chier', 'nique', 'niquer', 'ntm', 'fdp', 'pd', 'tg', 'batard', 'bouffon', 'debile',
+  'cul', 'prout', 'caca', 'pipi', 'zizi', 'nazi', 'hitler', 'sexe', 'porn', 'fuck', 'shit', 'bitch',
 ];
 
 // Libellés pour les messages d'erreur affichés au professeur.
@@ -77,5 +85,5 @@ const LIBELLES_REGLAGES = {
 const TYPES_LONGS = ['blocs', 'completer'];
 
 module.exports = {
-  ALPHABET_CODES, LONGUEUR_CODE, EQUIPES, REGLAGES_DEFAUT, BORNES_REGLAGES, LIBELLES_REGLAGES, PAIRES_DEFAUT, TYPES_LONGS,
+  ALPHABET_CODES, LONGUEUR_CODE, EQUIPES, REGLAGES_DEFAUT, BORNES_REGLAGES, LIBELLES_REGLAGES, PAIRES_DEFAUT, TYPES_LONGS, MOTS_SIGNALES,
 };

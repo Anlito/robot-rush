@@ -1,17 +1,19 @@
 'use strict';
 
 const http = require('node:http');
-const os = require('node:os');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const express = require('express');
 const { Server } = require('socket.io');
+const QRCode = require('qrcode');
 const { Partie, ErreurJeu } = require('./jeu');
 const stockage = require('./stockage');
+const reseau = require('./reseau');
 
-const PORT = Number(process.env.PORT) || 3000;
-const MOT_DE_PASSE = process.env.ADMIN_PASSWORD || 'robot';
+const CONFIG_SERVEUR = reseau.lireConfigServeur();
+const MOT_DE_PASSE = CONFIG_SERVEUR.motDePasse || 'robot';
 const PUBLIC = path.join(__dirname, '..', 'public');
+let port = CONFIG_SERVEUR.port; // peut changer si le port est déjà pris
 
 // ---------- Données ----------
 
@@ -32,18 +34,46 @@ const partie = new Partie({
 
 // ---------- Adresse à donner aux élèves ----------
 
-function adressesLocales() {
-  const res = [];
-  for (const liste of Object.values(os.networkInterfaces())) {
-    for (const a of liste || []) if (a.family === 'IPv4' && !a.internal) res.push(a.address);
-  }
-  return res;
+let adresseEnCache = null;
+function calculerAdresse() {
+  const locales = reseau.adressesLocales();
+  const suffixePort = port === 80 ? '' : `:${port}`;
+  let base;
+  if (CONFIG_SERVEUR.adressePublique) base = CONFIG_SERVEUR.adressePublique;
+  else base = `http://${locales.length ? locales[0].ip : 'localhost'}${suffixePort}`;
+  return {
+    base,
+    complete: `${base}/jouer`,
+    // Version courte à recopier : l'adresse sans « http:// » (la racine mène à /jouer).
+    courte: base.replace(/^https?:\/\//, ''),
+    autres: CONFIG_SERVEUR.adressePublique ? [] : locales.slice(1).map((a) => `${a.ip}${suffixePort}`),
+    // Aucune carte réseau utilisable : les élèves ne pourront pas se connecter.
+    sansReseau: !CONFIG_SERVEUR.adressePublique && (!locales.length || locales[0].ip.startsWith('169.254.')),
+  };
 }
+function adresse() {
+  if (!adresseEnCache) adresseEnCache = calculerAdresse();
+  return adresseEnCache;
+}
+// Le PC peut changer de réseau (Wi-Fi, câble) : on recalcule régulièrement.
+setInterval(() => {
+  const nouvelle = calculerAdresse();
+  if (JSON.stringify(nouvelle) !== JSON.stringify(adresseEnCache)) {
+    adresseEnCache = nouvelle;
+    qrEnCache = null;
+    publicSale = true;
+    planifier();
+  }
+}, 15000);
 
-function adresseEleves() {
-  if (process.env.PUBLIC_URL) return process.env.PUBLIC_URL.replace(/\/$/, '');
-  const ip = adressesLocales()[0] || 'localhost';
-  return `http://${ip}${PORT === 80 ? '' : `:${PORT}`}`;
+let qrEnCache = null;
+async function qrSvg() {
+  if (!qrEnCache) {
+    qrEnCache = await QRCode.toString(adresse().complete, {
+      type: 'svg', margin: 1, errorCorrectionLevel: 'M', color: { dark: '#16161D', light: '#FFFFFF' },
+    });
+  }
+  return qrEnCache;
 }
 
 // ---------- HTTP ----------
@@ -51,10 +81,25 @@ function adresseEleves() {
 const app = express();
 app.disable('x-powered-by');
 app.get('/', (req, res) => res.redirect('/jouer'));
-for (const page of ['course', 'jouer', 'admin']) {
+for (const page of ['course', 'jouer', 'admin', 'test']) {
   app.get(`/${page}`, (req, res) => res.sendFile(path.join(PUBLIC, `${page}.html`)));
 }
-app.use(express.static(PUBLIC));
+// QR code de l'adresse élèves, généré sur place (aucun service externe).
+app.get('/qr.svg', async (req, res) => {
+  try {
+    res.type('image/svg+xml').set('Cache-Control', 'no-cache').send(await qrSvg());
+  } catch (e) {
+    console.error(e);
+    res.status(500).end();
+  }
+});
+// Pages, styles et scripts : toujours revérifiés (une mise à jour du jeu est vue tout de suite).
+// Polices et images : gardées en cache par les navigateurs.
+app.use(express.static(PUBLIC, {
+  setHeaders(res, fichier) {
+    res.set('Cache-Control', /\.(woff2|svg|png|jpe?g)$/.test(fichier) ? 'public, max-age=86400' : 'no-cache');
+  },
+}));
 
 const serveur = http.createServer(app);
 const io = new Server(serveur, { pingInterval: 10000, pingTimeout: 8000 });
@@ -70,14 +115,16 @@ function planifier() {
   if (!minuterie) minuterie = setTimeout(diffuser, 40);
 }
 
+function vueCourse() { return { ...partie.vuePublique({ avecCodes: true, avecEleves: true }), adresse: adresse() }; }
+function vueAdmin() { return { ...partie.vueAdmin(), adresse: adresse() }; }
+
 function diffuser() {
   minuterie = null;
   if (publicSale) {
     publicSale = false;
-    const adresse = adresseEleves();
-    io.to('course').emit('etat', { ...partie.vuePublique({ avecCodes: true, avecEleves: true }), adresse });
+    io.to('course').emit('etat', vueCourse());
     io.to('eleves').emit('etat', partie.vuePublique());
-    io.to('admin').emit('etat', { ...partie.vueAdmin(), adresse });
+    io.to('admin').emit('etat', vueAdmin());
   }
   for (const jeton of joueursSales) {
     const vue = partie.vueEleve(jeton);
@@ -133,16 +180,28 @@ function motDePasseValide(essai) {
 
 function donneesAdmin() {
   return {
-    parcours: banque.parcours.map((p) => ({ id: p.id, nom: p.nom, nb: p.questions.length })),
+    parcours: banque.parcours.map((p) => {
+      const types = new Set(p.questions.map((id) => (banque.questions.find((q) => q.id === id) || {}).type).filter(Boolean));
+      return { id: p.id, nom: p.nom, nb: p.questions.length, nbTypes: types.size };
+    }),
+    motDePasseParDefaut: MOT_DE_PASSE === 'robot',
   };
 }
 
 io.on('connection', (socket) => {
   const { role, jeton, motDePasse } = socket.handshake.auth || {};
 
+  // Page de diagnostic /test : aller-retour temps réel.
+  if (role === 'test') {
+    socket.on('ping-test', (envoi, rappel) => {
+      if (typeof rappel === 'function') rappel({ envoi, serveur: Date.now() });
+    });
+    return;
+  }
+
   if (role === 'course') {
     socket.join('course');
-    socket.emit('etat', { ...partie.vuePublique({ avecCodes: true, avecEleves: true }), adresse: adresseEleves() });
+    socket.emit('etat', vueCourse());
     return;
   }
 
@@ -154,7 +213,7 @@ io.on('connection', (socket) => {
     }
     socket.join('admin');
     socket.emit('admin:donnees', donneesAdmin());
-    socket.emit('etat', { ...partie.vueAdmin(), adresse: adresseEleves() });
+    socket.emit('etat', vueAdmin());
 
     gerer(socket, 'configurer', ({ parcoursId, nbEquipes, reglages }) => {
       const parcours = parcoursId !== undefined ? trouverParcours(parcoursId) : undefined;
@@ -171,6 +230,7 @@ io.on('connection', (socket) => {
     gerer(socket, 'regenererCodes', () => partie.regenererCodes());
     gerer(socket, 'retirerEleve', ({ jeton: j }) => partie.retirerEleve(j));
     gerer(socket, 'deplacerEleve', ({ jeton: j, equipeId }) => partie.deplacerEleve(j, equipeId));
+    gerer(socket, 'signalerEleve', ({ jeton: j, signale }) => partie.signalerEleve(j, signale));
     return;
   }
 
@@ -195,7 +255,7 @@ io.on('connection', (socket) => {
     const e = partie.equipes.find((x) => x.code === String(code || '').trim().toUpperCase());
     if (!e) return { equipe: null };
     const nb = [...partie.joueurs.values()].filter((j) => j.equipeId === e.id).length;
-    return { equipe: { id: e.id, nom: e.nom, couleur: e.couleur, symbole: e.symbole, texte: e.texte, nbEleves: nb } };
+    return { equipe: { id: e.id, nom: e.nom, couleur: e.couleur, symbole: e.symbole, texte: e.texte, clair: e.clair, nbEleves: nb } };
   });
   const moi = () => socket.data.jeton;
   gerer(socket, 'repondre', (d) => partie.repondre(moi(), d));
@@ -214,14 +274,33 @@ io.on('connection', (socket) => {
   });
 });
 
-serveur.listen(PORT, () => {
-  console.log('Robot Rush est lancé.');
-  console.log(`  Élèves      : ${adresseEleves()}`);
-  for (const ip of adressesLocales().slice(1)) console.log(`                (ou http://${ip}:${PORT})`);
-  console.log(`  Projecteur  : http://localhost:${PORT}/course`);
-  console.log(`  Professeur  : http://localhost:${PORT}/admin`);
-  if (!process.env.ADMIN_PASSWORD) {
-    console.log('  Attention : mot de passe professeur par défaut (« robot »). Définissez ADMIN_PASSWORD.');
+// ---------- Démarrage ----------
+
+reseau.ecouter(serveur, CONFIG_SERVEUR.port).then((p) => {
+  port = p;
+  adresseEnCache = null;
+  const a = adresse();
+  const ligne = '='.repeat(60);
+  console.log(ligne);
+  console.log('  ROBOT RUSH est lancé. Laissez cette fenêtre ouverte pendant le cours.');
+  console.log(ligne);
+  console.log(`  Adresse à donner aux élèves :  ${a.complete}`);
+  console.log(`  (version courte : ${a.courte})`);
+  for (const autre of a.autres) console.log(`  Autre réseau possible : ${autre}`);
+  if (a.sansReseau) console.log('  ATTENTION : aucun réseau détecté. Branchez le PC au réseau du collège.');
+  console.log('');
+  console.log(`  Projecteur  : http://localhost:${port}/course`);
+  console.log(`  Professeur  : http://localhost:${port}/admin`);
+  console.log(`  Diagnostic  : ${a.base}/test  (à ouvrir depuis un poste élève)`);
+  if (p !== CONFIG_SERVEUR.port) console.log(`  Le port ${CONFIG_SERVEUR.port} était occupé : le jeu utilise le port ${p}.`);
+  if (MOT_DE_PASSE === 'robot') {
+    console.log('  Mot de passe professeur : « robot » (par défaut, à changer dans config-serveur.json).');
   }
   console.log(`  Données     : ${stockage.DOSSIER}`);
+  console.log(ligne);
+  if (CONFIG_SERVEUR.ouvrirNavigateur) reseau.ouvrirNavigateur(`http://localhost:${port}/admin`);
+}).catch((e) => {
+  console.error('');
+  console.error(`Impossible de démarrer Robot Rush : ${e.message}`);
+  process.exit(1);
 });
