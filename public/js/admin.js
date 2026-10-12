@@ -32,8 +32,68 @@
   el('#robot-logo').innerHTML = robot({ couleur: '#16161D', symbole: 'etoile', taille: 32 });
 
   function envoyer(evenement, d = {}) {
+    if (!socket || !socket.connected) return Promise.resolve({ ok: false, erreur: 'Pas de connexion au serveur Robot Rush.' });
     return new Promise((resolve) => socket.emit(evenement, d, (r) => resolve(r || { ok: false, erreur: 'Pas de réponse du serveur.' })));
   }
+
+  // ---------- Noyau partagé avec les onglets Questions et Parcours (admin-*.js) ----------
+  const ecouteursBanque = [];
+  const Admin = window.Admin = {
+    envoyer,
+    banque: null,
+    /** Appelé à chaque nouvelle version de la banque (après une modification, ici ou dans un autre onglet). */
+    surBanque(fn) { ecouteursBanque.push(fn); if (Admin.banque) fn(Admin.banque); },
+    etatPartie: () => etat,
+    /** Message en haut de l'écran (succès ou erreur), effacé au bout de quelques secondes. */
+    bandeau(texte, erreur = false) {
+      const b = el('#bandeau-message');
+      b.hidden = !texte;
+      b.textContent = texte || '';
+      b.classList.toggle('erreur', erreur);
+      clearTimeout(Admin.bandeau.t);
+      if (texte) Admin.bandeau.t = setTimeout(() => { b.hidden = true; }, erreur ? 9000 : 4000);
+    },
+    /** Fenêtre modale. contenu : HTML ; renvoie l'élément (fermer avec Admin.fermerModale()). */
+    modale({ titre, contenu, large = false, fermer }) {
+      const fond = el('#fond-modale');
+      const m = el('#modale');
+      m.className = `modale ${large ? 'large' : ''}`;
+      m.innerHTML = `<div class="tete-modale"><b>${esc(titre)}</b><button class="mini-bouton" data-fermer type="button" aria-label="Fermer">×</button></div>
+        <div class="corps-modale">${contenu}</div>`;
+      fond.hidden = false;
+      Admin.surFermeture = fermer || null;
+      m.querySelector('[data-fermer]').addEventListener('click', () => Admin.fermerModale());
+      setTimeout(() => { const f = m.querySelector('input, textarea, select, button:not([data-fermer])'); if (f) f.focus(); }, 0);
+      return m;
+    },
+    fermerModale() {
+      el('#fond-modale').hidden = true;
+      el('#modale').innerHTML = '';
+      if (Admin.surFermeture) { const f = Admin.surFermeture; Admin.surFermeture = null; f(); }
+    },
+    /** Exécute une action et affiche son erreur éventuelle dans le bandeau. Renvoie la réponse du serveur. */
+    async action(evenement, d, succes) {
+      const r = await envoyer(evenement, d);
+      if (!r.ok) Admin.bandeau(r.erreur, true);
+      else if (succes) Admin.bandeau(typeof succes === 'function' ? succes(r) : succes);
+      return r;
+    },
+  };
+  document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape' && !el('#fond-modale').hidden) Admin.fermerModale(); });
+
+  // ---------- Onglets Partie / Questions / Parcours ----------
+  function onglet() {
+    const nom = ['questions', 'parcours'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'partie';
+    for (const v of ['partie', 'questions', 'parcours']) el(`#vue-${v}`).hidden = v !== nom;
+    document.querySelectorAll('.onglet').forEach((o) => {
+      o.classList.toggle('actif', o.dataset.onglet === nom);
+      if (o.dataset.onglet === nom) o.setAttribute('aria-current', 'page'); else o.removeAttribute('aria-current');
+    });
+    document.body.dataset.onglet = nom;
+    window.dispatchEvent(new CustomEvent('onglet', { detail: nom }));
+  }
+  window.addEventListener('hashchange', onglet);
+  onglet();
   function message(texte, erreur = false) {
     const m = el('#message');
     m.hidden = !texte;
@@ -64,6 +124,7 @@
     socket.on('admin:refuse', ({ erreur }) => { session.ecrire(null); montrerAcces(erreur); });
     socket.on('admin:donnees', (d) => { donnees = d; session.ecrire(mdp); el('#avert-mdp').hidden = !d.motDePasseParDefaut; remplirParcours(); });
     socket.on('etat', (e) => { etat = e; afficher(); });
+    socket.on('banque', (b) => { Admin.banque = b; for (const f of ecouteursBanque) f(b); });
     socket.on('disconnect', () => message('Connexion au serveur perdue… reconnexion en cours. Vérifiez que la fenêtre Robot Rush est toujours ouverte sur ce PC.', true));
     socket.on('connect', () => message(''));
     socket.on('connect_error', () => {
@@ -146,9 +207,69 @@
       b.classList.toggle('actif', Number(b.dataset.n) === etat.equipes.length);
       b.disabled = !lobby;
     });
+    el('#btn-paires').disabled = !lobby;
+    el('#btn-paires').title = lobby ? '' : 'Modifiable avant le départ de la course';
     el('#paires').innerHTML = etat.paires.map((x) =>
       `<div class="paire">${icone(x.obstacle.id, 22)}→${icone(x.solution.id, 22)}<span>${esc(majuscule(x.obstacle.nom))}</span></div>`).join('');
   }
+
+  // ---------- Paires obstacle / solution (« Modifier ») ----------
+  const GENRES = [['m', 'masculin (un)'], ['f', 'féminin (une)'], ['pl', 'pluriel (des)'], ['part-f', 'de la'], ['part-m', 'du']];
+  const ARTICLES = { m: ['un', 'le', 'son'], f: ['une', 'la', 'sa'], pl: ['des', 'les', 'ses'], 'part-f': ['de la', 'la', 'sa'], 'part-m': ['du', 'le', 'son'] };
+  // Même règle que le serveur (server/paires.js), pour l'exemple affiché en direct.
+  function formes(nom, genre) {
+    const [un, le, sa] = ARTICLES[genre] || ARTICLES.m;
+    const voyelle = /^[aeiouyhàâéèêëîïôöûü]/i.test(nom) && genre !== 'pl';
+    return {
+      un: voyelle && genre.startsWith('part') ? `de l'${nom}` : `${un} ${nom}`,
+      le: voyelle ? `l'${nom}` : `${le} ${nom}`,
+      sa: voyelle && sa === 'sa' ? `son ${nom}` : `${sa} ${nom}`,
+    };
+  }
+
+  function editerPaires() {
+    if (etat.etat !== 'lobby') { Admin.bandeau('Les obstacles se modifient avant le départ de la course.', true); return; }
+    let paires = (Admin.banque ? Admin.banque.paires : []).map((p) => JSON.parse(JSON.stringify(p)));
+    const choix = (sel) => GENRES.map(([v, t]) => `<option value="${v}" ${v === sel ? 'selected' : ''}>${t}</option>`).join('');
+    const m = Admin.modale({ titre: 'Obstacles et solutions', contenu: '<div id="liste-paires"></div>' });
+    function rendre() {
+      const ex = paires[0] ? formes(paires[0].obstacle.nom || 'obstacle', paires[0].obstacle.genre) : null;
+      const exS = paires[0] ? formes(paires[0].solution.nom || 'solution', paires[0].solution.genre) : null;
+      m.querySelector('#liste-paires').innerHTML = `
+        <p class="aide">Chaque obstacle est annulé par sa solution. Les icônes existent pour les 4 paires d'origine ; une nouvelle paire a une icône générique.</p>
+        <div class="grille-paires">
+          <span class="entete-col">Obstacle</span><span></span><span class="entete-col">Solution</span><span></span>
+          ${paires.map((p, i) => `
+            <span class="cellule-paire">${icone(p.obstacle.id || '?', 26)}<input data-i="${i}" data-cote="obstacle" data-champ="nom" value="${esc(p.obstacle.nom)}" maxlength="24" aria-label="Obstacle ${i + 1}">
+              <select data-i="${i}" data-cote="obstacle" data-champ="genre" aria-label="Genre de l'obstacle ${i + 1}">${choix(p.obstacle.genre)}</select></span>
+            <span class="fleche-paire">→</span>
+            <span class="cellule-paire">${icone(p.solution.id || '?', 26)}<input data-i="${i}" data-cote="solution" data-champ="nom" value="${esc(p.solution.nom)}" maxlength="24" aria-label="Solution ${i + 1}">
+              <select data-i="${i}" data-cote="solution" data-champ="genre" aria-label="Genre de la solution ${i + 1}">${choix(p.solution.genre)}</select></span>
+            <button class="mini-bouton retirer" data-retirer-paire="${i}" type="button" ${paires.length <= 2 ? 'disabled' : ''} aria-label="Retirer la paire ${i + 1}">×</button>`).join('')}
+        </div>
+        ${paires.length < 8 ? '<button class="lien-bouton" data-ajouter-paire type="button">+ Ajouter une paire</button>' : ''}
+        ${ex ? `<p class="exemple-paires">Exemple au projecteur : « <b>Bleue</b> envoie ${esc(ex.un)} à <b>Rouge</b> ! » · « <b>Rouge</b> franchit ${esc(ex.le)} avec ${esc(exS.sa)} »</p>` : ''}
+        <div class="actions-modale"><button class="btn" data-fermer type="button">Annuler</button>
+          <button class="btn btn-primaire" data-enregistrer-paires type="button">Enregistrer</button></div>`;
+      m.querySelectorAll('[data-fermer]').forEach((b) => b.addEventListener('click', () => Admin.fermerModale()));
+    }
+    m.addEventListener('input', (ev) => {
+      const c = ev.target.dataset;
+      if (c.champ) { paires[c.i][c.cote][c.champ] = ev.target.value; if (c.champ === 'genre') rendre(); }
+    });
+    m.addEventListener('change', (ev) => { if (ev.target.dataset.champ === 'genre') rendre(); });
+    m.addEventListener('click', async (ev) => {
+      if (ev.target.closest('[data-ajouter-paire]')) { paires.push({ obstacle: { nom: '', genre: 'm' }, solution: { nom: '', genre: 'm' } }); rendre(); }
+      const r = ev.target.closest('[data-retirer-paire]');
+      if (r) { paires.splice(Number(r.dataset.retirerPaire), 1); rendre(); }
+      if (ev.target.closest('[data-enregistrer-paires]')) {
+        const rep = await Admin.action('paires', { paires }, 'Obstacles et solutions enregistrés.');
+        if (rep.ok) Admin.fermerModale();
+      }
+    });
+    rendre();
+  }
+  el('#btn-paires').addEventListener('click', editerPaires);
 
   // ---------- Pilotage ----------
   el('#btn-demarrer').addEventListener('click', async () => {

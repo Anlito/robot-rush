@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Robot Rush · Aperçu élève</title>
+<link rel="stylesheet" href="/fonts/polices.css?v=4">
+<link rel="stylesheet" href="/css/commun.css?v=4">
+<link rel="stylesheet" href="/css/jouer.css?v=4">
+<style>
+  /* Aperçu affiché dans l'admin : même rendu que l'écran élève, sans bandeau d'état. */
+  body { min-width: 0; background: var(--papier); }
+  .zone { height: 100vh; }
+  .puce-apercu { background: var(--jaune); color: var(--encre); font-weight: 700; font-size: 15px; padding: 4px 10px; border-radius: 6px; }
+  .resultat { border: 3px solid var(--encre); border-radius: 16px; padding: 14px 18px; font-size: 20px; display: flex; flex-direction: column; gap: 6px; }
+  .resultat.juste { background: var(--solution); border-color: var(--correct-2); }
+  .resultat.faux { background: var(--obstacle); border-color: var(--danger); }
+  .resultat .grand { font-family: var(--f-titre); font-weight: 800; font-size: 30px; }
+  .resultat b.mono { font-family: var(--f-mono); }
+</style>
+</head>
+<body>
+<main class="zone" id="zone"><p class="aide-q">Chargement de l'aperçu…</p></main>
+<script src="/js/commun.js?v=4"></script>
+<script src="/js/blocs.js?v=4"></script>
+<script src="/js/questions.js?v=7"></script>
+<script>
+'use strict';
+(() => {
+  const { esc, el } = RR;
+  const TYPES = { qcm: 'QCM', ordre: 'Remise en ordre', calcul: 'Calcul', blocs: 'Blocs à assembler', completer: 'Programme à compléter' };
+  let composant = null;
+
+  /** Appelé par l'admin : q = question préparée par le serveur ; repondre(reponse) → Promise de { correct, donnee, bonne, explication }. */
+  window.demarrerApercu = (q, repondre) => {
+    if (composant) composant.detruire();
+    const zone = el('#zone');
+    composant = RR.questions.creer(q, {
+      message: (t) => { el('#message-zone').textContent = t || ''; },
+      async repondre(reponse) {
+        const r = await repondre(reponse);
+        if (!r.ok) { el('#message-zone').textContent = r.erreur; return r; }
+        const res = el('#resultat');
+        res.hidden = false;
+        res.className = `resultat ${r.correct ? 'juste' : 'faux'}`;
+        res.innerHTML = r.correct
+          ? `<span class="grand">Bonne réponse !</span>${r.explication ? `<span>${esc(r.explication)}</span>` : ''}`
+          : `<span class="grand">Pas cette fois.</span>
+             <span>Réponse donnée : <b class="mono">${esc(r.donnee ?? '—')}</b></span>
+             <span>Bonne réponse : <b class="mono">${esc(r.bonne)}</b></span>${r.explication ? `<span>${esc(r.explication)}</span>` : ''}`;
+        res.scrollIntoView({ block: 'nearest' });
+        return { ok: true };
+      },
+    });
+    zone.innerHTML = `<div class="entete-q"><span class="puce-apercu">Aperçu élève</span><span class="puce-type">${TYPES[q.type] || q.type}</span></div>
+      <h2 class="enonce">${RR.questions.enonce(q.enonce)}</h2>
+      ${q.image ? `<img class="image-q" src="${esc(q.image)}" alt="">` : ''}
+      <div class="corps-q corps-${esc(q.type)}">${composant ? composant.html : ''}</div>
+      <div class="message-zone" id="message-zone" role="alert"></div>
+      <div id="resultat" class="resultat" hidden role="status"></div>`;
+    if (composant) composant.monter(el('#zone .corps-q'));
+  };
+  document.addEventListener('keydown', (ev) => {
+    if (!composant || ['INPUT', 'SELECT', 'TEXTAREA'].includes(ev.target.tagName) || ev.target.closest('.zone-blocs')) return;
+    if (composant.touche(ev)) ev.preventDefault();
+  });
+})();
+</script>
+</body>
+</html>

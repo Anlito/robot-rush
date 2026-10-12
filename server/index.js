@@ -7,6 +7,11 @@ const express = require('express');
 const { Server } = require('socket.io');
 const QRCode = require('qrcode');
 const { Partie, ErreurJeu } = require('./jeu');
+const { Banque, ErreurBanque, NIVEAUX, nettoyerQuestion, versionJouable, probleme } = require('./banque');
+const { TYPES } = require('./types');
+const blocs = require('./blocs');
+const images = require('./images');
+const { nettoyerPaires, genreDe } = require('./paires');
 const stockage = require('./stockage');
 const reseau = require('./reseau');
 
@@ -17,20 +22,36 @@ let port = CONFIG_SERVEUR.port; // peut changer si le port est déjà pris
 
 // ---------- Données ----------
 
-const banque = { questions: stockage.charger('questions'), parcours: stockage.charger('parcours') };
+// Chaque modification de la banque est enregistrée aussitôt dans data/ (sauvegarde automatique).
+const banque = new Banque({
+  questions: stockage.charger('questions'),
+  parcours: stockage.charger('parcours'),
+  sauver: stockage.sauver,
+  images: {
+    versDataUri: (chemin) => images.versDataUri(stockage.DOSSIER_IMAGES, chemin),
+    depuisDataUri: (uri) => images.depuisDataUri(stockage.DOSSIER_IMAGES, uri),
+  },
+});
 const config = stockage.charger('config');
 
 function trouverParcours(id) {
-  return banque.parcours.find((p) => p.id === id) || banque.parcours[0] || null;
+  return banque.unParcours(id) || banque.parcours[0] || null;
 }
 
 const partie = new Partie({
-  questions: banque.questions,
+  questions: banque.questionsJouables(),
   parcours: trouverParcours(config.parcoursId),
   reglages: config.reglages,
   paires: config.paires,
   nbEquipes: config.nbEquipes,
 });
+
+// Après une modification de la banque : la salle d'attente prend la nouvelle version.
+// Pendant une course, les questions en cours ne changent pas (elles seront à jour à la partie suivante).
+function rafraichirPartie() {
+  if (partie.etat !== 'lobby') return;
+  partie.configurer({ questions: banque.questionsJouables(), parcours: trouverParcours(partie.parcours && partie.parcours.id) });
+}
 
 // ---------- Adresse à donner aux élèves ----------
 
@@ -93,6 +114,14 @@ app.get('/qr.svg', async (req, res) => {
     res.status(500).end();
   }
 });
+// Images des questions. Le bac à sable (CSP « sandbox ») empêche un SVG piégé d'exécuter du code.
+app.use('/images', express.static(stockage.DOSSIER_IMAGES, {
+  fallthrough: false,
+  setHeaders(res) {
+    res.set({ 'Cache-Control': 'public, max-age=86400', 'X-Content-Type-Options': 'nosniff',
+      'Content-Security-Policy': "default-src 'none'; style-src 'unsafe-inline'; sandbox" });
+  },
+}));
 // Pages, styles et scripts : toujours revérifiés (une mise à jour du jeu est vue tout de suite).
 // Polices et images : gardées en cache par les navigateurs.
 app.use(express.static(PUBLIC, {
@@ -102,7 +131,8 @@ app.use(express.static(PUBLIC, {
 }));
 
 const serveur = http.createServer(app);
-const io = new Server(serveur, { pingInterval: 10000, pingTimeout: 8000 });
+// 10 Mo par message : de quoi importer une banque avec ses images (les réponses d'élèves sont limitées ailleurs).
+const io = new Server(serveur, { pingInterval: 10000, pingTimeout: 8000, maxHttpBufferSize: 10e6 });
 
 // ---------- Diffusion de l'état (regroupée pour rester fluide à 60 élèves) ----------
 
@@ -158,7 +188,7 @@ function gerer(socket, nom, fn) {
       const r = fn(donnees || {});
       repondre({ ok: true, ...(r || {}) });
     } catch (e) {
-      if (e instanceof ErreurJeu) repondre({ ok: false, erreur: e.message });
+      if (e instanceof ErreurJeu || e instanceof ErreurBanque || e instanceof images.ErreurImage) repondre({ ok: false, erreur: e.message });
       else { console.error(e); repondre({ ok: false, erreur: 'Erreur interne du serveur.' }); }
     }
   });
@@ -181,11 +211,31 @@ function motDePasseValide(essai) {
 function donneesAdmin() {
   return {
     parcours: banque.parcours.map((p) => {
-      const types = new Set(p.questions.map((id) => (banque.questions.find((q) => q.id === id) || {}).type).filter(Boolean));
-      return { id: p.id, nom: p.nom, nb: p.questions.length, nbTypes: types.size };
+      const types = new Set(p.questions.map((id) => (banque.question(id) || {}).type).filter(Boolean));
+      return { id: p.id, nom: p.nom, nb: p.questions.length, nbTypes: types.size, reglages: p.reglages };
     }),
     motDePasseParDefaut: MOT_DE_PASSE === 'robot',
   };
+}
+
+// Banque complète pour les éditeurs (onglets Questions et Parcours).
+function vueBanque() {
+  return {
+    ...banque.vue(),
+    paires: partie.paires.map((p) => ({
+      obstacle: { ...p.obstacle, genre: genreDe(p.obstacle) },
+      solution: { ...p.solution, genre: genreDe(p.solution) },
+    })),
+    blocsDisponibles: blocs.BLOCS_DISPONIBLES,
+    niveaux: NIVEAUX,
+  };
+}
+
+// Toutes les fenêtres admin ouvertes voient la même banque.
+function banqueModifiee() {
+  rafraichirPartie();
+  io.to('admin').emit('banque', vueBanque());
+  io.to('admin').emit('admin:donnees', donneesAdmin());
 }
 
 io.on('connection', (socket) => {
@@ -215,18 +265,81 @@ io.on('connection', (socket) => {
     socket.emit('admin:donnees', donneesAdmin());
     socket.emit('etat', vueAdmin());
 
+    socket.emit('banque', vueBanque());
+
+    function sauverConfig() {
+      Object.assign(config, { reglages: partie.reglages, nbEquipes: partie.equipes.length,
+        parcoursId: partie.parcours ? partie.parcours.id : null, paires: partie.paires });
+      stockage.sauver('config', config);
+    }
+
+    // ----- Partie -----
     gerer(socket, 'configurer', ({ parcoursId, nbEquipes, reglages }) => {
       const parcours = parcoursId !== undefined ? trouverParcours(parcoursId) : undefined;
-      partie.configurer({ parcours, nbEquipes, reglages });
-      Object.assign(config, { reglages: partie.reglages, nbEquipes: partie.equipes.length,
-        parcoursId: partie.parcours ? partie.parcours.id : null });
-      stockage.sauver('config', config);
+      // Choisir un parcours applique sa durée et sa longueur de piste (modifiables ensuite).
+      const fusion = parcours ? { ...(parcours.reglages || {}), ...(reglages || {}) } : reglages;
+      partie.configurer({ parcours, nbEquipes, reglages: fusion, questions: parcours ? banque.questionsJouables() : undefined });
+      sauverConfig();
     });
     gerer(socket, 'demarrer', ({ forcer }) => partie.demarrer({ forcer }));
     gerer(socket, 'pause', () => partie.pause());
     gerer(socket, 'reprendre', () => partie.reprendre());
     gerer(socket, 'arreter', () => partie.arreter());
-    gerer(socket, 'nouvellePartie', ({ garderEquipes }) => partie.nouvellePartie({ garderEquipes }));
+    gerer(socket, 'nouvellePartie', ({ garderEquipes }) => {
+      partie.nouvellePartie({ garderEquipes });
+      rafraichirPartie(); // questions modifiées pendant la course : prises en compte maintenant
+    });
+    gerer(socket, 'paires', ({ paires }) => {
+      if (partie.etat !== 'lobby') throw new ErreurBanque('Les obstacles se modifient avant le départ de la course.');
+      partie.configurer({ paires: nettoyerPaires(paires, (m) => { throw new ErreurBanque(m); }) });
+      sauverConfig();
+      banqueModifiee();
+    });
+
+    // ----- Banque de questions et parcours (sauvegarde automatique à chaque appel) -----
+    const modif = (nom, fn) => gerer(socket, nom, (d) => { const r = fn(d); banqueModifiee(); return r; });
+    modif('question:enregistrer', ({ question }) => banque.enregistrerQuestion(question));
+    modif('question:dupliquer', ({ id }) => banque.dupliquerQuestion(id));
+    modif('question:supprimer', ({ id }) => banque.supprimerQuestion(id));
+    modif('parcours:enregistrer', ({ parcours }) => banque.enregistrerParcours(parcours));
+    modif('parcours:dupliquer', ({ id }) => banque.dupliquerParcours(id));
+    modif('parcours:supprimer', ({ id }) => {
+      if (partie.parcours && partie.parcours.id === id && partie.etat !== 'lobby') {
+        throw new ErreurBanque('Ce parcours est utilisé par la course en cours : arrêtez-la avant de le supprimer.');
+      }
+      return banque.supprimerParcours(id);
+    });
+    modif('importer', ({ donnees, mode }) => ({ rapport: banque.importer(donnees, { mode: mode === 'remplacer' ? 'remplacer' : 'ajouter' }) }));
+    gerer(socket, 'exporter', ({ parcoursIds }) => ({ fichier: banque.exporter({ parcoursIds: Array.isArray(parcoursIds) ? parcoursIds : null }) }));
+
+    gerer(socket, 'image:envoyer', ({ donnees }) => {
+      const buffer = Buffer.isBuffer(donnees) ? donnees : donnees instanceof ArrayBuffer ? Buffer.from(donnees) : null;
+      if (!buffer) throw new images.ErreurImage('Image illisible.');
+      return { chemin: images.enregistrer(stockage.DOSSIER_IMAGES, buffer) };
+    });
+
+    // Blocs : conversions pour l'éditeur (assembler une séquence acceptée dans Blockly).
+    gerer(socket, 'blocs:lire', ({ sauvegarde }) => {
+      const lu = blocs.depuisBlockly(sauvegarde);
+      return { sequence: lu.programme, texte: blocs.texteProgramme(lu.programme), incomplets: lu.incomplets, horsProgramme: lu.horsProgramme };
+    });
+    gerer(socket, 'blocs:versBlockly', ({ sequence }) => ({ sauvegarde: blocs.versBlockly(Array.isArray(sequence) ? sequence : []) }));
+
+    // Aperçu élève : la question (même non enregistrée) préparée et validée comme en partie.
+    gerer(socket, 'apercu:preparer', ({ question }) => {
+      const q = versionJouable(nettoyerQuestion(question));
+      const pb = probleme(q);
+      if (pb) throw new ErreurBanque(`Aperçu impossible : ${pb}.`);
+      const { vue, prive } = TYPES[q.type].preparer(q, Math.random);
+      socket.data.apercu = { q, prive };
+      return { question: { id: 'apercu', type: q.type, enonce: q.enonce, image: q.image, ...vue } };
+    });
+    gerer(socket, 'apercu:repondre', ({ reponse }) => {
+      const a = socket.data.apercu;
+      if (!a) throw new ErreurBanque('Ouvrez d\'abord l\'aperçu.');
+      const correct = TYPES[a.q.type].valider(a.q, reponse, a.prive);
+      return { correct, ...TYPES[a.q.type].textes(a.q, reponse, a.prive), explication: a.q.explication };
+    });
     gerer(socket, 'regenererCodes', () => partie.regenererCodes());
     gerer(socket, 'retirerEleve', ({ jeton: j }) => partie.retirerEleve(j));
     gerer(socket, 'deplacerEleve', ({ jeton: j, equipeId }) => partie.deplacerEleve(j, equipeId));

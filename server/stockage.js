@@ -10,7 +10,10 @@ const { REGLAGES_DEFAUT, PAIRES_DEFAUT } = require('./constantes');
 
 const RACINE = path.join(__dirname, '..');
 const DOSSIER = path.resolve(process.env.DATA_DIR || path.join(RACINE, 'data'));
+const DOSSIER_IMAGES = path.join(DOSSIER, 'images');
+const DOSSIER_SAUVEGARDES = path.join(DOSSIER, 'sauvegardes');
 const SEED = path.join(RACINE, 'seed');
+const JOURS_DE_SAUVEGARDE = 30;
 
 const FICHIERS = {
   questions: { nom: 'questions.json', defaut: () => lireJson(path.join(SEED, 'questions.json')) },
@@ -22,6 +25,8 @@ function lireJson(fichier) {
   return JSON.parse(fs.readFileSync(fichier, 'utf8'));
 }
 
+const aujourdhui = () => new Date().toISOString().slice(0, 10);
+
 function charger(cle) {
   const { nom, defaut } = FICHIERS[cle];
   const fichier = path.join(DOSSIER, nom);
@@ -30,16 +35,46 @@ function charger(cle) {
     sauver(cle, valeur);
     return valeur;
   }
-  return lireJson(fichier);
+  try {
+    return lireJson(fichier);
+  } catch (e) {
+    // Fichier abîmé (modifié à la main, coupure de courant…) : on le met de côté au lieu de planter.
+    const mis = path.join(DOSSIER, `${nom.replace('.json', '')}-illisible-${aujourdhui()}-${Date.now()}.json`);
+    fs.renameSync(fichier, mis);
+    console.error(`\n  ATTENTION : le fichier ${nom} était illisible (${e.message}).`);
+    console.error(`  Il a été mis de côté sous le nom ${path.basename(mis)}.`);
+    console.error(`  Des copies de sécurité se trouvent dans ${DOSSIER_SAUVEGARDES}.\n`);
+    const valeur = defaut();
+    sauver(cle, valeur);
+    return valeur;
+  }
+}
+
+// Une copie de sécurité par jour et par fichier, gardée 30 jours.
+const sauvegardesDuJour = new Set();
+function copieDeSecurite(cle, fichier) {
+  const jour = aujourdhui();
+  if (sauvegardesDuJour.has(`${cle}-${jour}`) || !fs.existsSync(fichier)) return;
+  sauvegardesDuJour.add(`${cle}-${jour}`);
+  fs.mkdirSync(DOSSIER_SAUVEGARDES, { recursive: true });
+  const copie = path.join(DOSSIER_SAUVEGARDES, `${cle}-${jour}.json`);
+  if (!fs.existsSync(copie)) fs.copyFileSync(fichier, copie);
+  // Ménage des copies trop anciennes.
+  const limite = Date.now() - JOURS_DE_SAUVEGARDE * 86400000;
+  for (const f of fs.readdirSync(DOSSIER_SAUVEGARDES)) {
+    const p = path.join(DOSSIER_SAUVEGARDES, f);
+    if (fs.statSync(p).mtimeMs < limite) fs.rmSync(p);
+  }
 }
 
 function sauver(cle, valeur) {
   fs.mkdirSync(DOSSIER, { recursive: true });
   const fichier = path.join(DOSSIER, FICHIERS[cle].nom);
+  if (cle !== 'config') copieDeSecurite(cle, fichier);
   // Écriture atomique : un fichier temporaire puis renommage.
   const tmp = `${fichier}.tmp`;
   fs.writeFileSync(tmp, JSON.stringify(valeur, null, 2), 'utf8');
   fs.renameSync(tmp, fichier);
 }
 
-module.exports = { charger, sauver, DOSSIER };
+module.exports = { charger, sauver, DOSSIER, DOSSIER_IMAGES };

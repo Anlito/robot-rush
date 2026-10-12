@@ -5,9 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Robot Rush · Professeur</title>
 <link rel="icon" href="/assets/robots/robot-verte-normal.svg">
-<link rel="stylesheet" href="/fonts/polices.css?v=3">
-<link rel="stylesheet" href="/css/commun.css?v=3">
-<link rel="stylesheet" href="/css/admin.css?v=3">
+<link rel="stylesheet" href="/fonts/polices.css?v=4">
+<link rel="stylesheet" href="/css/commun.css?v=4">
+<link rel="stylesheet" href="/css/admin.css?v=4">
+<link rel="stylesheet" href="/css/admin-banque.css?v=4">
 </head>
 <body>
 
@@ -27,15 +28,20 @@
   <header class="barre-admin">
     <div class="logo"><span id="robot-logo"></span><b>Robot Rush</b><span class="gris">Admin</span></div>
     <nav class="onglets">
-      <a class="onglet actif" href="#">Partie</a>
-      <span class="onglet inactif" title="Arrive à l'étape 4">Questions</span>
-      <span class="onglet inactif" title="Arrive à l'étape 4">Parcours</span>
+      <a class="onglet actif" href="#partie" data-onglet="partie">Partie</a>
+      <a class="onglet" href="#questions" data-onglet="questions">Questions</a>
+      <a class="onglet" href="#parcours" data-onglet="parcours">Parcours</a>
     </nav>
-    <div class="liens"><span>Ouvrir <a href="/course" target="_blank" rel="noopener">/course</a> au projecteur</span>
+    <div class="liens">
+      <span class="lien-partie">Ouvrir <a href="/course" target="_blank" rel="noopener">/course</a> au projecteur</span>
+      <button class="btn btn-petit lien-banque" id="btn-importer" type="button">Importer JSON</button>
+      <button class="btn btn-petit lien-banque" id="btn-exporter" type="button">Exporter JSON</button>
+      <input type="file" id="fichier-import" accept=".json,application/json" hidden>
       <button class="lien-bouton" id="btn-deconnexion" type="button">Déconnexion</button></div>
   </header>
+  <p class="bandeau-message" id="bandeau-message" role="status" hidden></p>
 
-  <div class="mise-en-page">
+  <div class="mise-en-page vue-admin" id="vue-partie">
     <!-- Colonne de lancement -->
     <aside class="colonne">
       <div class="champ"><label for="parcours">Parcours</label>
@@ -48,7 +54,7 @@
           <span>Solution garantie : pendant un blocage, le tirage contient toujours la solution qui débloque <span class="gris">(décoché : hasard total)</span></span></label>
       </div>
 
-      <div class="champ"><div class="ligne-titre"><label>Obstacles → solutions</label><span class="lien-inactif" title="Arrive à l'étape 4">Modifier</span></div>
+      <div class="champ"><div class="ligne-titre"><label>Obstacles → solutions</label><button class="lien-bouton lien-petit" id="btn-paires" type="button">Modifier</button></div>
         <div class="paires" id="paires"></div></div>
       <p class="erreur" id="erreur-config" role="alert" hidden></p>
       <p class="aide avert-mdp" id="avert-mdp" hidden>Le mot de passe est encore « robot ». Pour le changer : ouvrir le fichier <code>config-serveur.json</code> du dossier Robot Rush avec le Bloc-notes, modifier <code>motDePasse</code>, puis relancer le jeu.</p>
@@ -97,10 +103,44 @@
       <div class="cartes-equipes" id="equipes"></div>
     </main>
   </div>
+
+  <!-- C2 · Questions -->
+  <div class="vue-admin vue-questions" id="vue-questions" hidden>
+    <aside class="liste-questions">
+      <div class="outils-liste">
+        <div class="ligne-recherche"><input type="search" id="recherche-q" placeholder="Rechercher une question…" aria-label="Rechercher une question">
+          <button class="btn btn-primaire" id="btn-nouvelle-q" type="button">+ Nouvelle</button></div>
+        <div class="filtres" id="filtres-q"></div>
+      </div>
+      <div class="lignes-q" id="lignes-q" role="listbox" aria-label="Banque de questions"></div>
+    </aside>
+    <section class="editeur-q" id="editeur-q"></section>
+  </div>
+
+  <!-- C3 · Parcours -->
+  <div class="vue-admin vue-parcours" id="vue-parcours" hidden>
+    <aside class="liste-parcours">
+      <button class="btn btn-primaire btn-large" id="btn-nouveau-p" type="button">+ Nouveau parcours</button>
+      <div id="cartes-p"></div>
+    </aside>
+    <section class="editeur-p" id="editeur-p"></section>
+    <aside class="banque-p">
+      <b>Banque de questions</b>
+      <input type="search" id="recherche-banque-p" placeholder="Rechercher…" aria-label="Rechercher dans la banque">
+      <div class="lignes-banque" id="lignes-banque-p"></div>
+    </aside>
+  </div>
 </div>
 
+<!-- Fenêtres (aperçu, blocs, paires, import) -->
+<div class="fond-modale" id="fond-modale" hidden><div class="modale" id="modale" role="dialog" aria-modal="true"></div></div>
+
 <script src="/socket.io/socket.io.js"></script>
-<script src="/js/commun.js?v=3"></script>
-<script src="/js/admin.js?v=3"></script>
+<script src="/js/commun.js?v=4"></script>
+<script src="/js/blocs.js?v=4"></script>
+<script src="/js/admin.js?v=4"></script>
+<script src="/js/admin-questions.js?v=4"></script>
+<script src="/js/admin-parcours.js?v=5"></script>
+<script src="/js/admin-fichiers.js?v=4"></script>
 </body>
 </html>

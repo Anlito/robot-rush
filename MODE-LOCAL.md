@@ -111,6 +111,10 @@ Les variables d'environnement `ADMIN_PASSWORD` et `PORT` restent possibles et so
 
 ## 9. Sauvegarder ses questions
 
-Tout est enregistré automatiquement dans le dossier **`data/`** du dossier Robot Rush.
-Pour sauvegarder ou transférer vos questions sur un autre PC, copiez ce dossier
-(l'export / import depuis l'espace professeur arrive avec l'éditeur de questions).
+Tout est enregistré automatiquement dans le dossier **`data/`** du dossier Robot Rush, à chaque modification.
+Une copie de sécurité est faite chaque jour dans `data/sauvegardes/` (gardée 30 jours).
+
+Pour transférer vos questions sur un autre PC ou les partager avec un collègue : dans l'espace professeur,
+bouton **Exporter JSON** (en haut, onglets Questions ou Parcours). Le fichier contient les questions, les parcours
+et les images. Sur l'autre PC : **Importer JSON**, puis « Ajouter à ma banque » ou « Remplacer ma banque ».
+On peut aussi copier tout le dossier `data/`.

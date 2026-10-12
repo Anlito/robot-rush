@@ -234,6 +234,14 @@ RR.blocs = (() => {
     return {
       sauvegarder: () => B.serialization.workspaces.save(ws),
       effacer: depart,
+      /** Recharge un programme (sauvegarde Blockly), par exemple une séquence acceptée à modifier. */
+      charger(sauvegarde) {
+        B.Events.disable();
+        try { ws.clear(); B.serialization.workspaces.load(sauvegarde, ws); } finally { B.Events.enable(); }
+        for (const b of ws.getTopBlocks(false)) if (b.type === 'programme') b.setDeletable(false);
+        ws.clearUndo();
+        ws.scroll(0, 0);
+      },
       // Recompté à la demande : les événements de Blockly arrivent en différé (et plus tard encore
       // quand la fenêtre n'est pas au premier plan).
       horsProgramme: () => { majHorsProgramme(); return hors; },
