@@ -1,0 +1,883 @@
+{
+  "format": "robot-rush",
+  "version": 1,
+  "exporteLe": "2026-10-13T21:09:55.444Z",
+  "questions": [
+    {
+      "id": "q-1",
+      "type": "calcul",
+      "niveau": "5e",
+      "titre": "Priorités opératoires",
+      "enonce": "Calcule : 3 + 4 × 5",
+      "image": null,
+      "duree_s": null,
+      "explication": "La multiplication est prioritaire : 4 × 5 = 20, puis 3 + 20 = 23.",
+      "donnees": {
+        "reponse": 23,
+        "unite": null
+      }
+    },
+    {
+      "id": "q-2",
+      "type": "ordre",
+      "niveau": "5e",
+      "titre": "Nombres relatifs à ranger",
+      "enonce": "Range ces nombres du plus petit au plus grand.",
+      "image": null,
+      "duree_s": null,
+      "explication": "Sur la droite graduée, les négatifs sont à gauche de zéro : −5 < −2 < 0 < 3 < 7.",
+      "donnees": {
+        "elements": [
+          "−5",
+          "−2",
+          "0",
+          "3",
+          "7"
+        ]
+      }
+    },
+    {
+      "id": "q-3",
+      "type": "calcul",
+      "niveau": "5e",
+      "titre": "Aire d'un triangle",
+      "enonce": "Un triangle a une base de 8 cm et une hauteur de 5 cm. Quelle est son aire ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "Aire = base × hauteur ÷ 2 = 8 × 5 ÷ 2 = 20 cm².",
+      "donnees": {
+        "reponse": 20,
+        "unite": "cm²"
+      }
+    },
+    {
+      "id": "q-4",
+      "type": "calcul",
+      "niveau": "4e",
+      "titre": "Pythagore : hypoténuse",
+      "enonce": "Un triangle est rectangle, avec deux côtés de l'angle droit de 6 cm et 8 cm. Quelle est la longueur de l'hypoténuse ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "BC² = 6² + 8² = 36 + 64 = 100, donc BC = 10 cm.",
+      "donnees": {
+        "reponse": 10,
+        "unite": "cm"
+      }
+    },
+    {
+      "id": "q-5",
+      "type": "qcm",
+      "niveau": "4e",
+      "titre": "Égalité de Pythagore",
+      "enonce": "Le triangle ABC est rectangle en A. Quelle égalité est vraie ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "L'hypoténuse est le côté opposé à l'angle droit, ici [BC] : BC² = AB² + AC².",
+      "donnees": {
+        "choix": [
+          "BC² = AB² + AC²",
+          "AB² = BC² + AC²",
+          "BC = AB + AC",
+          "AC² = AB² + BC²"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-6",
+      "type": "calcul",
+      "niveau": "4e",
+      "titre": "Puissance de 2",
+      "enonce": "Calcule : 2⁵",
+      "image": null,
+      "duree_s": null,
+      "explication": "2⁵ = 2 × 2 × 2 × 2 × 2 = 32.",
+      "donnees": {
+        "reponse": 32,
+        "unite": null
+      }
+    },
+    {
+      "id": "q-7",
+      "type": "calcul",
+      "niveau": "4e",
+      "titre": "Résoudre une équation",
+      "enonce": "Résous l'équation 3x + 5 = 20. Quelle est la valeur de x ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "3x = 20 − 5 = 15, donc x = 15 ÷ 3 = 5.",
+      "donnees": {
+        "reponse": 5,
+        "unite": null
+      }
+    },
+    {
+      "id": "q-8",
+      "type": "calcul",
+      "niveau": "5e",
+      "titre": "Proportionnalité : prix",
+      "enonce": "3 kg de pommes coûtent 7,50 €. Combien coûtent 5 kg de pommes ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "1 kg coûte 7,50 ÷ 3 = 2,50 €, donc 5 kg coûtent 2,50 × 5 = 12,50 €.",
+      "donnees": {
+        "reponse": 12.5,
+        "unite": "€"
+      }
+    },
+    {
+      "id": "q-9",
+      "type": "qcm",
+      "niveau": "5e",
+      "titre": "Homophones a / à, et / est",
+      "enonce": "Quelle phrase est correctement écrite ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "« a » est le verbe avoir (il avait), « et » relie deux éléments (et = et puis), « est » est le verbe être (il était).",
+      "donnees": {
+        "choix": [
+          "Il a un chien et il est gentil.",
+          "Il à un chien et il est gentil.",
+          "Il a un chien est il est gentil.",
+          "Il à un chien et il et gentil."
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-10",
+      "type": "completer",
+      "niveau": "5e",
+      "titre": "Passé composé avec être",
+      "enonce": "Complète la phrase en conjuguant le verbe « aller » au passé composé.",
+      "image": null,
+      "duree_s": null,
+      "explication": "Avec l'auxiliaire être, le participe passé s'accorde avec le sujet : nous (pluriel) → allés.",
+      "donnees": {
+        "version": "texte",
+        "texte": "Hier, nous ___ au cinéma.",
+        "mode": "liste",
+        "trous": [
+          {
+            "bonne": "sommes allés",
+            "distracteurs": [
+              "sommes allé",
+              "avons allé",
+              "somme allés"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "q-11",
+      "type": "qcm",
+      "niveau": "4e",
+      "titre": "Accord du participe passé",
+      "enonce": "Choisis la bonne orthographe : « Les fleurs que j'ai ___ sont belles. »",
+      "image": null,
+      "duree_s": null,
+      "explication": "Avec l'auxiliaire avoir, le participe s'accorde avec le COD placé avant le verbe : « que » remplace « les fleurs » (féminin pluriel).",
+      "donnees": {
+        "choix": [
+          "cueillies",
+          "cueilli",
+          "cueillis",
+          "cueillit"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-12",
+      "type": "qcm",
+      "niveau": "4e",
+      "titre": "Le passé simple",
+      "enonce": "Quel est le passé simple de « il chante » ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "Le passé simple est le temps des récits écrits : il chanta.",
+      "donnees": {
+        "choix": [
+          "il chanta",
+          "il chantait",
+          "il a chanté",
+          "il chantera"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-13",
+      "type": "qcm",
+      "niveau": "4e",
+      "titre": "Figure de style",
+      "enonce": "« Il est fort comme un lion » est…",
+      "image": null,
+      "duree_s": null,
+      "explication": "La comparaison rapproche deux éléments grâce à un mot de comparaison (ici « comme »). Une métaphore n'en a pas.",
+      "donnees": {
+        "choix": [
+          "Une comparaison",
+          "Une métaphore",
+          "Une hyperbole",
+          "Une personnification"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-14",
+      "type": "ordre",
+      "niveau": "5e",
+      "titre": "Schéma narratif",
+      "enonce": "Remets dans l'ordre les étapes du schéma narratif d'un récit.",
+      "image": null,
+      "duree_s": null,
+      "explication": "Un récit commence par une situation stable, qu'un événement vient bousculer, puis l'histoire se dénoue.",
+      "donnees": {
+        "elements": [
+          "Situation initiale",
+          "Élément perturbateur",
+          "Péripéties",
+          "Dénouement",
+          "Situation finale"
+        ]
+      }
+    },
+    {
+      "id": "q-15",
+      "type": "qcm",
+      "niveau": "5e",
+      "titre": "Charlemagne empereur",
+      "enonce": "En quelle année Charlemagne est-il couronné empereur ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "Le pape Léon III couronne Charlemagne empereur à Rome, la nuit de Noël de l'an 800.",
+      "donnees": {
+        "choix": [
+          "476",
+          "800",
+          "1066",
+          "1492"
+        ],
+        "bonne": 1
+      }
+    },
+    {
+      "id": "q-16",
+      "type": "qcm",
+      "niveau": "5e",
+      "titre": "Gutenberg",
+      "enonce": "Quelle invention de Gutenberg, vers 1450, a permis de diffuser les idées plus vite ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "L'imprimerie à caractères mobiles permet de produire beaucoup de livres, plus vite et moins cher.",
+      "donnees": {
+        "choix": [
+          "La boussole",
+          "L'imprimerie à caractères mobiles",
+          "La poudre à canon",
+          "L'horloge"
+        ],
+        "bonne": 1
+      }
+    },
+    {
+      "id": "q-17",
+      "type": "ordre",
+      "niveau": "5e",
+      "titre": "Frise du Moyen Âge à la Renaissance",
+      "enonce": "Remets ces événements dans l'ordre chronologique.",
+      "image": null,
+      "duree_s": null,
+      "explication": "Chute de Rome (476), Charlemagne (800), première croisade (1096), chute de Constantinople (1453), Colomb en Amérique (1492).",
+      "donnees": {
+        "elements": [
+          "Chute de l'Empire romain d'Occident",
+          "Couronnement de Charlemagne",
+          "Première croisade",
+          "Prise de Constantinople par les Ottomans",
+          "Premier voyage de Christophe Colomb"
+        ]
+      }
+    },
+    {
+      "id": "q-18",
+      "type": "qcm",
+      "niveau": "4e",
+      "titre": "Début de la Révolution",
+      "enonce": "En quelle année commence la Révolution française ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "La Révolution commence en 1789 : États généraux, puis prise de la Bastille le 14 juillet.",
+      "donnees": {
+        "choix": [
+          "1715",
+          "1789",
+          "1815",
+          "1848"
+        ],
+        "bonne": 1
+      }
+    },
+    {
+      "id": "q-19",
+      "type": "ordre",
+      "niveau": "4e",
+      "titre": "Étapes de la Révolution",
+      "enonce": "Remets ces événements dans l'ordre chronologique.",
+      "image": null,
+      "duree_s": null,
+      "explication": "Bastille (14 juillet 1789), nuit du 4 août 1789, Déclaration des droits (26 août 1789), exécution du roi (1793), Bonaparte au pouvoir (1799).",
+      "donnees": {
+        "elements": [
+          "Prise de la Bastille",
+          "Abolition des privilèges (nuit du 4 août)",
+          "Déclaration des droits de l'homme et du citoyen",
+          "Exécution de Louis XVI",
+          "Napoléon Bonaparte prend le pouvoir"
+        ]
+      }
+    },
+    {
+      "id": "q-20",
+      "type": "qcm",
+      "niveau": "4e",
+      "titre": "Monarchie absolue",
+      "enonce": "Quel roi de France incarne la monarchie absolue au XVIIe siècle ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "Louis XIV (le Roi-Soleil) concentre tous les pouvoirs et installe la cour à Versailles.",
+      "donnees": {
+        "choix": [
+          "Louis XIV",
+          "Charlemagne",
+          "Napoléon Ier",
+          "Louis-Philippe"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-21",
+      "type": "qcm",
+      "niveau": "5e",
+      "titre": "Continent le plus peuplé",
+      "enonce": "Quel continent compte le plus d'habitants ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "L'Asie rassemble environ 60 % de la population mondiale, avec la Chine et l'Inde.",
+      "donnees": {
+        "choix": [
+          "L'Afrique",
+          "L'Europe",
+          "L'Asie",
+          "L'Amérique du Nord"
+        ],
+        "bonne": 2
+      }
+    },
+    {
+      "id": "q-22",
+      "type": "qcm",
+      "niveau": "4e",
+      "titre": "La mondialisation",
+      "enonce": "Qu'est-ce que la mondialisation ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "Les échanges de marchandises, de personnes, d'argent et d'informations se développent entre tous les pays du monde.",
+      "donnees": {
+        "choix": [
+          "L'intensification des échanges entre les pays du monde",
+          "La disparition de tous les pays",
+          "Le réchauffement de la planète",
+          "L'augmentation du nombre de villes"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-23",
+      "type": "ordre",
+      "niveau": "5e",
+      "titre": "Échelles administratives",
+      "enonce": "Range ces territoires du plus petit au plus grand.",
+      "image": null,
+      "duree_s": null,
+      "explication": "La commune est incluse dans un département, lui-même dans une région, elle-même dans le pays.",
+      "donnees": {
+        "elements": [
+          "Commune",
+          "Département",
+          "Région",
+          "France"
+        ]
+      }
+    },
+    {
+      "id": "q-24",
+      "type": "qcm",
+      "niveau": "5e",
+      "titre": "Gaz de la respiration",
+      "enonce": "Quel gaz l'organisme prélève-t-il dans l'air pour respirer ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "Les poumons absorbent du dioxygène, qui passe dans le sang, et rejettent du dioxyde de carbone.",
+      "donnees": {
+        "choix": [
+          "Le dioxygène",
+          "Le dioxyde de carbone",
+          "Le diazote",
+          "L'hélium"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-25",
+      "type": "ordre",
+      "niveau": "5e",
+      "titre": "Trajet des aliments",
+      "enonce": "Remets dans l'ordre le trajet d'un aliment dans le tube digestif.",
+      "image": null,
+      "duree_s": null,
+      "explication": "Bouche, œsophage, estomac, intestin grêle (absorption des nutriments), gros intestin.",
+      "donnees": {
+        "elements": [
+          "Bouche",
+          "Œsophage",
+          "Estomac",
+          "Intestin grêle",
+          "Gros intestin"
+        ]
+      }
+    },
+    {
+      "id": "q-26",
+      "type": "qcm",
+      "niveau": "5e",
+      "titre": "Mesurer un séisme",
+      "enonce": "Quel instrument enregistre les secousses d'un séisme ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "Le sismographe enregistre les ondes sismiques sous forme d'un sismogramme.",
+      "donnees": {
+        "choix": [
+          "Le baromètre",
+          "Le sismographe",
+          "Le thermomètre",
+          "Le microscope"
+        ],
+        "bonne": 1
+      }
+    },
+    {
+      "id": "q-27",
+      "type": "qcm",
+      "niveau": "4e",
+      "titre": "Fécondation",
+      "enonce": "Chez l'être humain, où a lieu la fécondation ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "La rencontre entre le spermatozoïde et l'ovule se fait en général dans la trompe de Fallope (oviducte).",
+      "donnees": {
+        "choix": [
+          "Dans l'utérus",
+          "Dans le vagin",
+          "Dans la trompe de Fallope (oviducte)",
+          "Dans l'ovaire"
+        ],
+        "bonne": 2
+      }
+    },
+    {
+      "id": "q-28",
+      "type": "completer",
+      "niveau": "5e",
+      "titre": "Photosynthèse",
+      "enonce": "Complète le texte sur la photosynthèse.",
+      "image": null,
+      "duree_s": null,
+      "explication": "La plante absorbe du dioxyde de carbone et de l'eau, et grâce à la lumière elle fabrique sa matière et rejette du dioxygène.",
+      "donnees": {
+        "version": "texte",
+        "texte": "Grâce à la lumière, une plante verte absorbe de l'eau et du ___ et rejette du ___.",
+        "mode": "liste",
+        "trous": [
+          {
+            "bonne": "dioxyde de carbone",
+            "distracteurs": [
+              "dioxygène",
+              "diazote",
+              "hélium"
+            ]
+          },
+          {
+            "bonne": "dioxygène",
+            "distracteurs": [
+              "dioxyde de carbone",
+              "diazote",
+              "méthane"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "q-29",
+      "type": "qcm",
+      "niveau": "5e",
+      "titre": "Ébullition de l'eau",
+      "enonce": "À quelle température l'eau pure bout-elle, à pression normale ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "L'eau pure bout à 100 °C et gèle à 0 °C, à pression atmosphérique normale.",
+      "donnees": {
+        "choix": [
+          "0 °C",
+          "50 °C",
+          "100 °C",
+          "212 °C"
+        ],
+        "bonne": 2
+      }
+    },
+    {
+      "id": "q-30",
+      "type": "qcm",
+      "niveau": "5e",
+      "titre": "Changements d'état",
+      "enonce": "Comment s'appelle le passage de l'état liquide à l'état gazeux ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "Le passage liquide vers gaz est la vaporisation (ébullition ou évaporation). La fusion est solide vers liquide.",
+      "donnees": {
+        "choix": [
+          "La fusion",
+          "La solidification",
+          "La vaporisation",
+          "La condensation"
+        ],
+        "bonne": 2
+      }
+    },
+    {
+      "id": "q-31",
+      "type": "calcul",
+      "niveau": "4e",
+      "titre": "Lumière du Soleil",
+      "enonce": "La lumière du Soleil parcourt 150 000 000 km jusqu'à la Terre, à 300 000 km/s. Combien de secondes met-elle ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "t = d ÷ v = 150 000 000 ÷ 300 000 = 500 s, soit un peu plus de 8 minutes.",
+      "donnees": {
+        "reponse": 500,
+        "unite": "s"
+      }
+    },
+    {
+      "id": "q-32",
+      "type": "qcm",
+      "niveau": "4e",
+      "titre": "pH d'une solution",
+      "enonce": "Une solution a un pH égal à 3. Elle est…",
+      "image": null,
+      "duree_s": null,
+      "explication": "pH < 7 : solution acide ; pH = 7 : neutre ; pH > 7 : basique.",
+      "donnees": {
+        "choix": [
+          "Acide",
+          "Basique",
+          "Neutre",
+          "Sans pH"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-33",
+      "type": "qcm",
+      "niveau": "4e",
+      "titre": "Composition de l'air",
+      "enonce": "Quel gaz est le plus abondant dans l'air ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "L'air contient environ 78 % de diazote et 21 % de dioxygène.",
+      "donnees": {
+        "choix": [
+          "Le dioxygène",
+          "Le diazote",
+          "Le dioxyde de carbone",
+          "L'argon"
+        ],
+        "bonne": 1
+      }
+    },
+    {
+      "id": "q-34",
+      "type": "completer",
+      "niveau": "5e",
+      "titre": "Past simple : go",
+      "enonce": "Complète la phrase au prétérit (past simple).",
+      "image": null,
+      "duree_s": null,
+      "explication": "« Go » est un verbe irrégulier : son prétérit est « went ».",
+      "donnees": {
+        "version": "texte",
+        "texte": "Yesterday, I ___ to school by bus.",
+        "mode": "liste",
+        "trous": [
+          {
+            "bonne": "went",
+            "distracteurs": [
+              "go",
+              "goed",
+              "gone"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "q-35",
+      "type": "qcm",
+      "niveau": "5e",
+      "titre": "Troisième personne du singulier",
+      "enonce": "Which sentence is correct?",
+      "image": null,
+      "duree_s": null,
+      "explication": "Au présent simple, on ajoute -s au verbe à la 3e personne du singulier : she likes.",
+      "donnees": {
+        "choix": [
+          "She likes pizza.",
+          "She like pizza.",
+          "She liking pizza.",
+          "She are like pizza."
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-36",
+      "type": "qcm",
+      "niveau": "4e",
+      "titre": "Comparatif",
+      "enonce": "Complete: This book is ___ than that one.",
+      "image": null,
+      "duree_s": null,
+      "explication": "Avec un adjectif long comme « interesting », on utilise « more … than ».",
+      "donnees": {
+        "choix": [
+          "more interesting",
+          "interestinger",
+          "most interesting",
+          "the more interesting"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-37",
+      "type": "qcm",
+      "niveau": "5e",
+      "titre": "Demander l'heure",
+      "enonce": "Comment demande-t-on « Quelle heure est-il ? » en anglais ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "« What time is it? » sert à demander l'heure.",
+      "donnees": {
+        "choix": [
+          "How old are you?",
+          "What time is it?",
+          "Where are you?",
+          "What is your name?"
+        ],
+        "bonne": 1
+      }
+    },
+    {
+      "id": "q-38",
+      "type": "qcm",
+      "niveau": "5e",
+      "titre": "Devise de la République",
+      "enonce": "Quelle est la devise de la République française ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "La devise de la République est : Liberté, Égalité, Fraternité.",
+      "donnees": {
+        "choix": [
+          "Travail, Famille, Patrie",
+          "Liberté, Égalité, Fraternité",
+          "Unité, Justice, Paix",
+          "Honneur et Patrie"
+        ],
+        "bonne": 1
+      }
+    },
+    {
+      "id": "q-39",
+      "type": "qcm",
+      "niveau": "4e",
+      "titre": "Loi de 1905",
+      "enonce": "Que met en place la loi de 1905 ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "La loi de 1905 sépare les Églises et l'État : c'est le fondement de la laïcité en France.",
+      "donnees": {
+        "choix": [
+          "La séparation des Églises et de l'État",
+          "L'école obligatoire",
+          "Le droit de vote des femmes",
+          "L'abolition de l'esclavage"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-40",
+      "type": "qcm",
+      "niveau": "4e",
+      "titre": "Majorité civile",
+      "enonce": "À partir de quel âge est-on majeur en France ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "La majorité civile est fixée à 18 ans : on peut voter et signer un contrat.",
+      "donnees": {
+        "choix": [
+          "16 ans",
+          "18 ans",
+          "21 ans",
+          "15 ans"
+        ],
+        "bonne": 1
+      }
+    }
+  ],
+  "parcours": [
+    {
+      "id": "p-1",
+      "nom": "Culture collège : mélange 5e / 4e",
+      "ordre_aleatoire": true,
+      "questions": [
+        "q-1",
+        "q-2",
+        "q-3",
+        "q-4",
+        "q-5",
+        "q-6",
+        "q-7",
+        "q-8",
+        "q-9",
+        "q-10",
+        "q-11",
+        "q-12",
+        "q-13",
+        "q-14",
+        "q-15",
+        "q-16",
+        "q-17",
+        "q-18",
+        "q-19",
+        "q-20",
+        "q-21",
+        "q-22",
+        "q-23",
+        "q-24",
+        "q-25",
+        "q-26",
+        "q-27",
+        "q-28",
+        "q-29",
+        "q-30",
+        "q-31",
+        "q-32",
+        "q-33",
+        "q-34",
+        "q-35",
+        "q-36",
+        "q-37",
+        "q-38",
+        "q-39",
+        "q-40"
+      ],
+      "reglages": {
+        "dureePartie": 15,
+        "longueur": 40
+      }
+    },
+    {
+      "id": "p-2",
+      "nom": "Maths et sciences",
+      "ordre_aleatoire": true,
+      "questions": [
+        "q-1",
+        "q-2",
+        "q-3",
+        "q-4",
+        "q-5",
+        "q-6",
+        "q-7",
+        "q-8",
+        "q-24",
+        "q-25",
+        "q-26",
+        "q-27",
+        "q-28",
+        "q-29",
+        "q-30",
+        "q-31",
+        "q-32",
+        "q-33"
+      ],
+      "reglages": {
+        "dureePartie": 12,
+        "longueur": 30
+      }
+    },
+    {
+      "id": "p-3",
+      "nom": "Lettres, histoire-géo et EMC",
+      "ordre_aleatoire": true,
+      "questions": [
+        "q-9",
+        "q-10",
+        "q-11",
+        "q-12",
+        "q-13",
+        "q-14",
+        "q-15",
+        "q-16",
+        "q-17",
+        "q-18",
+        "q-19",
+        "q-20",
+        "q-21",
+        "q-22",
+        "q-23",
+        "q-38",
+        "q-39",
+        "q-40"
+      ],
+      "reglages": {
+        "dureePartie": 12,
+        "longueur": 30
+      }
+    },
+    {
+      "id": "p-4",
+      "nom": "Anglais",
+      "ordre_aleatoire": true,
+      "questions": [
+        "q-34",
+        "q-35",
+        "q-36",
+        "q-37"
+      ],
+      "reglages": {
+        "dureePartie": 5,
+        "longueur": 15
+      }
+    }
+  ]
+}
