@@ -9,6 +9,7 @@
 #   - Node.js et le jeu dans /opt/robot-rush ; les données (questions, parcours) dans /var/lib/robot-rush ;
 #   - le mot de passe professeur dans /etc/robot-rush/env (lisible par la Pi seulement, jamais dans le dépôt) ;
 #   - un service qui démarre le jeu à l'allumage et le relance s'il s'arrête ;
+#   - la mise à jour automatique au démarrage, quand la Pi a internet (outils-pi/mettre-a-jour.sh) ;
 #   - l'ouverture automatique de la course en plein écran sur la sortie HDMI.
 set -euo pipefail
 
@@ -87,6 +88,9 @@ WorkingDirectory=$DOSSIER
 Environment=PORT=$PORT
 Environment=DATA_DIR=$DONNEES
 EnvironmentFile=$CONFIG/env
+# Mise à jour depuis GitHub avant le démarrage (sans internet : ignorée ; « - » : un échec n'empêche pas le jeu).
+ExecStartPre=-/bin/bash $DOSSIER/outils-pi/mettre-a-jour.sh
+TimeoutStartSec=420
 ExecStart=$(command -v node) server/index.js
 Restart=always
 RestartSec=3

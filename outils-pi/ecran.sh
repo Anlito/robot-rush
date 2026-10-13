@@ -5,8 +5,8 @@
 PORT=3000
 URL="http://localhost:$PORT/course"
 
-# Le jeu met quelques secondes à démarrer avec la Pi : on l'attend (2 minutes au plus).
-for _ in $(seq 1 120); do
+# Le jeu met quelques secondes à démarrer avec la Pi, plus s'il installe une mise à jour : on l'attend (7 minutes au plus).
+for _ in $(seq 1 420); do
   curl -fs "http://localhost:$PORT/sante" >/dev/null && break
   sleep 1
 done

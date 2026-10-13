@@ -58,10 +58,18 @@ Avant de brancher un appareil personnel sur le réseau du collège, prévenir le
 À lui dire : la Pi ne va pas sur internet pendant le cours, n'enregistre aucune donnée personnelle
 (les pseudos des élèves ne sont jamais enregistrés) et n'accepte que les connexions au jeu (port 3000).
 
-## 4. Mettre le jeu à jour (à la maison, avec internet)
+## 4. Mettre le jeu à jour
 
-Quitter le plein écran (**Alt + F4**), ouvrir le Terminal et relancer la même commande qu'à l'étape 2.
+**Automatique** : à chaque allumage, si la Pi a internet (à la maison, câble ou Wi-Fi), elle installe toute seule
+la dernière version publiée sur GitHub avant de lancer le jeu (une à deux minutes de plus quand il y a du nouveau).
+Sans internet, au collège en général, elle démarre aussitôt avec la version déjà installée.
+Après une modification du jeu : allumer la Pi une fois à la maison, attendre que la course s'affiche, c'est tout.
 Les questions, les parcours et le mot de passe sont gardés.
+
+**À la main** (si un changement concerne l'installation elle-même, je vous le dirai) : quitter le plein écran
+(**Alt + F4**), ouvrir le Terminal et relancer la même commande qu'à l'étape 2.
+
+Voir ce qui s'est passé au dernier démarrage : `journalctl -u robot-rush -b | grep "Mise à jour"`.
 
 Changer le mot de passe professeur : `sudo rm /etc/robot-rush/env`, puis relancer la commande.
 
