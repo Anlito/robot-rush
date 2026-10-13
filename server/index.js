@@ -22,6 +22,7 @@ const { Server } = require('socket.io');
 const QRCode = require('qrcode');
 const { Partie, ErreurJeu } = require('./jeu');
 const { Banque, ErreurBanque, NIVEAUX, nettoyerQuestion, versionJouable, probleme } = require('./banque');
+const { creerReference, ErreurReference } = require('./reference');
 const { TYPES } = require('./types');
 const blocs = require('./blocs');
 const images = require('./images');
@@ -48,16 +49,11 @@ const banque = new Banque({
 });
 const config = stockage.charger('config');
 
-// Premier lancement (ou disque effacé) avec un banque.json dans le dépôt : on part de cette banque.
-const initiale = stockage.banqueInitiale();
-if (initiale) {
-  try {
-    const r = banque.importer(initiale, { mode: 'remplacer' });
-    console.log(`  Banque de départ chargée depuis banque.json : ${r.questions} question(s), ${r.parcours} parcours.`);
-  } catch (e) {
-    console.error(`  banque.json non utilisé : ${e.message}`);
-  }
-}
+// Banque de référence (banque.json publié sur GitHub) : chargée au premier lancement, puis à chaque nouvelle
+// publication arrivée avec la mise à jour du jeu, sauf si les questions d'ici ont été modifiées entre-temps.
+const reference = creerReference({ banque, stockage, depot: CONFIG_SERVEUR.depotGithub, publication: !CONFIG_SERVEUR.hebergement });
+const messageReference = reference.auDemarrage();
+if (messageReference) console.log(`  ${messageReference}`);
 
 // En ligne, sans volume permanent, data/ est effacé à chaque redémarrage (Render gratuit, par exemple).
 const STOCKAGE_EPHEMERE = Boolean(CONFIG_SERVEUR.hebergement) && !process.env.DATA_DIR && !reseau.hebergement().volume;
@@ -250,12 +246,18 @@ setInterval(() => partie.tick(), 200);
 function gerer(socket, nom, fn) {
   socket.on(nom, (donnees, rappel) => {
     const repondre = typeof rappel === 'function' ? rappel : () => {};
+    const echec = (e) => {
+      if (e instanceof ErreurJeu || e instanceof ErreurBanque || e instanceof images.ErreurImage || e instanceof ErreurReference) {
+        repondre({ ok: false, erreur: e.message });
+      } else { console.error(e); repondre({ ok: false, erreur: 'Erreur interne du serveur.' }); }
+    };
     try {
       const r = fn(donnees || {});
-      repondre({ ok: true, ...(r || {}) });
+      // Action asynchrone (échanges avec GitHub) : réponse quand elle est finie.
+      if (r && typeof r.then === 'function') r.then((x) => repondre({ ok: true, ...(x || {}) }), echec);
+      else repondre({ ok: true, ...(r || {}) });
     } catch (e) {
-      if (e instanceof ErreurJeu || e instanceof ErreurBanque || e instanceof images.ErreurImage) repondre({ ok: false, erreur: e.message });
-      else { console.error(e); repondre({ ok: false, erreur: 'Erreur interne du serveur.' }); }
+      echec(e);
     }
   });
 }
@@ -296,6 +298,7 @@ function vueBanque() {
     })),
     blocsDisponibles: blocs.BLOCS_DISPONIBLES,
     niveaux: NIVEAUX,
+    reference: reference.vue(),
   };
 }
 
@@ -385,6 +388,16 @@ io.on('connection', (socket) => {
     });
     modif('importer', ({ donnees, mode }) => ({ rapport: banque.importer(donnees, { mode: mode === 'remplacer' ? 'remplacer' : 'ajouter' }) }));
     gerer(socket, 'exporter', ({ parcoursIds }) => ({ fichier: banque.exporter({ parcoursIds: Array.isArray(parcoursIds) ? parcoursIds : null }) }));
+
+    // Banque de référence sur GitHub : publier (ordinateur du professeur), récupérer (partout).
+    const apres = (promesse) => promesse.then((r) => { banqueModifiee(); return r; });
+    gerer(socket, 'reference:relier', ({ jeton }) => apres(reference.relier(jeton)));
+    gerer(socket, 'reference:delier', () => { const r = reference.delier(); banqueModifiee(); return r; });
+    gerer(socket, 'reference:publier', ({ forcer }) => apres(reference.publier({ forcer: forcer === true })));
+    gerer(socket, 'reference:recuperer', ({ confirmer }) => {
+      if (confirmer && ['en_cours', 'pause'].includes(partie.etat)) throw new ErreurBanque('Récupérez les questions avant ou après la course, pas pendant.');
+      return apres(reference.recuperer({ confirmer: confirmer === true }));
+    });
 
     gerer(socket, 'image:envoyer', ({ donnees }) => {
       const buffer = Buffer.isBuffer(donnees) ? donnees : donnees instanceof ArrayBuffer ? Buffer.from(donnees) : null;

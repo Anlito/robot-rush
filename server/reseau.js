@@ -23,6 +23,8 @@ function lireConfigServeur() {
     adressePublique: (process.env.PUBLIC_URL || fichierConfig.adressePublique || h.adresse || '').replace(/\/$/, '') || null,
     ouvrirNavigateur: process.env.OUVRIR_NAVIGATEUR === '1' || fichierConfig.ouvrirNavigateur === true,
     hebergement: h.nom,
+    // Dépôt GitHub où la banque de référence (banque.json) est publiée.
+    depotGithub: process.env.DEPOT_GITHUB || fichierConfig.depotGithub || 'Anlito/robot-rush',
   };
 }
 

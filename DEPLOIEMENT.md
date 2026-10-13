@@ -54,13 +54,32 @@ Chaque envoi sur la branche `main` du dépôt redéploie le jeu automatiquement.
 - **Mise en veille** après 15 minutes sans visite : ouvrir l'écran projecteur (`/course`) **deux minutes avant le cours**.
   Pendant une partie, les élèves connectés le gardent éveillé.
 - **Fichiers effacés** à chaque redémarrage (mise en veille comprise) : les questions créées en ligne disparaissent.
-  La parade : la **banque de départ** `banque.json`.
-  1. Préparer ses questions et parcours (en local, ou en ligne pendant une séance).
-  2. Espace professeur → **Exporter JSON**.
-  3. Sur GitHub, dans le dépôt : **Add file** → **Upload files** → déposer le fichier **renommé `banque.json`** → **Commit changes**.
-  4. Render redéploie ; à chaque démarrage, le jeu recharge cette banque.
+  La parade : la **banque publiée** `banque.json` (voir « Publier ses questions » ci-dessous), rechargée à chaque démarrage.
 
   Un bandeau jaune le rappelle dans l'espace professeur quand le stockage n'est pas permanent.
+
+## Publier ses questions (banque de référence)
+
+L'ordinateur du professeur est la référence : on y crée les questions, puis bouton **Publier mes questions**
+(onglets Questions et Parcours). Le fichier `banque.json` est alors écrit dans le dépôt GitHub, et :
+
+- la **version en ligne** (Render) redémarre et repart de cette banque (2 à 3 minutes) ;
+- la **Raspberry Pi** la charge à son prochain démarrage avec internet (avec la mise à jour automatique du jeu) ;
+- un **autre ordinateur** la récupère avec **Publier mes questions → Récupérer…** (ou automatiquement à la première
+  installation : une banque neuve part toujours de `banque.json`).
+
+La première fois, il faut relier l'ordinateur à GitHub avec un **jeton** (la fenêtre explique les étapes) :
+github.com → *Settings* → *Personal access tokens* → *Fine-grained tokens*, accès au seul dépôt du jeu, permission
+**Contents : Read and write**. Le jeton reste dans le dossier des données de cet ordinateur (`data/github.json`),
+jamais dans le dépôt ni dans le navigateur.
+
+Sécurités :
+- une installation dont les questions ont été modifiées depuis la dernière synchronisation n'est **jamais** remplacée
+  automatiquement : un bandeau propose de récupérer la nouvelle banque ;
+- publier par-dessus une banque publiée depuis un autre ordinateur demande confirmation ;
+- avant chaque remplacement, la banque est copiée dans `sauvegardes/` (`questions-avant-recuperation-….json`).
+
+Autre dépôt que `Anlito/robot-rush` : `"depotGithub": "compte/depot"` dans `config-serveur.json`, ou la variable `DEPOT_GITHUB`.
 
 ## Fly.io
 

@@ -50,6 +50,8 @@ async function telechargerNode(destination) {
   fs.rmSync(DIST, { recursive: true, force: true });
   fs.mkdirSync(DOSSIER, { recursive: true });
   for (const f of A_COPIER) fs.cpSync(path.join(RACINE, f), path.join(DOSSIER, f), { recursive: true });
+  // Banque publiée : le dossier part avec les dernières questions publiées.
+  if (fs.existsSync(path.join(RACINE, 'banque.json'))) fs.copyFileSync(path.join(RACINE, 'banque.json'), path.join(DOSSIER, 'banque.json'));
   fs.copyFileSync(path.join(RACINE, 'config-serveur.exemple.json'), path.join(DOSSIER, 'config-serveur.json'));
   fs.copyFileSync(path.join(RACINE, 'outils-salle', 'FICHE-MISE-EN-PLACE.html'), path.join(DOSSIER, 'FICHE-MISE-EN-PLACE.html'));
 

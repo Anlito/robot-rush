@@ -11,8 +11,8 @@ const { REGLAGES_DEFAUT, PAIRES_DEFAUT } = require('./constantes');
 const RACINE = path.join(__dirname, '..');
 // Volume permanent de Railway reconnu automatiquement ; sinon DATA_DIR, sinon ./data.
 const DOSSIER = path.resolve(process.env.DATA_DIR || process.env.RAILWAY_VOLUME_MOUNT_PATH || path.join(RACINE, 'data'));
-// Banque de départ facultative (fichier exporté depuis l'admin, déposé à la racine du dépôt) :
-// utile sur un hébergement sans disque permanent, où data/ repart de zéro à chaque redémarrage.
+// Banque de référence facultative (fichier exporté depuis l'admin, publié à la racine du dépôt GitHub) :
+// chargée au premier lancement, puis à chaque nouvelle publication (voir reference.js).
 const BANQUE_INITIALE = path.join(RACINE, 'banque.json');
 const DOSSIER_IMAGES = path.join(DOSSIER, 'images');
 const DOSSIER_SAUVEGARDES = path.join(DOSSIER, 'sauvegardes');
@@ -85,15 +85,46 @@ function sauver(cle, valeur) {
   fs.renameSync(tmp, fichier);
 }
 
-/** Contenu de banque.json s'il faut l'utiliser : seulement quand la banque vient d'être créée. */
-function banqueInitiale() {
-  if (!crees.has('questions') || !fs.existsSync(BANQUE_INITIALE)) return null;
+/** true si la banque vient d'être créée à ce lancement (premier démarrage, ou disque effacé). */
+const banqueNeuve = () => crees.has('questions');
+
+/** Contenu de banque.json (banque de référence publiée), ou null s'il n'y en a pas ou s'il est illisible. */
+function lireBanqueReference() {
+  if (!fs.existsSync(BANQUE_INITIALE)) return null;
   try {
     return lireJson(BANQUE_INITIALE);
   } catch (e) {
-    console.error(`  Le fichier banque.json est illisible (${e.message}) : questions de test utilisées à la place.`);
+    console.error(`  Le fichier banque.json est illisible (${e.message}) : il est ignoré.`);
     return null;
   }
 }
 
-module.exports = { charger, sauver, banqueInitiale, DOSSIER, DOSSIER_IMAGES };
+/** Petits fichiers annexes du dossier de données (état de la publication, liaison GitHub). */
+function lireAnnexe(nom) {
+  const fichier = path.join(DOSSIER, nom);
+  if (!fs.existsSync(fichier)) return null;
+  try { return lireJson(fichier); } catch { return null; }
+}
+function ecrireAnnexe(nom, valeur) {
+  const fichier = path.join(DOSSIER, nom);
+  fs.mkdirSync(DOSSIER, { recursive: true });
+  if (valeur === null) { fs.rmSync(fichier, { force: true }); return; }
+  const tmp = `${fichier}.tmp`;
+  fs.writeFileSync(tmp, JSON.stringify(valeur, null, 2), { encoding: 'utf8', mode: 0o600 });
+  fs.renameSync(tmp, fichier);
+}
+
+/** Copie de la banque actuelle avant de la remplacer (en plus de la copie du jour). */
+function copieAvantRemplacement(etiquette) {
+  fs.mkdirSync(DOSSIER_SAUVEGARDES, { recursive: true });
+  const horodatage = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+  for (const cle of ['questions', 'parcours']) {
+    const fichier = path.join(DOSSIER, FICHIERS[cle].nom);
+    if (fs.existsSync(fichier)) fs.copyFileSync(fichier, path.join(DOSSIER_SAUVEGARDES, `${cle}-${etiquette}-${horodatage}.json`));
+  }
+}
+
+module.exports = {
+  charger, sauver, banqueNeuve, lireBanqueReference, lireAnnexe, ecrireAnnexe, copieAvantRemplacement,
+  DOSSIER, DOSSIER_IMAGES, DOSSIER_SAUVEGARDES,
+};

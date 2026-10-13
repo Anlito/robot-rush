@@ -73,10 +73,14 @@ Voir ce qui s'est passé au dernier démarrage : `journalctl -u robot-rush -b | 
 
 Changer le mot de passe professeur : `sudo rm /etc/robot-rush/env`, puis relancer la commande.
 
-## 5. Sauvegarder ses questions
+## 5. Les questions
 
-Comme sur PC : dans l'espace professeur, **Exporter JSON**. Les données sont aussi dans
-`/var/lib/robot-rush` sur la Pi (copie de sécurité quotidienne dans `sauvegardes/`).
+Créez-les sur **votre ordinateur**, puis bouton **Publier mes questions**. La Pi les charge toute seule à son
+prochain démarrage avec internet (en même temps que la mise à jour du jeu). Évitez de modifier les questions
+directement sur la Pi : dans ce cas, elle ne remplace plus rien d'elle-même et affiche un bandeau pour vous laisser choisir.
+
+À la main : sur la Pi, **Publier mes questions → Récupérer…** (avec internet).
+Les données sont dans `/var/lib/robot-rush` (copie de sécurité quotidienne dans `sauvegardes/`).
 
 ## Pour information
 

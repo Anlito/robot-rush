@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="/fonts/polices.css?v=4">
 <link rel="stylesheet" href="/css/commun.css?v=4">
 <link rel="stylesheet" href="/css/admin.css?v=5">
-<link rel="stylesheet" href="/css/admin-banque.css?v=8">
+<link rel="stylesheet" href="/css/admin-banque.css?v=9">
 </head>
 <body>
 
@@ -36,13 +36,15 @@
       <span class="lien-partie">Ouvrir <a href="/course" target="_blank" rel="noopener">/course</a> au projecteur</span>
       <button class="btn btn-petit lien-banque" id="btn-importer" type="button">Importer JSON</button>
       <button class="btn btn-petit lien-banque" id="btn-exporter" type="button">Exporter JSON</button>
+      <button class="btn btn-petit lien-banque" id="btn-publier" type="button">Publier mes questions</button>
       <input type="file" id="fichier-import" accept=".json,application/json" hidden>
       <button class="lien-bouton" id="btn-deconnexion" type="button">Déconnexion</button></div>
   </header>
   <p class="bandeau-message" id="bandeau-message" role="status" hidden></p>
+  <p class="bandeau-reference" id="bandeau-reference" hidden></p>
   <p class="avert-stockage" id="avert-stockage" hidden><b>Attention :</b> sur cet hébergement, les questions et parcours créés ici
-    sont effacés à chaque redémarrage du serveur. Exportez votre banque (bouton « Exporter JSON ») après chaque modification
-    et déposez le fichier sous le nom <code>banque.json</code> dans le dépôt GitHub : il sera rechargé automatiquement (voir DEPLOIEMENT.md).</p>
+    sont effacés à chaque redémarrage du serveur. Créez vos questions sur votre ordinateur, puis bouton « Publier mes questions » :
+    cette version en ligne repart toujours de la dernière banque publiée.</p>
 
   <div class="mise-en-page vue-admin" id="vue-partie">
     <!-- Colonne de lancement -->
@@ -152,5 +154,6 @@
 <script src="/js/admin-questions.js?v=7"></script>
 <script src="/js/admin-parcours.js?v=6"></script>
 <script src="/js/admin-fichiers.js?v=4"></script>
+<script src="/js/admin-reference.js?v=1"></script>
 </body>
 </html>
