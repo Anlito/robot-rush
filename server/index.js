@@ -22,7 +22,7 @@ const { Server } = require('socket.io');
 const QRCode = require('qrcode');
 const { Partie, ErreurJeu } = require('./jeu');
 const { Banque, ErreurBanque, NIVEAUX, nettoyerQuestion, versionJouable, probleme } = require('./banque');
-const { creerReference, ErreurReference } = require('./reference');
+const { creerReference, ErreurReference, empreinte } = require('./reference');
 const { TYPES } = require('./types');
 const blocs = require('./blocs');
 const images = require('./images');
@@ -51,7 +51,10 @@ const config = stockage.charger('config');
 
 // Banque de référence (banque.json publié sur GitHub) : chargée au premier lancement, puis à chaque nouvelle
 // publication arrivée avec la mise à jour du jeu, sauf si les questions d'ici ont été modifiées entre-temps.
-const reference = creerReference({ banque, stockage, depot: CONFIG_SERVEUR.depotGithub, publication: !CONFIG_SERVEUR.hebergement });
+// Empreinte de la banque de test d'origine (seed/) : une banque restée telle quelle peut être remplacée sans risque.
+const banqueDeTest = new Banque({ questions: stockage.contenuDeTest('questions'), parcours: stockage.contenuDeTest('parcours'), sauver: () => {} });
+const reference = creerReference({ banque, stockage, depot: CONFIG_SERVEUR.depotGithub, publication: !CONFIG_SERVEUR.hebergement,
+  empreinteDeTest: empreinte({ questions: banqueDeTest.questions, parcours: banqueDeTest.parcours }) });
 const messageReference = reference.auDemarrage();
 if (messageReference) console.log(`  ${messageReference}`);
 

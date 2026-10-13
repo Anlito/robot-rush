@@ -32,7 +32,7 @@ const resume = (d) => ({ questions: ((d && d.questions) || []).length, parcours:
  * publication : false sur un hébergement en ligne (pas de jeton ni de publication depuis là) ;
  * fetch : injectable pour les tests.
  */
-function creerReference({ banque, stockage, depot, publication = true, fetch = globalThis.fetch }) {
+function creerReference({ banque, stockage, depot, publication = true, fetch = globalThis.fetch, empreinteDeTest = null }) {
   const etat = () => stockage.lireAnnexe('reference.json');
   const jeton = () => (stockage.lireAnnexe('github.json') || {}).jeton || null;
   const empreinteLocale = () => empreinte({ questions: banque.questions, parcours: banque.parcours });
@@ -87,17 +87,19 @@ function creerReference({ banque, stockage, depot, publication = true, fetch = g
     const e = etat();
     const neuve = stockage.banqueNeuve();
     if (!neuve && e && e.fichier === empreinte(fichier)) return null; // déjà à jour
-    if (!neuve && !e) {
-      // Banque déjà là, jamais synchronisée : on ne remplace rien sans le professeur.
+    // Banque jamais synchronisée mais restée la banque de test d'origine : rien à protéger.
+    const deTest = !e && empreinteDeTest !== null && empreinteLocale() === empreinteDeTest;
+    if (!neuve && !e && !deTest) {
+      // Banque déjà là, jamais synchronisée, avec d'autres questions : on ne remplace rien sans le professeur.
       enAttente = resume(fichier);
       return 'Une banque publiée (banque.json) est disponible : bouton « Récupérer les questions publiées » dans l\'espace professeur.';
     }
-    if (!neuve && e.banque !== empreinteLocale()) {
+    if (!neuve && e && e.banque !== empreinteLocale()) {
       enAttente = resume(fichier);
       return 'Nouvelle banque publiée disponible, mais les questions de cet ordinateur ont été modifiées depuis : rien n\'est remplacé (choix dans l\'espace professeur).';
     }
     try {
-      const r = remplacer(fichier, neuve ? 'premier démarrage' : 'mise à jour');
+      const r = remplacer(fichier, neuve || deTest ? 'premier démarrage' : 'mise à jour');
       return `Banque publiée chargée : ${r.questions} question(s), ${r.parcours} parcours.`;
     } catch (err) {
       return `banque.json non utilisé : ${err.message}`;

@@ -153,3 +153,17 @@ test('version en ligne : pas de publication ni de jeton', async () => {
   await assert.rejects(ref.publier(), /ordinateur du professeur/);
   assert.equal(ref.vue().publication, false);
 });
+
+test('démarrage : banque jamais synchronisée mais restée la banque de test, remplacée sans demander', () => {
+  const b = nouvelleBanque();
+  const deTest = empreinte({ questions: b.questions, parcours: b.parcours });
+  const fichier = autreFichier();
+  const ref = creerReference({ banque: b, stockage: faux({ fichier }), depot: 'x/y', empreinteDeTest: deTest });
+  assert.match(ref.auDemarrage(), /chargée/);
+  assert.equal(b.questions.length, fichier.questions.length);
+  // Une banque de test modifiée reste protégée.
+  const b2 = nouvelleBanque();
+  b2.enregistrerQuestion({ type: 'calcul', enonce: 'faite ici', donnees: { reponse: 1 } });
+  const ref2 = creerReference({ banque: b2, stockage: faux({ fichier }), depot: 'x/y', empreinteDeTest: deTest });
+  assert.match(ref2.auDemarrage(), /Récupérer/);
+});

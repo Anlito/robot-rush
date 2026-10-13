@@ -85,6 +85,9 @@ function sauver(cle, valeur) {
   fs.renameSync(tmp, fichier);
 }
 
+/** Questions ou parcours de test d'origine (dossier seed/). */
+const contenuDeTest = (cle) => FICHIERS[cle].defaut();
+
 /** true si la banque vient d'être créée à ce lancement (premier démarrage, ou disque effacé). */
 const banqueNeuve = () => crees.has('questions');
 
@@ -125,6 +128,6 @@ function copieAvantRemplacement(etiquette) {
 }
 
 module.exports = {
-  charger, sauver, banqueNeuve, lireBanqueReference, lireAnnexe, ecrireAnnexe, copieAvantRemplacement,
+  charger, sauver, banqueNeuve, contenuDeTest, lireBanqueReference, lireAnnexe, ecrireAnnexe, copieAvantRemplacement,
   DOSSIER, DOSSIER_IMAGES, DOSSIER_SAUVEGARDES,
 };
