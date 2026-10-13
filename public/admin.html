@@ -7,8 +7,8 @@
 <link rel="icon" href="/assets/robots/robot-verte-normal.svg">
 <link rel="stylesheet" href="/fonts/polices.css?v=4">
 <link rel="stylesheet" href="/css/commun.css?v=4">
-<link rel="stylesheet" href="/css/admin.css?v=6">
-<link rel="stylesheet" href="/css/admin-banque.css?v=9">
+<link rel="stylesheet" href="/css/admin.css?v=7">
+<link rel="stylesheet" href="/css/admin-banque.css?v=10">
 </head>
 <body>
 
@@ -31,6 +31,7 @@
       <a class="onglet actif" href="#partie" data-onglet="partie">Partie</a>
       <a class="onglet" href="#questions" data-onglet="questions">Questions</a>
       <a class="onglet" href="#parcours" data-onglet="parcours">Parcours</a>
+      <a class="onglet" href="#historique" data-onglet="historique">Historique</a>
     </nav>
     <div class="liens">
       <span class="lien-partie">Ouvrir <a href="/course" target="_blank" rel="noopener">/course</a> au projecteur</span>
@@ -49,6 +50,12 @@
   <div class="mise-en-page vue-admin" id="vue-partie">
     <!-- Colonne de lancement -->
     <aside class="colonne">
+      <div class="champ"><label for="titre-partie">Titre de la partie <span class="gris">(option, pour l'historique)</span></label>
+        <input id="titre-partie" class="champ-partie" maxlength="80" placeholder="ex. Séance 3 : conditions" autocomplete="off"></div>
+      <div class="champ"><label for="classe-partie">Classe <span class="gris">(option)</span></label>
+        <input id="classe-partie" class="champ-partie" maxlength="30" placeholder="ex. 5e B" autocomplete="off" list="liste-classes"></div>
+      <datalist id="liste-classes"></datalist>
+
       <div class="champ"><label for="parcours">Parcours</label>
         <select id="parcours"></select><span class="aide" id="info-parcours"></span></div>
 
@@ -131,6 +138,17 @@
     <section class="editeur-q" id="editeur-q"></section>
   </div>
 
+  <!-- Historique des parties : bilans, acquis par question -->
+  <div class="vue-admin vue-historique" id="vue-historique" hidden>
+    <aside class="liste-historique">
+      <div class="outils-liste"><select id="filtre-classe-h" aria-label="Filtrer par classe"></select>
+        <span class="aide">Une partie est enregistrée à la fin de la course. Aucun nom d'élève n'est conservé.</span></div>
+      <div class="lignes-h" id="lignes-h"></div>
+    </aside>
+    <section class="detail-h" id="detail-h"></section>
+    <datalist id="liste-classes-h"></datalist>
+  </div>
+
   <!-- C3 · Parcours -->
   <div class="vue-admin vue-parcours" id="vue-parcours" hidden>
     <aside class="liste-parcours">
@@ -152,10 +170,11 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/commun.js?v=4"></script>
 <script src="/js/blocs.js?v=6"></script>
-<script src="/js/admin.js?v=10"></script>
+<script src="/js/admin.js?v=11"></script>
 <script src="/js/admin-questions.js?v=7"></script>
 <script src="/js/admin-parcours.js?v=6"></script>
 <script src="/js/admin-fichiers.js?v=4"></script>
 <script src="/js/admin-reference.js?v=1"></script>
+<script src="/js/admin-historique.js?v=1"></script>
 </body>
 </html>

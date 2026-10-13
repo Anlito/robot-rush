@@ -54,6 +54,7 @@ function nettoyerReglages(entree, base = REGLAGES_DEFAUT) {
  *  - 'joueur' (jeton)         : l'état personnel d'un élève a changé
  *  - 'alerte' (equipeId, a)   : flash à afficher chez les élèves d'une équipe
  *  - 'retire' (jeton, motif)  : l'élève doit revenir à l'écran de connexion
+ *  - 'bilan' (bilan)          : partie terminée, bilan pour l'historique (aucun pseudo d'élève dedans)
  */
 class Partie extends EventEmitter {
   constructor({ questions = [], parcours = null, reglages = {}, paires = PAIRES_DEFAUT, nbEquipes = 4,
@@ -67,6 +68,7 @@ class Partie extends EventEmitter {
     this.joueurs = new Map(); // jeton → joueur
     this.fil = [];
     this.resultat = null;
+    this.bilanQuestions = new Map(); // id de question → réussites et erreurs pendant la partie
     this.idFil = 0;
     this.configurer({ questions, parcours, reglages, paires, nbEquipes });
   }
@@ -122,6 +124,9 @@ class Partie extends EventEmitter {
       protegeJusqua: 0,
       succesJusqua: 0,
       justes: 0,
+      fausses: 0,
+      attaques: 0,
+      solutions: 0,
     }));
     // Codes uniques même en gardant les anciens.
     const vus = new Set();
@@ -263,6 +268,7 @@ class Partie extends EventEmitter {
     this.etat = ETATS.EN_COURS;
     this.t = 0;
     this.dernierTick = this.maintenant();
+    this.bilanQuestions = new Map();
     for (const j of this.joueurs.values()) if (j.connecte) this.donnerQuestion(j);
     this.ajouterFil({ type: 'depart', texte: 'Départ de la course !' });
     this.emit('change');
@@ -303,6 +309,7 @@ class Partie extends EventEmitter {
     } else {
       this.equipes.forEach((e) => Object.assign(e, {
         position: 0, stock: this.stockVide(), blocage: null, protegeJusqua: 0, succesJusqua: 0, justes: 0,
+        fausses: 0, attaques: 0, solutions: 0,
       }));
       for (const j of this.joueurs.values()) {
         Object.assign(j, { phase: 'attente', question: null, tirage: null, retour: null, file: [],
@@ -372,6 +379,7 @@ class Partie extends EventEmitter {
       q = this.questions.find((x) => x.id === id) || null; // question retirée entre-temps : suivante
     }
     j.numero++;
+    this.compter(q, j, 'posees');
     const { vue, prive } = TYPES[q.type].preparer(q, this.rng);
     const duree = (q.duree_s || (TYPES_LONGS.includes(q.type) ? this.reglages.tempsQuestionLong : this.reglages.tempsQuestion)) * 1000;
     j.question = { q, vue, prive, finA: this.t + duree, duree };
@@ -391,6 +399,7 @@ class Partie extends EventEmitter {
     const equipe = this.equipes[j.equipeId];
     j.stats.justes++;
     equipe.justes++;
+    this.compter(q, j, 'justes');
     j.retour = { correct: true, explication: q.explication || null };
     j.phase = 'action';
     j.finPhase = this.t + this.reglages.delaiAction * 1000;
@@ -401,6 +410,8 @@ class Partie extends EventEmitter {
 
   repondreFaux(j, reponse) {
     const { q, prive } = j.question;
+    this.equipes[j.equipeId].fausses++;
+    this.compter(q, j, reponse === null ? 'tempsEcoules' : 'fausses');
     j.fautes.add(q.id); // reposée en priorité au tour suivant
     const { donnee, bonne } = TYPES[q.type].textes(q, reponse, prive);
     j.retour = { correct: false, donnee: reponse === null ? null : donnee, bonne, explication: q.explication || null,
@@ -497,6 +508,7 @@ class Partie extends EventEmitter {
     const e = this.equipes[j.equipeId];
     const sol = this.solution(solutionId);
     j.stats.solutions++;
+    e.solutions++;
     if (e.blocage && this.solutionDe(e.blocage.obstacle).id === solutionId) {
       // La solution qui débloque est consommée aussitôt.
       e.blocage = null;
@@ -526,6 +538,7 @@ class Partie extends EventEmitter {
     if (c.protegeJusqua > this.t) erreur(`L'équipe ${c.nom} est protégée quelques secondes.`);
     this.appliquerObstacle(c, obstacle, e, j.pseudo);
     j.stats.attaques++;
+    e.attaques++;
     this.donnerQuestion(j);
     return {};
   }
@@ -602,7 +615,47 @@ class Partie extends EventEmitter {
     const g = classement.filter((c) => c.rang === 1);
     this.ajouterFil({ type: 'fin', texte: g.length === 1 ? `${this.equipes[g[0].equipe].nom} gagne !` : 'Égalité en tête !' });
     for (const j of joueurs) { j.phase = 'fin'; j.question = null; j.tirage = null; this.emit('joueur', j.jeton); }
+    const bilan = this.bilan(raison, classement);
+    if (bilan) this.emit('bilan', bilan);
     this.emit('change');
+  }
+
+  /** Une question posée, réussie, ratée ou sans réponse dans le temps : pour le bilan par question. */
+  compter(q, j, cle) {
+    if (!this.bilanQuestions.has(q.id)) {
+      this.bilanQuestions.set(q.id, { id: q.id, titre: q.titre || null, enonce: q.enonce, type: q.type,
+        version: q.donnees && q.donnees.version === 'blocs' ? 'blocs' : undefined, niveau: q.niveau || null,
+        posees: 0, justes: 0, fausses: 0, tempsEcoules: 0, parEquipe: {} });
+    }
+    const b = this.bilanQuestions.get(q.id);
+    b[cle]++;
+    const e = b.parEquipe[j.equipeId] || (b.parEquipe[j.equipeId] = { posees: 0, justes: 0, fausses: 0, tempsEcoules: 0 });
+    e[cle]++;
+  }
+
+  /**
+   * Bilan de la partie pour l'historique : équipes et questions, jamais de pseudo d'élève.
+   * null si personne n'a répondu (partie lancée puis arrêtée aussitôt).
+   */
+  bilan(raison, classement) {
+    const questions = [...this.bilanQuestions.values()];
+    if (!questions.some((b) => b.justes + b.fausses + b.tempsEcoules > 0)) return null;
+    const n = this.elevesParEquipe();
+    return {
+      date: new Date(Date.now() - this.t).toISOString(),
+      raison,
+      dureeMs: this.t,
+      parcours: this.parcours ? { id: this.parcours.id, nom: this.parcours.nom } : null,
+      nbEleves: this.joueurs.size,
+      reglages: { dureePartie: this.reglages.dureePartie, longueur: this.reglages.longueur },
+      equipes: classement.map((c) => {
+        const e = this.equipes[c.equipe];
+        return { nom: e.nom, couleur: e.couleur, symbole: e.symbole, rang: c.rang, position: e.position,
+          justes: e.justes, fausses: e.fausses, attaques: e.attaques, solutions: e.solutions, nbEleves: n[e.id] };
+      }),
+      questions: questions.map((b) => ({ ...b, parEquipe: Object.fromEntries(Object.entries(b.parEquipe)
+        .map(([id, v]) => [this.equipes[id].nom, v])) })),
+    };
   }
 
   // ---------- Utilitaires ----------

@@ -23,6 +23,7 @@ const QRCode = require('qrcode');
 const { Partie, ErreurJeu } = require('./jeu');
 const { Banque, ErreurBanque, NIVEAUX, nettoyerQuestion, versionJouable, probleme } = require('./banque');
 const { creerReference, ErreurReference, empreinte } = require('./reference');
+const { creerHistorique, nettoyerClasse, nettoyerTitre } = require('./historique');
 const { TYPES } = require('./types');
 const blocs = require('./blocs');
 const images = require('./images');
@@ -199,8 +200,13 @@ function planifier() {
 
 // QR code de l'adresse élèves : caché par défaut (postes fixes), affichable depuis l'espace professeur.
 const afficherQr = () => config.afficherQr === true;
+
+// Historique des parties : bilan enregistré à chaque fin de partie (équipes et questions, sans pseudo).
+const historique = creerHistorique({ stockage });
+const vueHistorique = () => ({ parties: historique.liste(), classes: historique.classes() });
 function vueCourse() { return { ...partie.vuePublique({ avecCodes: true, avecEleves: true }), adresse: adresse(), afficherQr: afficherQr() }; }
-function vueAdmin() { return { ...partie.vueAdmin(), adresse: adresse(), afficherQr: afficherQr() }; }
+function vueAdmin() { return { ...partie.vueAdmin(), adresse: adresse(), afficherQr: afficherQr(),
+  classe: config.classe || '', titrePartie: config.titrePartie || '' }; }
 
 /** Vue des élèves : fil réduit, paires obstacle / solution seulement quand elles changent (le navigateur garde les précédentes). */
 function vueEleves({ complete = false } = {}) {
@@ -231,6 +237,18 @@ function diffuserJoueurs() {
 }
 
 partie.on('change', () => { publicSale = true; planifier(); });
+partie.on('bilan', (bilan) => {
+  try {
+    historique.ajouter(bilan, { classe: config.classe, titre: config.titrePartie });
+    // Le titre sert à une partie : la suivante en demande un nouveau (la classe, elle, est gardée).
+    config.titrePartie = null;
+    stockage.sauver('config', config);
+    io.to('admin').emit('historique', vueHistorique());
+    io.to('admin').emit('etat', vueAdmin());
+  } catch (e) {
+    console.error(`  Historique non enregistré : ${e.message}`);
+  }
+});
 partie.on('joueur', (jeton) => { joueursSales.add(jeton); planifier(); });
 partie.on('alerte', (equipeId, alerte) => {
   for (const j of partie.joueurs.values()) {
@@ -363,6 +381,25 @@ io.on('connection', (socket) => {
       partie.configurer({ parcours, nbEquipes, reglages: fusion, questions: parcours ? banque.questionsJouables() : undefined });
       sauverConfig();
     });
+    // ----- Historique des parties -----
+    gerer(socket, 'infosPartie', ({ classe, titre }) => {
+      if (classe !== undefined) config.classe = nettoyerClasse(classe);
+      if (titre !== undefined) config.titrePartie = nettoyerTitre(titre);
+      stockage.sauver('config', config);
+      io.to('admin').emit('etat', vueAdmin());
+    });
+    gerer(socket, 'historique:liste', () => vueHistorique());
+    gerer(socket, 'historique:detail', ({ id }) => ({ partie: historique.detail(String(id)) }));
+    gerer(socket, 'historique:cumul', ({ classe }) => ({ cumul: historique.cumul(classe === null || classe === undefined ? null : String(classe)) }));
+    gerer(socket, 'historique:modifier', ({ id, titre, classe }) => {
+      historique.modifier(String(id), { titre, classe });
+      io.to('admin').emit('historique', vueHistorique());
+    });
+    gerer(socket, 'historique:supprimer', ({ id }) => {
+      historique.supprimer(String(id));
+      io.to('admin').emit('historique', vueHistorique());
+    });
+
     gerer(socket, 'affichage', ({ afficherQr: qr }) => {
       config.afficherQr = qr === true;
       stockage.sauver('config', config);

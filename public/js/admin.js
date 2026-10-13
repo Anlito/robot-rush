@@ -38,8 +38,11 @@
 
   // ---------- Noyau partagé avec les onglets Questions et Parcours (admin-*.js) ----------
   const ecouteursBanque = [];
+  const ecouteurs = []; // [événement, fonction] : rebranchés à chaque connexion
   const Admin = window.Admin = {
     envoyer,
+    /** Écoute un événement du serveur (aussi après une reconnexion). */
+    ecouter(nom, fn) { ecouteurs.push([nom, fn]); if (socket) socket.on(nom, fn); },
     banque: null,
     /** Appelé à chaque nouvelle version de la banque (après une modification, ici ou dans un autre onglet). */
     surBanque(fn) { ecouteursBanque.push(fn); if (Admin.banque) fn(Admin.banque); },
@@ -91,8 +94,8 @@
 
   // ---------- Onglets Partie / Questions / Parcours ----------
   function onglet() {
-    const nom = ['questions', 'parcours'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'partie';
-    for (const v of ['partie', 'questions', 'parcours']) el(`#vue-${v}`).hidden = v !== nom;
+    const nom = ['questions', 'parcours', 'historique'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'partie';
+    for (const v of ['partie', 'questions', 'parcours', 'historique']) el(`#vue-${v}`).hidden = v !== nom;
     document.querySelectorAll('.onglet').forEach((o) => {
       o.classList.toggle('actif', o.dataset.onglet === nom);
       if (o.dataset.onglet === nom) o.setAttribute('aria-current', 'page'); else o.removeAttribute('aria-current');
@@ -141,6 +144,7 @@
     });
     socket.on('etat', (e) => { etat = e; afficher(); });
     socket.on('banque', (b) => { Admin.banque = b; for (const f of ecouteursBanque) f(b); });
+    for (const [nom, fn] of ecouteurs) socket.on(nom, fn);
     socket.on('disconnect', () => message('Connexion au serveur perdue… reconnexion en cours. Vérifiez que la fenêtre Robot Rush est toujours ouverte sur ce PC.', true));
     socket.on('connect', () => message(''));
     socket.on('connect_error', () => {
@@ -201,6 +205,12 @@
     const cle = ev.target.dataset.reglage;
     if (cle) configurer({ reglages: { [cle]: ev.target.value } });
   });
+  // Titre et classe de la partie : enregistrés dans l'historique à la fin de la course.
+  el('#titre-partie').addEventListener('change', (ev) => Admin.envoyer('infosPartie', { titre: ev.target.value }));
+  el('#classe-partie').addEventListener('change', (ev) => Admin.envoyer('infosPartie', { classe: ev.target.value }));
+  Admin.ecouter('historique', (h) => {
+    el('#liste-classes').innerHTML = h.classes.map((c) => `<option value="${esc(c)}"></option>`).join('');
+  });
   el('#afficherQr').addEventListener('change', (ev) => Admin.envoyer('affichage', { afficherQr: ev.target.checked }));
   el('#solutionGarantie').addEventListener('change', (ev) => configurer({ reglages: { solutionGarantie: ev.target.checked } }));
   document.querySelectorAll('[name="finBlocage"]').forEach((r) => r.addEventListener('change', (ev) => configurer({ reglages: { finBlocage: ev.target.value } })));
@@ -211,6 +221,9 @@
       const input = el(`#r-${cle}`);
       if (document.activeElement !== input) input.value = etat.reglagesComplets[cle];
       input.disabled = !lobby;
+    }
+    for (const [id, valeur] of [['#titre-partie', etat.titrePartie], ['#classe-partie', etat.classe]]) {
+      if (document.activeElement !== el(id)) el(id).value = valeur || '';
     }
     el('#solutionGarantie').checked = etat.reglagesComplets.solutionGarantie;
     el('#solutionGarantie').disabled = !lobby;

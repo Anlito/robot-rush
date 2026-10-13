@@ -484,3 +484,42 @@ test('élève qui quitte la page : compté à part, revient avec son jeton', () 
   p.connecter(j.eleve1);
   assert.equal(p.vuePublique({ avecEleves: true }).equipes[1].eleves[0], 'eleve1');
 });
+
+test('bilan de fin de partie : par équipe et par question, sans aucun pseudo', () => {
+  const { p, j, avancerTemps } = nouvellePartie();
+  const bilans = [];
+  p.on('bilan', (b) => bilans.push(b));
+  p.demarrer();
+  const q0 = p.joueurs.get(j.eleve0).question.q.id;
+  bonneReponse(p, j.eleve0);
+  const q1 = p.joueurs.get(j.eleve1).question.q.id;
+  mauvaiseReponse(p, j.eleve1);
+  avancerTemps(30001); // eleve2 (et les autres questions en cours) : temps écoulé
+  p.arreter();
+  assert.equal(bilans.length, 1);
+  const b = bilans[0];
+  assert.equal(b.raison, 'arret');
+  assert.equal(b.nbEleves, 3);
+  assert.equal(b.equipes.length, 3);
+  const rouge = b.equipes.find((e) => e.nom === 'Rouge');
+  assert.equal(rouge.justes, 1);
+  const bleue = b.equipes.find((e) => e.nom === 'Bleue');
+  assert.ok(bleue.fausses >= 1);
+  const stat = (id) => b.questions.find((x) => x.id === id);
+  assert.ok(stat(q0).justes >= 1);
+  assert.ok(stat(q1).fausses >= 1);
+  assert.ok(b.questions.some((x) => x.tempsEcoules >= 1));
+  for (const x of b.questions) assert.ok(x.posees >= x.justes + x.fausses + x.tempsEcoules, x.id);
+  assert.equal(stat(q0).parEquipe.Rouge.justes >= 1, true);
+  const texte = JSON.stringify(b);
+  for (const pseudo of ['eleve0', 'eleve1', 'eleve2']) assert.ok(!texte.includes(pseudo), `pseudo ${pseudo} dans le bilan`);
+});
+
+test('bilan : rien d\'enregistré si personne n\'a répondu', () => {
+  const { p } = nouvellePartie();
+  const bilans = [];
+  p.on('bilan', (b) => bilans.push(b));
+  p.demarrer();
+  p.arreter();
+  assert.equal(bilans.length, 0);
+});
