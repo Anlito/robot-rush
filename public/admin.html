@@ -7,7 +7,7 @@
 <link rel="icon" href="/assets/robots/robot-verte-normal.svg">
 <link rel="stylesheet" href="/fonts/polices.css?v=4">
 <link rel="stylesheet" href="/css/commun.css?v=4">
-<link rel="stylesheet" href="/css/admin.css?v=5">
+<link rel="stylesheet" href="/css/admin.css?v=6">
 <link rel="stylesheet" href="/css/admin-banque.css?v=9">
 </head>
 <body>
@@ -97,6 +97,8 @@
           <b class="adresse-courte mono" id="adresse-courte"></b>
           <span class="adresse-complete">Adresse complète : <span class="mono" id="adresse-complete"></span></span>
           <span class="adresse-autres" id="adresse-autres"></span>
+          <label class="case-a-cocher case-qr"><input type="checkbox" id="afficherQr">
+            <span>Afficher le QR code <span class="gris">(au projecteur et ici : pour des tablettes ou téléphones)</span></span></label>
           <span class="alerte-reseau" id="alerte-reseau" hidden>Aucun réseau détecté : branchez le PC au réseau du collège (câble ou Wi-Fi), puis attendez quelques secondes.</span>
         </div>
         <details class="aide-connexion">
@@ -150,7 +152,7 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/commun.js?v=4"></script>
 <script src="/js/blocs.js?v=6"></script>
-<script src="/js/admin.js?v=8"></script>
+<script src="/js/admin.js?v=9"></script>
 <script src="/js/admin-questions.js?v=7"></script>
 <script src="/js/admin-parcours.js?v=6"></script>
 <script src="/js/admin-fichiers.js?v=4"></script>

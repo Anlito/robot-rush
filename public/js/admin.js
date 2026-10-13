@@ -201,6 +201,7 @@
     const cle = ev.target.dataset.reglage;
     if (cle) configurer({ reglages: { [cle]: ev.target.value } });
   });
+  el('#afficherQr').addEventListener('change', (ev) => Admin.envoyer('affichage', { afficherQr: ev.target.checked }));
   el('#solutionGarantie').addEventListener('change', (ev) => configurer({ reglages: { solutionGarantie: ev.target.checked } }));
   document.querySelectorAll('[name="finBlocage"]').forEach((r) => r.addEventListener('change', (ev) => configurer({ reglages: { finBlocage: ev.target.value } })));
 
@@ -360,6 +361,9 @@
     el('#adresse-autres').textContent = a.autres.length ? `Si ça ne marche pas, autre adresse possible : ${a.autres.join(' ou ')}` : '';
     el('#alerte-reseau').hidden = !a.sansReseau;
     const qr = el('#qr');
+    qr.hidden = !etat.afficherQr;
+    el('#carte-adresse').classList.toggle('sans-qr', !etat.afficherQr);
+    el('#afficherQr').checked = Boolean(etat.afficherQr);
     if (qr.dataset.adresse !== a.complete) { qr.dataset.adresse = a.complete; qr.src = `/qr.svg?${encodeURIComponent(a.complete)}`; }
   }
 

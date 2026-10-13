@@ -58,6 +58,8 @@ input:focus-visible, select:focus-visible, button:focus-visible, summary:focus-v
 .saisie-unite:has(input:disabled) { background: var(--fond-admin); color: #9A968C; }
 .champ > .case-a-cocher { display: flex; gap: 8px; align-items: flex-start; margin-top: 10px; line-height: 1.35; cursor: pointer; font-weight: 400; }
 .case-a-cocher input { width: 18px; height: 18px; margin: 1px 0 0; flex: none; accent-color: var(--encre); }
+.case-qr { display: flex; gap: 8px; align-items: flex-start; cursor: pointer; font-weight: 400; font-size: 14px; margin-top: 4px; }
+.carte-adresse.sans-qr { grid-template-columns: 1fr; }
 .fin-blocage { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
 .fin-blocage .case-a-cocher { display: flex; gap: 8px; align-items: flex-start; line-height: 1.35; cursor: pointer; font-weight: 400; }
 .ligne-titre { display: flex; justify-content: space-between; align-items: baseline; }

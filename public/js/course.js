@@ -10,10 +10,13 @@
   let dernierFil = null;
   let gabarit = '';
 
-  // Mise à l'échelle de la scène 1920×1080 dans la fenêtre.
+  // Mise à l'échelle de la scène (1920 de large) dans la fenêtre. Écran plus haut que le 16:9
+  // (projecteur ou écran 4:3, 5:4…) : la scène s'allonge au lieu de laisser des bandes noires.
   function ajuster() {
-    const k = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
-    scene.style.transform = `translate(${(window.innerWidth - 1920 * k) / 2}px, ${(window.innerHeight - 1080 * k) / 2}px) scale(${k})`;
+    const hauteur = Math.min(1600, Math.max(1080, Math.round(1920 * window.innerHeight / window.innerWidth)));
+    scene.style.height = `${hauteur}px`;
+    const k = Math.min(window.innerWidth / 1920, window.innerHeight / hauteur);
+    scene.style.transform = `translate(${(window.innerWidth - 1920 * k) / 2}px, ${(window.innerHeight - hauteur * k) / 2}px) scale(${k})`;
   }
   window.addEventListener('resize', ajuster);
   ajuster();
@@ -37,7 +40,7 @@
     el('#adresse-lobby').textContent = a.courte;
     el('#adresse-autres').textContent = a.sansReseau
       ? 'Aucun réseau détecté sur ce PC : branchez-le au réseau du collège.'
-      : `Ou scanne le QR code · adresse complète : ${a.complete}`;
+      : `${etat.afficherQr ? 'Ou scanne le QR code · a' : 'A'}dresse complète : ${a.complete}`;
     const n = etat.equipes.length;
     const colonnes = n <= 4 ? n : 4;
     const grille = el('#cartes-codes');
@@ -232,6 +235,7 @@
     const chrono = el('#chrono');
     chrono.classList.toggle('vide', vue !== 'course');
     if (vue === 'course') chrono.innerHTML = decompte(etat.tempsRestantMs, { format: 'mmss' });
+    document.body.classList.toggle('sans-qr', !etat.afficherQr);
     // Le QR code suit l'adresse (changement de réseau) : on le recharge si elle change.
     if (afficher.adresseQr !== a.complete) {
       afficher.adresseQr = a.complete;

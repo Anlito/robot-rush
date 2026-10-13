@@ -197,8 +197,10 @@ function planifier() {
   }
 }
 
-function vueCourse() { return { ...partie.vuePublique({ avecCodes: true, avecEleves: true }), adresse: adresse() }; }
-function vueAdmin() { return { ...partie.vueAdmin(), adresse: adresse() }; }
+// QR code de l'adresse élèves : caché par défaut (postes fixes), affichable depuis l'espace professeur.
+const afficherQr = () => config.afficherQr === true;
+function vueCourse() { return { ...partie.vuePublique({ avecCodes: true, avecEleves: true }), adresse: adresse(), afficherQr: afficherQr() }; }
+function vueAdmin() { return { ...partie.vueAdmin(), adresse: adresse(), afficherQr: afficherQr() }; }
 
 /** Vue des élèves : fil réduit, paires obstacle / solution seulement quand elles changent (le navigateur garde les précédentes). */
 function vueEleves({ complete = false } = {}) {
@@ -360,6 +362,12 @@ io.on('connection', (socket) => {
       const fusion = parcours ? { ...(parcours.reglages || {}), ...(reglages || {}) } : reglages;
       partie.configurer({ parcours, nbEquipes, reglages: fusion, questions: parcours ? banque.questionsJouables() : undefined });
       sauverConfig();
+    });
+    gerer(socket, 'affichage', ({ afficherQr: qr }) => {
+      config.afficherQr = qr === true;
+      stockage.sauver('config', config);
+      io.to('course').emit('etat', vueCourse());
+      io.to('admin').emit('etat', vueAdmin());
     });
     gerer(socket, 'demarrer', ({ forcer }) => partie.demarrer({ forcer }));
     gerer(socket, 'pause', () => partie.pause());
