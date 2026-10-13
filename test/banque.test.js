@@ -181,3 +181,14 @@ test('titre : gardé, nettoyé, 80 caractères au plus', () => {
   assert.ok(question.titre.startsWith('LED D9 x'));
   assert.equal(b.enregistrerQuestion({ type: 'calcul', enonce: 'y', donnees: { reponse: 1 } }).question.titre, null);
 });
+
+test('le modèle pour l\'IA (outils-salle/MODELE-QUESTIONS-IA.md) reste importable et complet', () => {
+  const md = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'outils-salle', 'MODELE-QUESTIONS-IA.md'), 'utf8');
+  const fichier = JSON.parse(md.split('```json')[1].split('```')[0]);
+  const b = new Banque({ questions: [], parcours: [], sauver: () => {} });
+  const r = b.importer(fichier, { mode: 'ajouter' });
+  assert.deepEqual(r.ignorees, []);
+  assert.equal(r.incompletes, 0);
+  assert.equal(r.questions, fichier.questions.length);
+  for (const q of b.questions) assert.equal(probleme(q), null, q.titre);
+});
