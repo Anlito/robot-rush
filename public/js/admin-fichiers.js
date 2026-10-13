@@ -34,7 +34,7 @@
     if (fichier.size > TAILLE_MAX) { Admin.bandeau('Fichier trop gros (9 Mo au plus). Exportez parcours par parcours.', true); return; }
     let donnees;
     try {
-      donnees = JSON.parse(await fichier.text());
+      donnees = JSON.parse((await fichier.text()).replace(/^\uFEFF/, ''));
     } catch {
       Admin.bandeau('Ce fichier n\'est pas un fichier JSON lisible. Utilisez un fichier exporté depuis Robot Rush.', true);
       return;

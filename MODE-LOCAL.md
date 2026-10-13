@@ -9,6 +9,23 @@ Aucune donnée ne sort du réseau local. Les questions, parcours et réglages so
 
 ---
 
+## 0. Le plus simple : le dossier tout prêt
+
+Le dossier `RobotRush` préparé (archive `RobotRush-mode-local-AAAA-MM-JJ.zip`) contient déjà tout :
+le jeu, ses composants et Node.js portable. **Rien à installer** : décompresser, puis double-cliquer sur `demarrer.bat`.
+La **fiche de mise en place** (`FICHE-MISE-EN-PLACE.html`, à imprimer) résume les étapes et le dépannage sur une page.
+
+Pour refaire ce dossier après une mise à jour du jeu (sur un PC avec Node.js et internet) :
+
+```bash
+npm run dossier-local
+```
+
+Le résultat est dans `dist/` : le dossier `RobotRush` et son archive ZIP. Vos données (`data/`)
+et votre mot de passe (`config-serveur.json`) ne sont jamais copiés dedans.
+
+Les étapes 1 et 2 ci-dessous ne servent que si vous partez du code source.
+
 ## 1. Installer Node.js (une seule fois)
 
 Robot Rush a besoin de **Node.js**, un programme gratuit.

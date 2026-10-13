@@ -140,3 +140,19 @@ test('paires : formes déduites du genre, identifiants gardés, au moins 2', () 
   assert.deepEqual(PAIRES_DEFAUT.map((x) => genreDe(x.solution)), ['m', 'f', 'f', 'pl']);
   assert.equal(genreDe(PAIRES_DEFAUT[3].obstacle), 'part-f');
 });
+
+test('fichiers JSON avec une marque BOM (Bloc-notes de Windows) : lus quand même', () => {
+  const fs = require('node:fs');
+  const os = require('node:os');
+  const path = require('node:path');
+  const dossier = fs.mkdtempSync(path.join(os.tmpdir(), 'rr-bom-'));
+  const BOM = String.fromCharCode(0xfeff);
+  fs.writeFileSync(path.join(dossier, 'questions.json'), BOM + JSON.stringify(seedQ.slice(0, 2)), 'utf8');
+  process.env.DATA_DIR = dossier;
+  delete require.cache[require.resolve('../server/stockage')];
+  const stockage = require('../server/stockage');
+  assert.equal(stockage.charger('questions').length, 2);
+  delete process.env.DATA_DIR;
+  delete require.cache[require.resolve('../server/stockage')];
+  fs.rmSync(dossier, { recursive: true, force: true });
+});

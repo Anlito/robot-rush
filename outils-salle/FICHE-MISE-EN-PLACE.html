@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Robot Rush · Fiche de mise en place</title>
+<link rel="stylesheet" href="public/fonts/polices.css">
+<style>
+  :root { --encre: #16161D; --gris: #4A4A57; --papier: #F5F2EA; --jaune: #F2B705; --vert: #15803D; --rouge: #B42318; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #CFC9BC; color: var(--encre); font: 14px/1.4 'Atkinson Hyperlegible', system-ui, sans-serif; }
+  .page { width: 210mm; min-height: 297mm; margin: 16px auto; background: #fff; padding: 12mm 14mm; }
+  h1 { font: 800 26px/1.1 'Bricolage Grotesque', system-ui, sans-serif; margin: 0; }
+  h2 { font: 800 16px/1.2 'Bricolage Grotesque', system-ui, sans-serif; margin: 14px 0 6px; display: flex; align-items: center; gap: 8px; }
+  h2 .num { background: var(--encre); color: #fff; border-radius: 6px; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; flex: none; }
+  .sous { color: var(--gris); margin: 4px 0 10px; }
+  .encadre { border: 2px solid var(--encre); border-radius: 10px; padding: 8px 12px; margin: 8px 0; }
+  .encadre.attention { border-color: var(--jaune); background: #FCF0C8; }
+  .encadre.plan-b { background: var(--papier); }
+  ul, ol { margin: 4px 0; padding-left: 20px; }
+  li { margin: 2px 0; }
+  .case { display: inline-block; width: 12px; height: 12px; border: 1.5px solid var(--encre); border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+  code, .mono { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 13px; background: var(--papier); padding: 0 4px; border-radius: 4px; }
+  .deux { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  td, th { border: 1px solid #C9C2B3; padding: 4px 6px; text-align: left; vertical-align: top; }
+  th { background: var(--papier); }
+  .note { font-size: 12px; color: var(--gris); }
+  .imprimer { position: fixed; right: 16px; top: 16px; background: var(--encre); color: #fff; border: none; border-radius: 10px; padding: 10px 16px; font: 700 15px 'Atkinson Hyperlegible', sans-serif; cursor: pointer; }
+  /* Impression : tout tient sur une page A4 */
+  @media print {
+    body { background: #fff; font-size: 11.5px; line-height: 1.28; }
+    .page { margin: 0; width: auto; min-height: 0; padding: 0; }
+    .imprimer { display: none; }
+    h1 { font-size: 21px; }
+    h2 { font-size: 13.5px; margin: 7px 0 3px; }
+    h2 .num { width: 19px; height: 19px; font-size: 12px; }
+    .sous { margin: 2px 0 6px; }
+    .encadre { padding: 5px 9px; margin: 5px 0; }
+    li { margin: 1px 0; }
+    code, .mono { font-size: 11px; }
+    table { font-size: 11px; }
+    td, th { padding: 2px 5px; }
+    .note { font-size: 10.5px; }
+    .deux { gap: 10px; }
+    @page { size: A4; margin: 9mm 11mm; }
+  }
+</style>
+</head>
+<body>
+<button class="imprimer" onclick="window.print()">Imprimer cette fiche</button>
+<div class="page">
+  <h1>Robot Rush · Mise en place en salle</h1>
+  <p class="sous">Mode local : le jeu tourne sur le PC du professeur, les élèves s'y connectent par le réseau du collège. Rien à installer sur leurs postes.</p>
+
+  <div class="encadre attention"><b>À faire une fois, avant le premier cours</b> (idéalement quelques jours avant, avec un poste élève à côté) :
+    étapes 1 à 3 ci-dessous. Si le poste élève n'arrive pas à se connecter, il reste le temps de voir le référent numérique.</div>
+
+  <h2><span class="num">0</span>Copier le dossier</h2>
+  <ul>
+    <li><span class="case"></span>Copier le dossier <b>RobotRush</b> en entier sur le PC prof (par exemple dans <i>Documents</i>). Le lancer depuis la clé USB marche aussi, plus lentement.</li>
+    <li class="note">Le dossier contient tout : le jeu, ses composants et Node.js (version portable, rien à installer, pas besoin de droits d'administrateur).</li>
+  </ul>
+
+  <h2><span class="num">1</span>Lancer le jeu</h2>
+  <ul>
+    <li><span class="case"></span>Brancher le PC au <b>réseau du collège</b> (le même que les postes élèves).</li>
+    <li><span class="case"></span>Double-cliquer sur <b>demarrer.bat</b>. Une fenêtre noire s'ouvre : <b>la laisser ouverte</b> tout le cours.</li>
+    <li><span class="case"></span><b>Pare-feu Windows</b> : s'il pose la question, cocher <b>Réseaux privés</b> (et « domaine » s'il est proposé), puis <b>Autoriser l'accès</b>.
+      <span class="note">Sans droits d'administrateur, Windows peut refuser : voir le plan B en bas.</span></li>
+    <li><span class="case"></span>Noter l'adresse affichée dans la fenêtre noire, par exemple <span class="mono">192.168.1.25:3000</span>.</li>
+  </ul>
+
+  <h2><span class="num">2</span>Espace professeur</h2>
+  <ul>
+    <li><span class="case"></span>Le navigateur s'ouvre sur l'espace professeur. Mot de passe : <b>robot</b>.</li>
+    <li><span class="case"></span><b>Changer le mot de passe</b> (une fois) : fermer la fenêtre noire, ouvrir <code>config-serveur.json</code> avec le Bloc-notes,
+      remplacer <code>"robot"</code> par le vôtre (garder les guillemets), enregistrer, relancer <b>demarrer.bat</b>.</li>
+  </ul>
+
+  <h2><span class="num">3</span>Tester depuis un poste élève</h2>
+  <ul>
+    <li><span class="case"></span>Sur un poste élève, ouvrir le navigateur et taper l'adresse suivie de <b>/test</b>, par exemple <span class="mono">192.168.1.25:3000/test</span>.</li>
+    <li><span class="case"></span>La page doit afficher <b>« Connexion réussie »</b>. Sinon : voir « Si ça ne marche pas ».</li>
+  </ul>
+
+  <div class="deux">
+    <div>
+      <h2><span class="num">4</span>Le jour du cours</h2>
+      <ol>
+        <li>Lancer <b>demarrer.bat</b> 5 minutes avant.</li>
+        <li>Espace professeur : choisir le parcours, le nombre d'équipes.</li>
+        <li>Lien <b>« Ouvrir /course »</b> en haut → sur le vidéoprojecteur, plein écran (<b>F11</b>).</li>
+        <li>Les élèves tapent l'adresse affichée au tableau (ou scannent le QR code), puis le <b>code de leur équipe</b> et un pseudo.</li>
+        <li><b>▶ Démarrer la course</b>.</li>
+        <li>À la fin : fermer la fenêtre noire.</li>
+      </ol>
+    </div>
+    <div>
+      <h2><span class="num">!</span>Bon à savoir</h2>
+      <ul>
+        <li>Un élève qui actualise ou ferme l'onglet retrouve son équipe en rouvrant l'adresse.</li>
+        <li>Les questions créées dans l'espace professeur sont gardées dans le dossier <code>data</code>.</li>
+        <li>Aucun pseudo d'élève n'est enregistré après la partie.</li>
+        <li>Aucune connexion à internet n'est nécessaire.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2><span class="num">?</span>Si ça ne marche pas</h2>
+  <table>
+    <tr><th style="width:38%">Ce qu'on voit</th><th>Que faire</th></tr>
+    <tr><td>La fenêtre noire se ferme tout de suite, ou parle de Node.js</td><td>Vérifier que le dossier <code>node</code> est bien dans le dossier RobotRush (copie complète).</td></tr>
+    <tr><td>« Le port 3000 est déjà utilisé »</td><td>Rien à faire : le jeu prend le port suivant. Donner aux élèves la <b>nouvelle</b> adresse affichée.</td></tr>
+    <tr><td>Le poste élève n'ouvre pas la page (délai dépassé)</td><td>1) Même réseau que le PC prof ? (pas de Wi-Fi invité) 2) Essayer l'« autre adresse » affichée dans la fenêtre noire. 3) Pare-feu : voir plan B.</td></tr>
+    <tr><td>« Aucun réseau détecté »</td><td>Brancher le câble réseau ou se connecter au Wi-Fi du collège, attendre quelques secondes.</td></tr>
+    <tr><td>La page /test s'ouvre mais « temps réel » échoue</td><td>Essayer un autre navigateur sur le poste élève ; sinon un filtrage bloque les WebSockets : voir le référent numérique.</td></tr>
+  </table>
+
+  <div class="encadre plan-b"><b>Plan B pare-feu</b> (si le poste élève n'arrive pas à se connecter et que Windows n'a rien demandé, ou a refusé faute de droits) :
+    demander au <b>référent numérique</b> d'autoriser sur le PC prof les connexions entrantes vers
+    <code>node.exe</code> (dans le dossier <code>RobotRush\node</code>), ou le <b>port TCP 3000</b>, sur le réseau du collège.
+    Autre solution : un point d'accès Wi-Fi dédié à la classe. Guide détaillé : <b>MODE-LOCAL.md</b> dans le dossier.</div>
+</div>
+</body>
+</html>

@@ -5,3 +5,4 @@ data/
 config-serveur.json
 node/
 .claude/
+dist/

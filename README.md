@@ -17,6 +17,9 @@ avec un obstacle. La course est projetée en classe.
 **Guide pas à pas pour les enseignants : [MODE-LOCAL.md](MODE-LOCAL.md)** (installation de Node.js ou version portable,
 double-clic sur `demarrer.bat`, pare-feu Windows, adresse et QR code pour les élèves, page `/test`, dépannage).
 
+Dossier tout prêt à copier sur le PC du professeur (jeu + Node.js portable + fiche de mise en place à imprimer) :
+`npm run dossier-local` → `dist/RobotRush/` et son archive ZIP.
+
 En bref : double-cliquer sur `demarrer.bat` (Mac : `demarrer.command`, Linux : `demarrer.sh`).
 Le script vérifie Node.js, installe les composants la première fois, crée `config-serveur.json`,
 puis lance le serveur et ouvre l'espace professeur. Tout fonctionne hors ligne : polices, icônes, QR code
@@ -187,7 +190,8 @@ public/          pages /course, /jouer, /admin, /test, styles, scripts, SVG, pol
   vendor/blockly/  Blockly, copié depuis le projet céréales
 seed/            questions et parcours de départ
 test/            tests de la logique de jeu (node --test)
-tools/           élèves factices, test de charge
+tools/           élèves factices, test de charge, préparation du dossier local
+outils-salle/    fiche de mise en place à imprimer
 render.yaml, railway.json, fly.toml, Dockerfile   déploiement en ligne
 demarrer.bat     lancement Windows (double-clic) ; demarrer.command (Mac), demarrer.sh (Linux)
 design/          maquettes Claude Design (référence de l'interface)

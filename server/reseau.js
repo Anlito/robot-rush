@@ -10,7 +10,8 @@ function lireConfigServeur() {
   let fichierConfig = {};
   if (fs.existsSync(fichier)) {
     try {
-      fichierConfig = JSON.parse(fs.readFileSync(fichier, 'utf8'));
+      // Le Bloc-notes de Windows peut ajouter une marque invisible (BOM) en tête de fichier : on l'ignore.
+      fichierConfig = JSON.parse(fs.readFileSync(fichier, 'utf8').replace(/^\uFEFF/, ''));
     } catch (e) {
       console.error(`Le fichier config-serveur.json est mal écrit (${e.message}). Il est ignoré.`);
     }

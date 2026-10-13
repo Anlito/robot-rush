@@ -8,7 +8,8 @@
     "start": "node server/index.js",
     "test": "node --test test/*.test.js",
     "test-charge": "node tools/test-charge.js",
-    "eleves-factices": "node tools/eleves-factices.js"
+    "eleves-factices": "node tools/eleves-factices.js",
+    "dossier-local": "node tools/preparer-dossier-local.js"
   },
   "engines": {
     "node": ">=20"

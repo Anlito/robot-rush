@@ -26,7 +26,8 @@ const FICHIERS = {
 };
 
 function lireJson(fichier) {
-  return JSON.parse(fs.readFileSync(fichier, 'utf8'));
+  // Marque invisible (BOM) ajoutée par certains éditeurs Windows : ignorée.
+  return JSON.parse(fs.readFileSync(fichier, 'utf8').replace(/^\uFEFF/, ''));
 }
 
 const aujourdhui = () => new Date().toISOString().slice(0, 10);
