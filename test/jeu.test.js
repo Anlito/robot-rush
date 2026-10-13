@@ -471,3 +471,16 @@ test('deuxième tour : les questions ratées passent en premier (ordre du parcou
   const tour3 = jouerTour(p, jeton, avancerTemps);
   assert.deepEqual(tour3, ['q0', 'q1', 'q2', 'q3', 'q4'], 'tout réussi au tour 2 : retour à l\'ordre du parcours');
 });
+
+test('élève qui quitte la page : compté à part, revient avec son jeton', () => {
+  const { p, j } = nouvellePartie();
+  p.deconnecter(j.eleve1);
+  const v = p.vuePublique({ avecEleves: true });
+  assert.equal(v.nbEleves, 3);
+  assert.equal(v.nbConnectes, 2);
+  assert.equal(v.equipes[1].nbConnectes, 0);
+  assert.deepEqual(v.equipes[1].partis, ['eleve1']);
+  assert.deepEqual(v.equipes[1].eleves, []);
+  p.connecter(j.eleve1);
+  assert.equal(p.vuePublique({ avecEleves: true }).equipes[1].eleves[0], 'eleve1');
+});

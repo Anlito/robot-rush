@@ -324,10 +324,10 @@
   });
 
   function ligneEleve(j, e) {
-    const note = j.signale ? 'à retirer ?' : !j.connecte ? 'reconnexion…' : '';
+    const note = j.signale ? 'à retirer ?' : !j.connecte ? 'a quitté la page' : '';
     const autres = etat.equipes.filter((x) => x.id !== e.id);
     return `<div class="eleve ${j.signale ? 'signale' : ''}">
-      <span class="point ${j.connecte ? '' : 'absent'}" title="${j.connecte ? 'Connecté' : 'Déconnecté, peut revenir'}"></span>
+      <span class="point ${j.connecte ? '' : 'absent'}" title="${j.connecte ? 'Connecté' : 'A quitté la page : peut revenir avec le même pseudo, ou être retiré (×)'}"></span>
       <span class="pseudo">${esc(j.pseudo)}</span>
       ${note ? `<span class="note">${note}</span>` : ''}
       ${etat.etat !== 'lobby' ? `<span class="stats" title="Réponses justes · attaques · solutions">${j.stats.justes}·${j.stats.attaques}·${j.stats.solutions}</span>` : ''}

@@ -36,7 +36,7 @@
   // ---------- A3 · Avant la partie ----------
   function afficherLobby() {
     const a = etat.adresse;
-    el('#nb-connectes').textContent = etat.nbEleves;
+    el('#nb-connectes').textContent = etat.nbConnectes;
     el('#adresse-lobby').textContent = a.courte;
     el('#adresse-autres').textContent = a.sansReseau
       ? 'Aucun réseau détecté sur ce PC : branchez-le au réseau du collège.'
@@ -50,7 +50,8 @@
       <div class="carte-code">
         <div class="bandeau" style="background:${e.couleur};color:${e.texte}">${robot({ couleur: e.couleur, symbole: e.symbole, taille: 64 })}<span>${esc(e.nom)}</span></div>
         <div class="corps"><div class="code">${esc(e.code)}</div>
-        <div class="eleves"><b>${e.nbEleves} élève${e.nbEleves > 1 ? 's' : ''}${e.eleves.length ? ' ·' : ''}</b> ${e.eleves.map(esc).join(', ')}</div></div>
+        <div class="eleves"><b>${e.nbConnectes} élève${e.nbConnectes > 1 ? 's' : ''}${e.eleves.length ? ' ·' : ''}</b> ${e.eleves.map(esc).join(', ')}
+          ${e.partis.length ? `<span class="partis">· parti${e.partis.length > 1 ? 's' : ''} : ${e.partis.map(esc).join(', ')}</span>` : ''}</div></div>
       </div>`).join('');
   }
 

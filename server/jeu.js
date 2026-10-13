@@ -646,9 +646,13 @@ class Partie extends EventEmitter {
         protegeRestantMs: Math.max(0, e.protegeJusqua - this.t),
         succesRestantMs: Math.max(0, e.succesJusqua - this.t),
         nbEleves: parEquipe[e.id].length,
-        eleves: avecEleves ? parEquipe[e.id].map((j) => j.pseudo) : undefined,
+        nbConnectes: parEquipe[e.id].filter((j) => j.connecte).length,
+        // Projecteur : élèves présents, et ceux qui ont quitté la page (ils peuvent revenir avec le même pseudo).
+        eleves: avecEleves ? parEquipe[e.id].filter((j) => j.connecte).map((j) => j.pseudo) : undefined,
+        partis: avecEleves ? parEquipe[e.id].filter((j) => !j.connecte).map((j) => j.pseudo) : undefined,
       })),
       nbEleves: this.joueurs.size,
+      nbConnectes: [...this.joueurs.values()].filter((j) => j.connecte).length,
       fil: this.fil.slice(0, fil),
       resultat: this.resultat,
     };
