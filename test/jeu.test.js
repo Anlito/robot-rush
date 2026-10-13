@@ -433,3 +433,41 @@ test('fin du blocage : réglage inconnu ignoré, durée par défaut', () => {
   const { p } = nouvellePartie({ reglages: { finBlocage: 'jamais' } });
   assert.equal(p.reglages.finBlocage, 'duree');
 });
+
+// Joue un tour complet pour un élève : rate les questions demandées, réussit les autres. Renvoie l'ordre vu.
+function jouerTour(p, jeton, avancerTemps, rater = () => false) {
+  const vues = [];
+  for (let i = 0; i < QUESTIONS.length; i++) {
+    const id = p.joueurs.get(jeton).question.q.id;
+    vues.push(id);
+    if (rater(id, i)) { mauvaiseReponse(p, jeton); avancerTemps(3000); } else { bonneReponse(p, jeton); p.choisirAction(jeton, 'avancer'); }
+  }
+  return vues;
+}
+
+test('deuxième tour : les questions ratées passent en premier (ordre aléatoire)', () => {
+  const { p, j, avancerTemps } = nouvellePartie();
+  p.demarrer();
+  const tour1 = jouerTour(p, j.eleve0, avancerTemps, (id, i) => i === 1 || i === 3);
+  assert.equal(new Set(tour1).size, QUESTIONS.length);
+  const ratees = new Set([tour1[1], tour1[3]]);
+  const tour2 = jouerTour(p, j.eleve0, avancerTemps, (id) => id === tour1[3]);
+  assert.equal(new Set(tour2).size, QUESTIONS.length, 'toutes les questions une fois au deuxième tour');
+  assert.deepEqual(new Set(tour2.slice(0, 2)), ratees, 'les deux ratées d\'abord');
+});
+
+test('deuxième tour : les questions ratées passent en premier (ordre du parcours)', () => {
+  const horloge = { now: 0 };
+  const parcours = { id: 'p', nom: 'P', ordre_aleatoire: false, questions: QUESTIONS.map((q) => q.id) };
+  const p = new Partie({ questions: QUESTIONS, parcours, nbEquipes: 2, rng: rngFixe(), maintenant: () => horloge.now });
+  const avancerTemps = (ms) => { horloge.now += ms; p.tick(); };
+  const jeton = p.rejoindre({ code: p.equipes[0].code, pseudo: 'a' }).jeton;
+  p.rejoindre({ code: p.equipes[1].code, pseudo: 'b' });
+  p.demarrer();
+  const tour1 = jouerTour(p, jeton, avancerTemps, (id) => id === 'q1' || id === 'q3');
+  assert.deepEqual(tour1, ['q0', 'q1', 'q2', 'q3', 'q4']);
+  const tour2 = jouerTour(p, jeton, avancerTemps);
+  assert.deepEqual(tour2, ['q1', 'q3', 'q0', 'q2', 'q4']);
+  const tour3 = jouerTour(p, jeton, avancerTemps);
+  assert.deepEqual(tour3, ['q0', 'q1', 'q2', 'q3', 'q4'], 'tout réussi au tour 2 : retour à l\'ordre du parcours');
+});

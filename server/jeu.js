@@ -179,8 +179,8 @@ class Partie extends EventEmitter {
       finPhase: 0,         // fin de l'attente (erreur) ou du choix d'action
       tirage: null,        // { solutions: [...] } ou { obstacles: [...] }
       retour: null,        // { correct, donnee, bonne, explication }
-      vues: new Set(),
-      indexSuivant: 0,
+      file: [],            // questions restantes du tour en cours (identifiants)
+      fautes: new Set(),   // questions ratées pendant ce tour : posées en premier au tour suivant
       numero: 0,
       stats: { justes: 0, attaques: 0, solutions: 0 },
       signale: pseudoSignale(p),
@@ -305,8 +305,8 @@ class Partie extends EventEmitter {
         position: 0, stock: this.stockVide(), blocage: null, protegeJusqua: 0, succesJusqua: 0, justes: 0,
       }));
       for (const j of this.joueurs.values()) {
-        Object.assign(j, { phase: 'attente', question: null, tirage: null, retour: null, vues: new Set(),
-          indexSuivant: 0, numero: 0, stats: { justes: 0, attaques: 0, solutions: 0 } });
+        Object.assign(j, { phase: 'attente', question: null, tirage: null, retour: null, file: [],
+          fautes: new Set(), numero: 0, stats: { justes: 0, attaques: 0, solutions: 0 } });
         this.emit('joueur', j.jeton);
       }
     }
@@ -348,23 +348,29 @@ class Partie extends EventEmitter {
 
   // ---------- Questions ----------
 
+  /**
+   * Un tour = chaque question du parcours une fois, au hasard ou dans l'ordre du parcours.
+   * À partir du deuxième tour, les questions ratées au tour précédent passent en premier.
+   */
+  nouveauTour(j) {
+    const aRevoir = j.fautes;
+    j.fautes = new Set();
+    const ordonner = (liste) => (this.parcours && this.parcours.ordre_aleatoire === false ? liste : melanger(liste, this.rng));
+    const file = [...ordonner(this.questions.filter((q) => aRevoir.has(q.id))),
+      ...ordonner(this.questions.filter((q) => !aRevoir.has(q.id)))].map((q) => q.id);
+    // Jamais deux fois de suite la même question (fin d'un tour, début du suivant).
+    const derniere = j.question && j.question.q.id;
+    if (file.length > 1 && file[0] === derniere) [file[0], file[1]] = [file[1], file[0]];
+    return file;
+  }
+
   donnerQuestion(j) {
-    const qs = this.questions;
-    let q;
-    if (this.parcours && this.parcours.ordre_aleatoire === false) {
-      q = qs[j.indexSuivant % qs.length];
-      j.indexSuivant++;
-    } else {
-      let candidates = qs.filter((x) => !j.vues.has(x.id));
-      if (candidates.length === 0) {
-        // Toutes vues : on recommence, en évitant de reposer la dernière tout de suite.
-        const derniere = j.question && j.question.q.id;
-        j.vues.clear();
-        candidates = qs.length > 1 ? qs.filter((x) => x.id !== derniere) : qs;
-      }
-      q = candidates[Math.floor(this.rng() * candidates.length)];
+    let q = null;
+    while (!q) {
+      if (!j.file.length) j.file = this.nouveauTour(j);
+      const id = j.file.shift();
+      q = this.questions.find((x) => x.id === id) || null; // question retirée entre-temps : suivante
     }
-    j.vues.add(q.id);
     j.numero++;
     const { vue, prive } = TYPES[q.type].preparer(q, this.rng);
     const duree = (q.duree_s || (TYPES_LONGS.includes(q.type) ? this.reglages.tempsQuestionLong : this.reglages.tempsQuestion)) * 1000;
@@ -395,6 +401,7 @@ class Partie extends EventEmitter {
 
   repondreFaux(j, reponse) {
     const { q, prive } = j.question;
+    j.fautes.add(q.id); // reposée en priorité au tour suivant
     const { donnee, bonne } = TYPES[q.type].textes(q, reponse, prive);
     j.retour = { correct: false, donnee: reponse === null ? null : donnee, bonne, explication: q.explication || null,
       tempsDepasse: reponse === null };
