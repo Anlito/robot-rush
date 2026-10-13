@@ -4,3 +4,4 @@ data/
 *.log
 config-serveur.json
 node/
+.claude/
