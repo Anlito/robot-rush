@@ -1,5 +1,19 @@
 'use strict';
 
+// Lancé sans invite de commandes (« Lancer Robot Rush.vbs » ou un raccourci), la fenêtre se fermerait
+// dès la sortie du programme : en cas d'erreur, on attend que l'utilisateur ait pu lire le message.
+function arreterAvecMessage(message) {
+  console.error(`\n${message}\n`);
+  if (process.env.ROBOTRUSH_ATTENDRE !== '1' || !process.stdin.isTTY) process.exit(1);
+  console.error('Appuyez sur Entrée pour fermer cette fenêtre.');
+  process.stdin.resume();
+  process.stdin.once('data', () => process.exit(1));
+}
+process.on('uncaughtException', (e) => {
+  if (process.env.ROBOTRUSH_ATTENDRE === '1') arreterAvecMessage(`Erreur de Robot Rush : ${e.stack || e.message}`);
+  else { console.error(e); process.exit(1); }
+});
+
 const http = require('node:http');
 const path = require('node:path');
 const crypto = require('node:crypto');
@@ -479,8 +493,4 @@ reseau.ecouter(serveur, CONFIG_SERVEUR.port).then((p) => {
   console.log(`  Données     : ${stockage.DOSSIER}`);
   console.log(ligne);
   if (CONFIG_SERVEUR.ouvrirNavigateur) reseau.ouvrirNavigateur(`http://localhost:${port}/admin`);
-}).catch((e) => {
-  console.error('');
-  console.error(`Impossible de démarrer Robot Rush : ${e.message}`);
-  process.exit(1);
-});
+}).catch((e) => arreterAvecMessage(`Impossible de démarrer Robot Rush : ${e.message}`));

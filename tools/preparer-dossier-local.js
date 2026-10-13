@@ -25,7 +25,7 @@ const DOSSIER = path.join(DIST, 'RobotRush');
 const args = process.argv.slice(2);
 const option = (nom) => { const i = args.indexOf(nom); return i >= 0 ? args[i + 1] : null; };
 const A_COPIER = ['server', 'public', 'seed', 'package.json', 'package-lock.json', 'demarrer.bat', 'demarrer.command', 'demarrer.sh',
-  'config-serveur.exemple.json', 'MODE-LOCAL.md'];
+  'config-serveur.exemple.json', 'MODE-LOCAL.md', 'Lancer Robot Rush.vbs'];
 
 const etape = (t) => console.log(`\n» ${t}`);
 

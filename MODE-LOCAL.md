@@ -58,7 +58,21 @@ peut être **copié tel quel** sur une clé USB ou un autre PC : il fonctionnera
 ## 3. Lancer le jeu
 
 1. Brancher le PC au **réseau du collège** (câble ou Wi-Fi), le même que celui des postes élèves.
-2. Double-cliquer sur **`demarrer.bat`** (Mac : `demarrer.command`, Linux : `demarrer.sh`).
+2. Double-cliquer sur **`Lancer Robot Rush.vbs`** ou sur **`demarrer.bat`** (Mac : `demarrer.command`, Linux : `demarrer.sh`).
+   Sur beaucoup de PC de collège, **l'invite de commandes est désactivée par l'administrateur** : `demarrer.bat`
+   s'ouvre alors et se ferme aussitôt. `Lancer Robot Rush.vbs` lance le jeu sans passer par l'invite de commandes.
+
+   **Si les deux sont bloqués**, créer soi-même un raccourci (aucun script) :
+   1. Ouvrir le dossier `RobotRush\node`, clic droit sur `node.exe` → **Créer un raccourci**
+      (sous Windows 11 : **Afficher plus d'options** d'abord).
+   2. Clic droit sur le raccourci créé → **Propriétés** :
+      - **Cible** : ajouter à la fin, après le guillemet, un espace puis `server\index.js`.
+        Exemple : `"C:\Users\prof\Documents\RobotRush\node\node.exe" server\index.js`
+      - **Démarrer dans** : le dossier `RobotRush` (copier son chemin depuis la barre d'adresse de l'Explorateur).
+   3. **OK**, puis double-cliquer sur le raccourci (on peut le déplacer sur le Bureau).
+
+   Si Windows répond que le programme est bloqué par l'administrateur, seul le référent numérique peut
+   autoriser `RobotRush\node\node.exe` ; sinon, utiliser la version en ligne (voir DEPLOIEMENT.md).
 3. Une fenêtre noire s'ouvre et affiche l'adresse à donner aux élèves, par exemple :
 
    ```
@@ -103,7 +117,8 @@ et mesure la rapidité du réseau. Cette page ne change rien à la partie.
 |---|---|
 | La fenêtre noire dit « Node.js n'est pas installé » | Installer Node.js (étape 1), ou utiliser la version portable. |
 | « L'installation des composants a échoué » | Il faut internet pour la toute première installation. Sinon, copier le dossier depuis un PC où le jeu fonctionne déjà (avec `node_modules`). |
-| La fenêtre noire se ferme tout de suite | Ouvrir une invite de commandes dans le dossier et taper `demarrer.bat` pour lire le message. |
+| La fenêtre noire se ferme tout de suite | L'invite de commandes est sans doute désactivée par l'administrateur : lancer `Lancer Robot Rush.vbs`, ou créer le raccourci décrit à l'étape 3. |
+| « Windows a refusé de lancer Node.js », « bloqué par l'administrateur » | Le PC interdit les programmes copiés : demander au référent numérique d'autoriser `RobotRush\node\node.exe`, ou utiliser la version en ligne. |
 | « Le port 3000 est déjà utilisé, essai du port 3001 » | Rien à faire : le jeu prend le port suivant. Donner aux élèves la **nouvelle** adresse affichée. |
 | La page ne s'ouvre pas sur les postes élèves | 1) Vérifier que les postes sont sur le **même réseau** que le PC. 2) Vérifier le **pare-feu** (étape 4). 3) Essayer l'**autre adresse** affichée si le PC a plusieurs cartes réseau. 4) Certains réseaux isolent les postes entre eux : demander au référent numérique d'autoriser le port (3000 par défaut), ou utiliser un point d'accès Wi-Fi dédié à la classe. |
 | « Aucun réseau détecté » | Le PC n'est relié à aucun réseau : brancher le câble ou se connecter au Wi-Fi, attendre quelques secondes. |

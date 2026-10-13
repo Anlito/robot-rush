@@ -65,7 +65,8 @@
   <h2><span class="num">1</span>Lancer le jeu</h2>
   <ul>
     <li><span class="case"></span>Brancher le PC au <b>réseau du collège</b> (le même que les postes élèves).</li>
-    <li><span class="case"></span>Double-cliquer sur <b>demarrer.bat</b>. Une fenêtre noire s'ouvre : <b>la laisser ouverte</b> tout le cours.</li>
+    <li><span class="case"></span>Double-cliquer sur <b>Lancer Robot Rush.vbs</b> (ou sur <b>demarrer.bat</b>). Une fenêtre noire s'ouvre : <b>la laisser ouverte</b> tout le cours.
+      <span class="note">Si l'invite de commandes est désactivée par l'administrateur, demarrer.bat s'ouvre et se ferme aussitôt : utiliser Lancer Robot Rush.vbs.</span></li>
     <li><span class="case"></span><b>Pare-feu Windows</b> : s'il pose la question, cocher <b>Réseaux privés</b> (et « domaine » s'il est proposé), puis <b>Autoriser l'accès</b>.
       <span class="note">Sans droits d'administrateur, Windows peut refuser : voir le plan B en bas.</span></li>
     <li><span class="case"></span>Noter l'adresse affichée dans la fenêtre noire, par exemple <span class="mono">192.168.1.25:3000</span>.</li>
@@ -110,7 +111,8 @@
   <h2><span class="num">?</span>Si ça ne marche pas</h2>
   <table>
     <tr><th style="width:38%">Ce qu'on voit</th><th>Que faire</th></tr>
-    <tr><td>La fenêtre noire se ferme tout de suite, ou parle de Node.js</td><td>Vérifier que le dossier <code>node</code> est bien dans le dossier RobotRush (copie complète).</td></tr>
+    <tr><td>La fenêtre noire s'ouvre et se ferme aussitôt</td><td>L'invite de commandes est désactivée : lancer <b>Lancer Robot Rush.vbs</b>. Si lui aussi est bloqué : raccourci manuel, voir MODE-LOCAL.md.</td></tr>
+    <tr><td>Message « Windows a refusé de lancer Node.js » ou « bloqué par l'administrateur »</td><td>Le PC interdit les programmes copiés : demander au référent numérique d'autoriser <code>RobotRush\node\node.exe</code>, ou utiliser la version en ligne.</td></tr>
     <tr><td>« Le port 3000 est déjà utilisé »</td><td>Rien à faire : le jeu prend le port suivant. Donner aux élèves la <b>nouvelle</b> adresse affichée.</td></tr>
     <tr><td>Le poste élève n'ouvre pas la page (délai dépassé)</td><td>1) Même réseau que le PC prof ? (pas de Wi-Fi invité) 2) Essayer l'« autre adresse » affichée dans la fenêtre noire. 3) Pare-feu : voir plan B.</td></tr>
     <tr><td>« Aucun réseau détecté »</td><td>Brancher le câble réseau ou se connecter au Wi-Fi du collège, attendre quelques secondes.</td></tr>
