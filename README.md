@@ -20,6 +20,9 @@ double-clic sur `demarrer.bat`, pare-feu Windows, adresse et QR code pour les é
 Dossier tout prêt à copier sur le PC du professeur (jeu + Node.js portable + fiche de mise en place à imprimer) :
 `npm run dossier-local` → `dist/RobotRush/` et son archive ZIP.
 
+Sur **Raspberry Pi** (borne branchée en RJ45 et sur le vidéoprojecteur, installation en une commande) :
+[outils-pi/RASPBERRY-PI.md](outils-pi/RASPBERRY-PI.md).
+
 En bref : double-cliquer sur `demarrer.bat` (Mac : `demarrer.command`, Linux : `demarrer.sh`).
 Le script vérifie Node.js, installe les composants la première fois, crée `config-serveur.json`,
 puis lance le serveur et ouvre l'espace professeur. Tout fonctionne hors ligne : polices, icônes, QR code

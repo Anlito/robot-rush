@@ -9,6 +9,12 @@ Aucune donnée ne sort du réseau local. Les questions, parcours et réglages so
 
 ---
 
+## Sur Raspberry Pi
+
+Une Raspberry Pi branchée en RJ45 sur le réseau du collège et sur le vidéoprojecteur peut faire tourner le jeu
+à la place du PC du professeur (utile quand l'invite de commandes est désactivée) :
+voir [outils-pi/RASPBERRY-PI.md](outils-pi/RASPBERRY-PI.md).
+
 ## 0. Le plus simple : le dossier tout prêt
 
 Le dossier `RobotRush` préparé (archive `RobotRush-mode-local-AAAA-MM-JJ.zip`) contient déjà tout :
