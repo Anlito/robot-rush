@@ -40,6 +40,7 @@ function repondre(vue, q, juste) {
     case 'calcul':
       return String(juste ? q.donnees.reponse : Math.floor(Math.random() * 200));
     case 'completer':
+      if (q.donnees.version === 'blocs') return blocs.versBlockly(juste ? q.donnees.sequences[0] : [{ bloc: 'led_etat', etat: 1 }]);
       return q.donnees.trous.map((t) => (juste ? t.bonne : hasard(t.distracteurs || ['?'])));
     case 'blocs':
       return blocs.versBlockly(juste ? q.donnees.sequences[0] : [{ bloc: 'led_etat', etat: 1 }]);

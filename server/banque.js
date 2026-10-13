@@ -14,13 +14,16 @@ const erreur = (m) => { throw new ErreurBanque(m); };
 const FORMAT = 'robot-rush';
 const VERSION = 1;
 const NIVEAUX = ['5e', '4e', '3e', 'SEGPA', 'autre'];
-const MAX = { enonce: 600, explication: 400, choix: 150, element: 150, texte: 1500, unite: 12, nom: 80, trou: 80 };
+const MAX = { titre: 80, enonce: 600, explication: 400, choix: 150, element: 150, texte: 1500, unite: 12, nom: 80, trou: 80 };
 
 const texte = (v, max) => String(v ?? '').replace(/\r\n?/g, '\n').trim().slice(0, max);
 const ligne = (v, max) => texte(v, max).replace(/\s+/g, ' ');
 const liste = (v) => (Array.isArray(v) ? v : []);
 
 // ---------- Nettoyage des données par type ----------
+
+// Un programme de blocs repasse par Blockly et retour : seules les instructions connues survivent.
+const programmeConnu = (p) => blocs.depuisBlockly(blocs.versBlockly(liste(p))).programme;
 
 const NETTOYAGE = {
   qcm(d) {
@@ -38,16 +41,18 @@ const NETTOYAGE = {
   },
   blocs(d) {
     const autorises = liste(d.blocs).filter((b) => blocs.BLOCS_DISPONIBLES.includes(b));
-    // Chaque séquence repasse par Blockly et retour : seules les instructions connues survivent.
-    const sequences = liste(d.sequences).slice(0, 10).map((s) => blocs.depuisBlockly(blocs.versBlockly(liste(s))).programme);
-    return { blocs: [...new Set(autorises)], sequences };
+    const sequences = liste(d.sequences).slice(0, 10).map(programmeConnu);
+    return { blocs: [...new Set(autorises)], broches: d.broches === true, sequences };
   },
   completer(d) {
+    if (d.version === 'blocs') {
+      return { version: 'blocs', ...NETTOYAGE.blocs(d), depart: Array.isArray(d.depart) ? programmeConnu(d.depart) : null };
+    }
     const trous = liste(d.trous).slice(0, 6).map((t) => ({
       bonne: ligne(t && t.bonne, MAX.trou),
       distracteurs: liste(t && t.distracteurs).slice(0, 6).map((x) => ligne(x, MAX.trou)).filter(Boolean),
     }));
-    return { texte: texte(d.texte, MAX.texte), mode: d.mode === 'glisser' ? 'glisser' : 'liste', trous };
+    return { version: 'texte', texte: texte(d.texte, MAX.texte), mode: d.mode === 'glisser' ? 'glisser' : 'liste', trous };
   },
 };
 
@@ -61,6 +66,7 @@ function nettoyerQuestion(q) {
     id: typeof q.id === 'string' && /^[\w-]{1,40}$/.test(q.id) ? q.id : null,
     type,
     niveau: NIVEAUX.includes(q.niveau) ? q.niveau : '5e',
+    titre: ligne(q.titre, MAX.titre) || null,
     enonce: texte(q.enonce, MAX.enonce),
     image: typeof q.image === 'string' && /^\/images\/[0-9a-f]{16}\.(png|jpg|gif|webp|svg)$/.test(q.image) ? q.image : null,
     duree_s: duree,
@@ -113,6 +119,8 @@ function nettoyerParcours(p, idsQuestions) {
   };
 }
 
+const avecBlocs = (q) => q.donnees && (q.type === 'blocs' || (q.type === 'completer' && q.donnees.version === 'blocs'));
+
 // ---------- La banque ----------
 
 class Banque {
@@ -149,7 +157,8 @@ class Banque {
         ...q,
         probleme: probleme(q),
         utilisations: this.parcours.filter((p) => p.questions.includes(q.id)).length,
-        apercuSequences: q.type === 'blocs' ? q.donnees.sequences.map((s) => blocs.texteProgramme(s)) : undefined,
+        apercuSequences: avecBlocs(q) ? q.donnees.sequences.map((s) => blocs.texteProgramme(s)) : undefined,
+        apercuDepart: avecBlocs(q) && q.donnees.depart ? blocs.texteProgramme(q.donnees.depart) : undefined,
       })),
       parcours: this.parcours.map((p) => ({ ...p, nbJouables: p.questions.filter((id) => { const q = this.question(id); return q && !probleme(q); }).length })),
     };

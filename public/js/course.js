@@ -125,8 +125,10 @@
         // On ne reconstruit la tuile que si l'obstacle change (sinon l'animation de chute recommencerait).
         if (b.dataset.obstacle !== e.blocage.obstacle) {
           b.dataset.obstacle = e.blocage.obstacle;
-          b.innerHTML = `<div class="tuile">${icone(e.blocage.obstacle, t.tuile)}</div>${decompte(e.blocage.restantMs, { suffixe: ' s', classe: 'compte' })}`;
-        } else {
+          b.innerHTML = `<div class="tuile">${icone(e.blocage.obstacle, t.tuile)}</div>${e.blocage.restantMs === null
+            ? `<span class="attend-solution" title="Bloquée jusqu'à la solution">${icone(e.blocage.solution, t.icone)}</span>`
+            : decompte(e.blocage.restantMs, { suffixe: ' s', classe: 'compte' })}`;
+        } else if (e.blocage.restantMs !== null) {
           b.querySelector('.compte').dataset.fin = RR.fin(e.blocage.restantMs);
         }
         if (!avant || !avant.blocage) { rejouer(coureur, 'tombe'); rejouer(coureur, 'secousse'); }

@@ -107,7 +107,7 @@
       const enMaj = (x) => x.un.replace(x.nom, x.nom.toUpperCase());
       return `<div class="etat etat-bloque"><div class="encart"><span class="ico">${icone(p.obstacle.id, 30)}</span>
         <div class="lignes"><span class="l1">Bloquée par ${esc(enMaj(p.obstacle))}</span><span class="l2">Prends ${esc(enMaj(p.solution))} !</span></div>
-        ${decompte(e.blocage.restantMs, { suffixe: ' s', classe: 'compte' })}</div></div>`;
+        ${e.blocage.restantMs === null ? '<span class="sans-fin">Seule la solution débloque</span>' : decompte(e.blocage.restantMs, { suffixe: ' s', classe: 'compte' })}</div></div>`;
     }
     if (a && a.type === 'info') {
       return `<div class="etat"><div class="lignes"><span class="petit">${esc(a.texte)}</span></div></div>`;
@@ -228,7 +228,7 @@
 
   function enteteQuestion(q) {
     const long = ['blocs', 'completer'].includes(q.type);
-    return `<div class="entete-q"><span class="puce-type">${TYPES[q.type] || q.type}</span>
+    return `<div class="entete-q"><span class="puce-type">${q.version === 'blocs' ? 'Blocs à compléter' : TYPES[q.type] || q.type}</span>
       <span class="numero-q">Question ${q.numero}${long ? ` · ${Math.round(q.dureeMs / 1000)} s` : ''}</span>
       <div class="barre-temps"><div id="barre-q" style="transform:scaleX(${q.restantMs / q.dureeMs})"></div></div>
       <b class="secondes" data-fin="${RR.fin(q.restantMs)}" data-suffixe=" s" data-barre="${q.dureeMs}" data-cible="barre-q">${Math.ceil(q.restantMs / 1000)} s</b></div>`;

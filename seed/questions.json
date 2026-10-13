@@ -474,5 +474,190 @@
         }
       ]
     }
+  },
+  {
+    "id": "q-021",
+    "type": "completer",
+    "niveau": "5e",
+    "duree_s": null,
+    "enonce": "Complète le programme : la LED doit clignoter 5 fois (allumée 0,5 s, puis éteinte 0,5 s).",
+    "image": null,
+    "explication": "Il faut répéter 5 fois : allumer, attendre 0,5 s, éteindre, attendre 0,5 s.",
+    "donnees": {
+      "version": "blocs",
+      "blocs": [
+        "led_etat",
+        "servo_angle"
+      ],
+      "broches": false,
+      "sequences": [
+        [
+          {
+            "bloc": "repeter",
+            "fois": 5,
+            "faire": [
+              {
+                "bloc": "led_etat",
+                "etat": 1
+              },
+              {
+                "bloc": "attendre",
+                "duree": 0.5
+              },
+              {
+                "bloc": "led_etat",
+                "etat": 0
+              },
+              {
+                "bloc": "attendre",
+                "duree": 0.5
+              }
+            ]
+          }
+        ]
+      ],
+      "depart": [
+        {
+          "bloc": "repeter",
+          "fois": {
+            "bloc": "trou"
+          },
+          "faire": [
+            {
+              "bloc": "led_etat",
+              "etat": 1
+            },
+            {
+              "bloc": "attendre",
+              "duree": {
+                "bloc": "trou"
+              }
+            },
+            {
+              "bloc": "trou"
+            },
+            {
+              "bloc": "attendre",
+              "duree": 0.5
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "q-022",
+    "type": "completer",
+    "niveau": "5e",
+    "duree_s": null,
+    "enonce": "La LED est branchée sur D4 et le bouton sur D7. Complète : quand on appuie sur le bouton, la LED s'allume ; sinon, elle s'éteint.",
+    "image": null,
+    "explication": "Condition : état du bouton (D7). Alors : LED (D4) à HAUT. Sinon : LED (D4) à BAS.",
+    "donnees": {
+      "version": "blocs",
+      "blocs": [
+        "bouton_etat",
+        "valeur_haut_bas",
+        "comparaison"
+      ],
+      "broches": true,
+      "sequences": [
+        [
+          {
+            "bloc": "si_sinon",
+            "condition": {
+              "bloc": "bouton_etat",
+              "broche": "D7"
+            },
+            "alors": [
+              {
+                "bloc": "led_etat",
+                "etat": 1,
+                "broche": "D4"
+              }
+            ],
+            "sinon": [
+              {
+                "bloc": "led_etat",
+                "etat": 0,
+                "broche": "D4"
+              }
+            ]
+          }
+        ]
+      ],
+      "depart": [
+        {
+          "bloc": "si_sinon",
+          "condition": null,
+          "alors": [
+            {
+              "bloc": "led_etat",
+              "etat": 1,
+              "broche": "?"
+            }
+          ],
+          "sinon": [
+            {
+              "bloc": "led_etat",
+              "etat": "?",
+              "broche": "D4"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "q-023",
+    "type": "completer",
+    "niveau": "5e",
+    "duree_s": null,
+    "enonce": "Le servomoteur est branché sur D6. Complète : il va à 0°, attend 2 s, puis va à 180°.",
+    "image": null,
+    "explication": "Servo (D6) à 0°, attendre 2 s, servo (D6) à 180°.",
+    "donnees": {
+      "version": "blocs",
+      "blocs": [
+        "servo_angle",
+        "led_etat",
+        "attendre"
+      ],
+      "broches": true,
+      "sequences": [
+        [
+          {
+            "bloc": "servo_angle",
+            "angle": 0,
+            "broche": "D6"
+          },
+          {
+            "bloc": "attendre",
+            "duree": 2
+          },
+          {
+            "bloc": "servo_angle",
+            "angle": 180,
+            "broche": "D6"
+          }
+        ]
+      ],
+      "depart": [
+        {
+          "bloc": "servo_angle",
+          "angle": {
+            "bloc": "trou"
+          },
+          "broche": "?"
+        },
+        {
+          "bloc": "attendre",
+          "duree": 2
+        },
+        {
+          "bloc": "trou"
+        }
+      ]
+    }
   }
 ]

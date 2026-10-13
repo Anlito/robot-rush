@@ -130,3 +130,69 @@ test('blocs : bloc incomplet ou hors du programme', () => {
 });
 
 
+
+// ---------- Programme de blocs à compléter, broches ----------
+
+/** Remplace dans une sauvegarde Blockly les trous du départ par les bonnes valeurs (comme l'élève). */
+const completerDepart = (question) => blocs.versBlockly(question.donnees.sequences[0]);
+
+test('à compléter (blocs) : le départ envoyé est verrouillé, a ses trous et pas la solution', () => {
+  const question = q('q-021');
+  const { vue } = preparer(question);
+  assert.equal(vue.version, 'blocs');
+  const lu = blocs.depuisBlockly(vue.depart);
+  assert.equal(lu.incomplets, 3);
+  assert.match(blocs.texteProgramme(lu.programme), /répéter \? fois .*\[bloc manquant\]/);
+  const repeter = vue.depart.blocks.blocks[0].inputs.DO.block;
+  assert.equal(repeter.movable, false);
+  assert.equal(repeter.deletable, false);
+  assert.equal(repeter.inputs.FOIS.shadow.fields.NUM, '?');
+  assert.notEqual(repeter.inputs.FOIS.shadow.editable, false, 'le trou reste modifiable');
+  assert.equal(repeter.inputs.FAIRE.block.editable, false, 'un bloc donné sans trou ne se modifie pas');
+});
+
+test('à compléter (blocs) : départ non rempli refusé, programme complété accepté', () => {
+  for (const id of ['q-021', 'q-022', 'q-023']) {
+    const question = q(id);
+    const { vue } = preparer(question);
+    assert.equal(TYPES.completer.valider(question, vue.depart), false, id);
+    assert.equal(TYPES.completer.valider(question, completerDepart(question)), true, id);
+    assert.match(TYPES.completer.textes(question, vue.depart).donnee, /\?|manquant/, id);
+  }
+});
+
+test('broches : la bonne broche est exigée, ignorée si la question est sans broches', () => {
+  const question = q('q-022');
+  const sol = question.donnees.sequences[0];
+  const mauvaise = JSON.parse(JSON.stringify(sol));
+  mauvaise[0].alors[0].broche = 'D5';
+  assert.equal(TYPES.completer.valider(question, blocs.versBlockly(mauvaise)), false);
+  // Écriture équivalente avec la broche : bouton (D7) = HAUT.
+  const equivalente = JSON.parse(JSON.stringify(sol));
+  equivalente[0].condition = { bloc: 'comparaison', op: '=', a: { bloc: 'bouton_etat', broche: 'D7' }, b: { bloc: 'valeur_haut_bas', valeur: 1 } };
+  assert.equal(TYPES.completer.valider(question, blocs.versBlockly(equivalente)), true);
+  const autreBouton = JSON.parse(JSON.stringify(equivalente));
+  autreBouton[0].condition.a.broche = 'D8';
+  assert.equal(TYPES.completer.valider(question, blocs.versBlockly(autreBouton)), false);
+  // Sans broches : la broche choisie ne compte pas.
+  const sans = { ...question, donnees: { ...question.donnees, broches: false } };
+  assert.equal(TYPES.completer.valider(sans, blocs.versBlockly(mauvaise)), true);
+  // Broche « ? » ou inconnue : case incomplète.
+  const inconnue = blocs.versBlockly([{ bloc: 'led_etat', etat: 1, broche: 'D99' }]);
+  assert.equal(blocs.depuisBlockly(inconnue).incomplets, 1);
+});
+
+test('à compléter (blocs) : question mal préparée signalée', () => {
+  const base = q('q-021');
+  const sans = (d) => ({ ...base, donnees: { ...base.donnees, ...d } });
+  assert.match(TYPES.completer.verifier(sans({ depart: null })), /départ manquant/);
+  assert.match(TYPES.completer.verifier(sans({ depart: base.donnees.sequences[0] })), /aucun trou/);
+  assert.match(TYPES.completer.verifier(sans({ sequences: [] })), /solution manquante/);
+  assert.match(TYPES.completer.verifier({ ...q('q-022'), donnees: { ...q('q-022').donnees, sequences: [[{ bloc: 'led_etat', etat: 1 }]] } }), /broche/);
+});
+
+test('nombre : la virgule et le « ? » sont lus correctement', () => {
+  const prog = (num) => ({ blocks: { blocks: [{ type: 'programme', inputs: { DO: { block: { type: 'attendre', inputs: { DUREE: { shadow: { type: 'nombre', fields: { NUM: num } } } } } } } }] } });
+  assert.deepEqual(blocs.depuisBlockly(prog(0.5)).programme, [{ bloc: 'attendre', duree: 0.5 }]);
+  assert.equal(blocs.depuisBlockly(prog('?')).incomplets, 1);
+});

@@ -395,7 +395,8 @@ io.on('connection', (socket) => {
     // Blocs : conversions pour l'éditeur (assembler une séquence acceptée dans Blockly).
     gerer(socket, 'blocs:lire', ({ sauvegarde }) => {
       const lu = blocs.depuisBlockly(sauvegarde);
-      return { sequence: lu.programme, texte: blocs.texteProgramme(lu.programme), incomplets: lu.incomplets, horsProgramme: lu.horsProgramme };
+      return { sequence: lu.programme, texte: blocs.texteProgramme(lu.programme), incomplets: lu.incomplets, horsProgramme: lu.horsProgramme,
+        brochesManquantes: blocs.brochesManquantes(lu.programme) };
     });
     gerer(socket, 'blocs:versBlockly', ({ sequence }) => ({ sauvegarde: blocs.versBlockly(Array.isArray(sequence) ? sequence : []) }));
 

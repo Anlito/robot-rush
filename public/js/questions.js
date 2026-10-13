@@ -148,8 +148,9 @@ RR.questions = (() => {
     };
   }
 
-  // ---------- B5 · Blocs à assembler (Blockly) ----------
+  // ---------- B5 · Blocs à assembler (Blockly), et programme de blocs à compléter ----------
   function blocs(q, ctx) {
+    const aCompleter = q.version === 'blocs';
     let editeur = null;
     let detruit = false;
     let avertiHors = false;
@@ -166,14 +167,16 @@ RR.questions = (() => {
     return {
       html: `<div class="blocs">
         <div class="zone-blocs" id="zone-blocs"><p class="chargement-blocs">Chargement des blocs…</p></div>
-        <div class="cote"><p class="aide-q">Glisse les blocs de la palette sous « Programme ». Clique sur un nombre pour le modifier.</p>
-          <button class="bouton-clair" data-effacer type="button">Tout effacer</button>${boutonValider()}</div></div>`,
+        <div class="cote">${aCompleter
+          ? `<p class="aide-q">Complète le programme : remplace chaque <b class="trou-aide">?</b>. Clique sur un <b>?</b> pour écrire un nombre ou choisir dans le menu.${q.blocs.length ? ' Glisse un bloc de la palette sur « ? bloc manquant » ou dans une case vide.' : ''}</p>`
+          : '<p class="aide-q">Glisse les blocs de la palette sous « Programme ». Clique sur un nombre pour le modifier.</p>'}
+          <button class="bouton-clair" data-effacer type="button">${aCompleter ? 'Recommencer' : 'Tout effacer'}</button>${boutonValider()}</div></div>`,
       monter(z) {
         const zone = el('#zone-blocs', z);
         RR.blocs.charger().then(() => {
           if (detruit) return;
           zone.innerHTML = '';
-          editeur = RR.blocs.creer(zone, q.blocs);
+          editeur = RR.blocs.creer(zone, q.blocs, { broches: q.broches, trous: aCompleter, depart: aCompleter ? q.depart : null });
         }).catch(() => {
           zone.innerHTML = '<p class="chargement-blocs erreur">Les blocs n\'ont pas pu se charger. Actualise la page (F5).</p>';
         });
@@ -187,8 +190,9 @@ RR.questions = (() => {
     };
   }
 
-  // ---------- B6 · Programme à compléter ----------
+  // ---------- B6 · Programme à compléter (version texte ; la version blocs est en B5) ----------
   function completer(q, ctx) {
+    if (q.version === 'blocs') return blocs(q, ctx);
     const n = q.segments.length - 1;
     const valeurs = Array(n).fill(null);
     let trouChoisi = null;

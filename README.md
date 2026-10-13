@@ -128,12 +128,12 @@ Durée par défaut : 30 s, 60 s pour `blocs` et `completer` (réglables), sauf s
 | Repris tel quel | Adapté pour Robot Rush |
 |---|---|
 | Blockly copié dans `public/vendor/blockly` (aucun CDN) | chargé seulement à la première question de blocs |
-| Libellés français, couleurs des familles, thème, rendu « zelos » (`public/js/blocs.js`) | pas de choix de broche ; un seul chapeau « Programme » ; nouveau bloc « répéter ( ) fois » ; palette à plat (les blocs de la question) |
+| Libellés français, couleurs des familles, thème, rendu « zelos » (`public/js/blocs.js`) | broches au choix de la question (menus D2 à D13, servo D5 / D6) ; un seul chapeau « Programme » ; nouveau bloc « répéter ( ) fois » ; palette à plat (les blocs de la question) |
 | Format simplifié des programmes et conversion Blockly ↔ programme (`server/blocs.js`) | lu côté serveur, étendu à « répéter » ; normalisation des écritures équivalentes |
 | Repérage des blocs « hors du programme » (contour pointillé) | avertissement avant de valider |
 | — | pas de simulateur ni de scénarios (version réduite) : comparaison avec les séquences acceptées |
 
-Séquences acceptées, au format de l'atelier céréales (sans broche) :
+Séquences acceptées, au format de l'atelier céréales (`"broche": "D3"` en plus si la question est « avec broches ») :
 
 ```json
 [{ "bloc": "si_sinon", "condition": { "bloc": "bouton_etat" },
@@ -143,6 +143,17 @@ Séquences acceptées, au format de l'atelier céréales (sans broche) :
 Écritures équivalentes acceptées automatiquement : « si bouton », « si bouton = HAUT », « si HAUT = bouton »,
 « si bouton ≠ BAS » ; « si bouton = BAS alors A sinon B » vaut « si bouton alors B sinon A ».
 Pour une autre variante (ex. clignoter en commençant éteint), ajouter une séquence à la liste.
+
+### Programme à compléter : version texte ou version blocs
+
+- **Texte** : le programme est écrit avec `___` à la place de chaque trou (liste déroulante ou glisser-déposer).
+- **Blocs** : le professeur assemble la solution dans Blockly, puis « Préparer les trous » : bloc remplacé par
+  « ? bloc manquant », nombre remplacé par `?` (temps, angle, nombre de fois, valeur de CHOIX), menu sur `?`
+  (broche, HAUT / BAS, = / ≠), condition retirée. L'élève reçoit ce programme verrouillé : seuls les trous se
+  modifient ; un bloc posé juste au-dessus ou en dessous d'un « ? bloc manquant » prend sa place.
+  La palette contient les blocs pour remplir les trous (et des pièges). Validation comme les blocs à assembler.
+  Format : `"donnees": { "version": "blocs", "blocs": [...], "broches": true, "sequences": [[...]], "depart": [...] }`,
+  avec `{ "bloc": "trou" }` pour un bloc manquant ou un nombre `?`, `"?"` pour un menu, `null` pour une condition vide.
 
 ## Espace professeur (`/admin`)
 

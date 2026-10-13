@@ -83,7 +83,7 @@
             <span class="poignee-zone" data-poignee-p="${i}" title="Glisser pour déplacer">${POIGNEE}</span>
             <span class="mono gris">${esc(numero(id))}</span><span class="badge-type">${COURT[q.type]}</span>
             <button type="button" class="texte-q lien-texte" data-ouvrir-q="${esc(id)}" title="Ouvrir dans l'éditeur de questions">
-              ${q.probleme ? `<span class="pastille-pb" title="Incomplète : ${esc(q.probleme)} — ne sera pas posée">!</span>` : ''}${esc(q.enonce || '(sans énoncé)')}</button>
+              ${q.probleme ? `<span class="pastille-pb" title="Incomplète : ${esc(q.probleme)} — ne sera pas posée">!</span>` : ''}${Admin.libelleQuestion(q)}</button>
             <span class="mono gris">${q.duree_s || (['blocs', 'completer'].includes(q.type) ? r.tempsQuestionLong : r.tempsQuestion)} s</span>
             <button class="mini-bouton" type="button" data-monter-p="${i}" ${i === 0 ? 'disabled' : ''} aria-label="Monter">↑</button>
             <button class="mini-bouton" type="button" data-descendre-p="${i}" ${i === p.questions.length - 1 ? 'disabled' : ''} aria-label="Descendre">↓</button>
@@ -97,11 +97,11 @@
     if (!brouillon) { el('#lignes-banque-p').innerHTML = ''; return; }
     const r = recherche.toLowerCase();
     const dans = new Set(brouillon.questions);
-    const liste = Admin.banque.questions.filter((q) => !r || `${q.id} ${q.enonce}`.toLowerCase().includes(r));
+    const liste = Admin.banque.questions.filter((q) => !r || Admin.texteRecherche(q).includes(r));
     el('#lignes-banque-p').innerHTML = liste.map((q) => `
       <div class="ligne-banque ${dans.has(q.id) ? 'deja' : ''}">
         <span class="badge-type">${COURT[q.type]}</span>
-        <span class="texte-q">${q.probleme ? '<span class="pastille-pb" title="Incomplète">!</span>' : ''}${esc(q.enonce || '(sans énoncé)')}</span>
+        <span class="texte-q">${q.probleme ? '<span class="pastille-pb" title="Incomplète">!</span>' : ''}${Admin.libelleQuestion(q)}</span>
         <button class="mini-bouton ajouter" type="button" data-ajouter-q="${esc(q.id)}" ${dans.has(q.id) ? 'disabled aria-label="Déjà dans le parcours"' : 'aria-label="Ajouter au parcours"'}>${dans.has(q.id) ? '✓' : '+'}</button>
       </div>`).join('') || '<p class="vide-liste">Aucune question.</p>';
   }

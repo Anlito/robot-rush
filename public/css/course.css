@@ -76,6 +76,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--encr
 .stock { display: flex; gap: 4px; }
 .puce { display: flex; align-items: center; gap: 1px; background: #fff; border: 1.5px solid var(--encre); border-radius: 6px; padding: 0 4px 0 2px; height: 32px; font-family: var(--f-mono); font-weight: 700; font-size: 22px; }
 .blocage { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
+/* Blocage sans fin automatique : la solution attendue, dans un cadre pointillé. */
+.attend-solution { display: inline-flex; padding: 4px; border: 3px dashed var(--encre); border-radius: 10px; background: var(--blanc, #fff); }
 .tuile { width: 56px; height: 56px; background: var(--obstacle); border: 2.5px solid var(--encre); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
 .compte { font-family: var(--f-titre); font-weight: 800; font-size: 32px; background: var(--encre); color: var(--jaune); padding: 2px 12px; border-radius: 10px; font-variant-numeric: tabular-nums; }
 .chantier-bas { position: absolute; left: 0; right: 0; bottom: 0; height: 8px; }

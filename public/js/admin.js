@@ -53,11 +53,19 @@
       clearTimeout(Admin.bandeau.t);
       if (texte) Admin.bandeau.t = setTimeout(() => { b.hidden = true; }, erreur ? 9000 : 4000);
     },
+    /** Libellé d'une question dans les listes : son titre (s'il y en a un), puis l'énoncé. */
+    libelleQuestion(q) {
+      const enonce = RR.esc(q.enonce || '(sans énoncé)');
+      return `<span class="libelle-q">${q.titre ? `<b>${RR.esc(q.titre)}</b> <span class="gris">· ${enonce}</span>` : enonce}</span>`;
+    },
+    /** Texte cherché par la recherche des listes. */
+    texteRecherche: (q) => `${q.id} ${q.titre || ''} ${q.enonce} ${JSON.stringify(q.donnees)}`.toLowerCase(),
+
     /** Fenêtre modale. contenu : HTML ; renvoie l'élément (fermer avec Admin.fermerModale()). */
-    modale({ titre, contenu, large = false, fermer }) {
+    modale({ titre, contenu, large = false, plein = false, fermer }) {
       const fond = el('#fond-modale');
       const m = el('#modale');
-      m.className = `modale ${large ? 'large' : ''}`;
+      m.className = `modale ${large ? 'large' : ''} ${plein ? 'plein' : ''}`;
       m.innerHTML = `<div class="tete-modale"><b>${esc(titre)}</b><button class="mini-bouton" data-fermer type="button" aria-label="Fermer">×</button></div>
         <div class="corps-modale">${contenu}</div>`;
       fond.hidden = false;
@@ -194,6 +202,7 @@
     if (cle) configurer({ reglages: { [cle]: ev.target.value } });
   });
   el('#solutionGarantie').addEventListener('change', (ev) => configurer({ reglages: { solutionGarantie: ev.target.checked } }));
+  document.querySelectorAll('[name="finBlocage"]').forEach((r) => r.addEventListener('change', (ev) => configurer({ reglages: { finBlocage: ev.target.value } })));
 
   function afficherReglages() {
     const lobby = etat.etat === 'lobby';
@@ -204,6 +213,12 @@
     }
     el('#solutionGarantie').checked = etat.reglagesComplets.solutionGarantie;
     el('#solutionGarantie').disabled = !lobby;
+    document.querySelectorAll('[name="finBlocage"]').forEach((r) => {
+      r.checked = r.value === etat.reglagesComplets.finBlocage;
+      r.disabled = !lobby;
+    });
+    // Sans fin automatique, la durée de blocage ne sert pas.
+    if (etat.reglagesComplets.finBlocage === 'solution') el('#r-dureeBlocage').disabled = true;
     el('#parcours').disabled = !lobby;
     if (etat.parcoursId && el('#parcours').value !== etat.parcoursId) el('#parcours').value = etat.parcoursId;
     const p = donnees.parcours.find((x) => x.id === etat.parcoursId);

@@ -7,8 +7,8 @@
 <link rel="icon" href="/assets/robots/robot-verte-normal.svg">
 <link rel="stylesheet" href="/fonts/polices.css?v=4">
 <link rel="stylesheet" href="/css/commun.css?v=4">
-<link rel="stylesheet" href="/css/admin.css?v=4">
-<link rel="stylesheet" href="/css/admin-banque.css?v=5">
+<link rel="stylesheet" href="/css/admin.css?v=5">
+<link rel="stylesheet" href="/css/admin-banque.css?v=8">
 </head>
 <body>
 
@@ -55,6 +55,13 @@
       <div class="champ"><label>Réglages</label><div id="reglages"></div>
         <label class="case-a-cocher"><input type="checkbox" id="solutionGarantie">
           <span>Solution garantie : pendant un blocage, le tirage contient toujours la solution qui débloque <span class="gris">(décoché : hasard total)</span></span></label>
+        <div class="fin-blocage" role="radiogroup" aria-label="Fin d'un blocage">
+          <span class="petit-label">Fin d'un blocage</span>
+          <label class="case-a-cocher"><input type="radio" name="finBlocage" value="duree">
+            <span>Après la durée de blocage <span class="gris">(ou plus tôt en prenant la solution)</span></span></label>
+          <label class="case-a-cocher"><input type="radio" name="finBlocage" value="solution">
+            <span>Seulement en prenant la solution <span class="gris">(pas de fin automatique)</span></span></label>
+        </div>
       </div>
 
       <div class="champ"><div class="ligne-titre"><label>Obstacles → solutions</label><button class="lien-bouton lien-petit" id="btn-paires" type="button">Modifier</button></div>
@@ -140,10 +147,10 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/commun.js?v=4"></script>
-<script src="/js/blocs.js?v=4"></script>
-<script src="/js/admin.js?v=5"></script>
-<script src="/js/admin-questions.js?v=4"></script>
-<script src="/js/admin-parcours.js?v=5"></script>
+<script src="/js/blocs.js?v=6"></script>
+<script src="/js/admin.js?v=8"></script>
+<script src="/js/admin-questions.js?v=7"></script>
+<script src="/js/admin-parcours.js?v=6"></script>
 <script src="/js/admin-fichiers.js?v=4"></script>
 </body>
 </html>

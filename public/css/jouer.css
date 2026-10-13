@@ -52,6 +52,7 @@ body { min-width: 1024px; }
 .encart .ico { background: var(--obstacle); border-radius: 6px; padding: 2px; }
 .encart .l1 { font-size: 16px; font-weight: 700; }
 .encart .l2 { font-size: 14px; font-weight: 700; color: var(--jaune); }
+.encart .sans-fin { font-weight: 700; font-size: 15px; color: var(--jaune); text-align: right; max-width: 120px; line-height: 1.2; }
 .encart .compte { font-family: var(--f-titre); font-weight: 800; font-size: 28px; color: var(--jaune); font-variant-numeric: tabular-nums; }
 .etat-attaque { background: var(--alerte); color: #fff; }
 .etat-attaque .ico { background: #fff; border-radius: 8px; border: 2px solid var(--encre); padding: 2px; }
@@ -217,6 +218,7 @@ body { min-width: 1024px; }
 .corps-q { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 22px; }
 .code-enonce { font-family: var(--f-mono); background: #fff; border: 2px solid var(--encre); border-radius: 8px; padding: 0 10px; font-size: .9em; }
 .aide-q { margin: 0; font-size: 17px; color: var(--encre-2); line-height: 1.4; }
+.aide-q .trou-aide { background: #FFE58A; border: 1.5px solid #B88A00; border-radius: 5px; padding: 0 6px; }
 .bouton-valider { height: 80px; padding: 0 36px; font-size: 30px; }
 .bouton-clair { height: 56px; border: 2.5px solid var(--encre); border-radius: 14px; background: #fff; font-weight: 700; font-size: 18px; cursor: pointer; }
 .bouton-clair:active { transform: translateY(2px); }

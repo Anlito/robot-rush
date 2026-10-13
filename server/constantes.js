@@ -31,6 +31,9 @@ const REGLAGES_DEFAUT = {
   // true : quand l'équipe est bloquée, le tirage de solutions contient toujours celle qui débloque.
   // false : hasard total (plus difficile).
   solutionGarantie: true,
+  // Fin d'un blocage : 'duree' (au bout de dureeBlocage, ou plus tôt en prenant la solution)
+  // ou 'solution' (seulement en prenant la solution : pas de fin automatique).
+  finBlocage: 'duree',
 };
 
 // Bornes des réglages numériques : [min, max].

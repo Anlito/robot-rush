@@ -67,7 +67,9 @@ function reponse(vue, q) {
       return q.donnees.elements.map((t) => { const i = vue.elements.findIndex((x, k) => x === t && !pris.has(k)); pris.add(i); return i; });
     }
     case 'calcul': return String(juste ? q.donnees.reponse : 999);
-    case 'completer': return q.donnees.trous.map((t) => (juste ? t.bonne : '?'));
+    case 'completer':
+      if (q.donnees.version === 'blocs') return blocs.versBlockly(juste ? q.donnees.sequences[0] : [{ bloc: 'led_etat', etat: 1 }]);
+      return q.donnees.trous.map((t) => (juste ? t.bonne : '?'));
     case 'blocs': return blocs.versBlockly(juste ? q.donnees.sequences[0] : [{ bloc: 'led_etat', etat: 1 }]);
     default: return null;
   }

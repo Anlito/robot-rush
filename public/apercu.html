@@ -6,7 +6,7 @@
 <title>Robot Rush · Aperçu élève</title>
 <link rel="stylesheet" href="/fonts/polices.css?v=4">
 <link rel="stylesheet" href="/css/commun.css?v=4">
-<link rel="stylesheet" href="/css/jouer.css?v=4">
+<link rel="stylesheet" href="/css/jouer.css?v=6">
 <style>
   /* Aperçu affiché dans l'admin : même rendu que l'écran élève, sans bandeau d'état. */
   body { min-width: 0; background: var(--papier); }
@@ -22,8 +22,8 @@
 <body>
 <main class="zone" id="zone"><p class="aide-q">Chargement de l'aperçu…</p></main>
 <script src="/js/commun.js?v=4"></script>
-<script src="/js/blocs.js?v=4"></script>
-<script src="/js/questions.js?v=7"></script>
+<script src="/js/blocs.js?v=6"></script>
+<script src="/js/questions.js?v=8"></script>
 <script>
 'use strict';
 (() => {
@@ -52,7 +52,7 @@
         return { ok: true };
       },
     });
-    zone.innerHTML = `<div class="entete-q"><span class="puce-apercu">Aperçu élève</span><span class="puce-type">${TYPES[q.type] || q.type}</span></div>
+    zone.innerHTML = `<div class="entete-q"><span class="puce-apercu">Aperçu élève</span><span class="puce-type">${q.version === 'blocs' ? 'Blocs à compléter' : TYPES[q.type] || q.type}</span></div>
       <h2 class="enonce">${RR.questions.enonce(q.enonce)}</h2>
       ${q.image ? `<img class="image-q" src="${esc(q.image)}" alt="">` : ''}
       <div class="corps-q corps-${esc(q.type)}">${composant ? composant.html : ''}</div>

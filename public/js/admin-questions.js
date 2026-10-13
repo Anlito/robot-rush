@@ -27,14 +27,17 @@
     ordre: () => ({ elements: ['', '', ''] }),
     calcul: () => ({ reponse: '', unite: '' }),
     blocs: () => ({ blocs: ['led_etat', 'attendre', 'si_alors', 'si_sinon', 'bouton_etat'], sequences: [] }),
-    completer: () => ({ texte: '', mode: 'liste', trous: [] }),
+    completer: () => ({ version: 'texte', texte: '', mode: 'liste', trous: [] }),
   };
+  const COMPLETER_BLOCS = () => ({ version: 'blocs', blocs: ['led_etat', 'attendre'], broches: false, sequences: [], depart: null });
+  const estCompleterBlocs = (q) => q.type === 'completer' && q.donnees.version === 'blocs';
 
   let filtreType = 'tous';
   let filtreNiveau = '';
   let recherche = '';
   let brouillon = null;        // question en cours d'édition
   let textesSequences = [];    // séquences de blocs en clair (affichage)
+  let texteDepart = '';        // programme de départ à compléter, en clair
   let modifie = false;
   let minuterie = null;
   let enregistrement = null;   // promesse de l'enregistrement en cours
@@ -53,7 +56,7 @@
     const r = recherche.toLowerCase();
     return b.questions.filter((q) => (filtreType === 'tous' || q.type === filtreType)
       && (!filtreNiveau || q.niveau === filtreNiveau)
-      && (!r || `${q.id} ${q.enonce} ${JSON.stringify(q.donnees)}`.toLowerCase().includes(r)));
+      && (!r || Admin.texteRecherche(q).includes(r)));
   }
 
   function rendreFiltres() {
@@ -72,7 +75,7 @@
       <button type="button" class="ligne-q ${brouillon && brouillon.id === q.id ? 'choisie' : ''}" data-q="${esc(q.id)}" role="option" aria-selected="${brouillon && brouillon.id === q.id}">
         <span class="num mono">${esc(numero(q.id))}</span>
         <span class="badge-type">${COURT[q.type] || '?'}</span>
-        <span class="texte-q">${q.probleme ? `<span class="pastille-pb" title="Incomplète : ${esc(q.probleme)}">!</span>` : ''}${esc(q.enonce || '(sans énoncé)')}</span>
+        <span class="texte-q">${q.probleme ? `<span class="pastille-pb" title="Incomplète : ${esc(q.probleme)}">!</span>` : ''}${Admin.libelleQuestion(q)}</span>
         <span class="gris">${esc(q.niveau || '')}</span>
         <span class="mono gris duree">${q.duree_s || dureeDefaut(q.type)} s</span>
       </button>`).join('') || '<p class="vide-liste">Aucune question ne correspond.</p>';
@@ -83,8 +86,9 @@
     const q = Admin.banque.questions.find((x) => x.id === id);
     if (!q) return;
     brouillon = copie(q);
-    for (const k of ['probleme', 'utilisations', 'apercuSequences']) delete brouillon[k];
+    for (const k of ['probleme', 'utilisations', 'apercuSequences', 'apercuDepart']) delete brouillon[k];
     textesSequences = (q.apercuSequences || []).slice();
+    texteDepart = q.apercuDepart || '';
     modifie = false;
     statut = q.probleme ? { texte: `Incomplète : ${q.probleme}. Elle ne sera pas posée.`, type: 'attention' } : { texte: 'Enregistrée', type: 'ok' };
     rendreListe();
@@ -92,14 +96,15 @@
   }
 
   function nouvelle() {
-    brouillon = { id: null, type: filtreType !== 'tous' ? filtreType : 'qcm', niveau: filtreNiveau || '5e', enonce: '', image: null, duree_s: null, explication: '', donnees: null };
+    brouillon = { id: null, type: filtreType !== 'tous' ? filtreType : 'qcm', niveau: filtreNiveau || '5e', titre: '', enonce: '', image: null, duree_s: null, explication: '', donnees: null };
     brouillon.donnees = DEFAUTS[brouillon.type]();
     textesSequences = [];
+    texteDepart = '';
     modifie = false;
     statut = { texte: 'Nouvelle question : elle sera enregistrée dès que vous écrivez.', type: '' };
     rendreListe();
     rendreEditeur();
-    el('#champ-enonce').focus();
+    el('#champ-titre').focus();
   }
 
   function rendreStatut() {
@@ -129,6 +134,8 @@
       ${utilisations ? `<p class="aide">Utilisée dans ${utilisations} parcours.</p>` : ''}
       <div class="segmente types-q" role="tablist" aria-label="Type de question">
         ${TYPES.map(([t, n]) => `<button type="button" role="tab" aria-selected="${q.type === t}" class="${q.type === t ? 'actif' : ''}" data-type="${t}">${n}</button>`).join('')}</div>
+      <div class="champ champ-titre"><label for="champ-titre">Titre <span class="gris">(option · visible seulement dans l'espace professeur, pour retrouver la question)</span></label>
+        <input id="champ-titre" data-champ="titre" maxlength="80" value="${esc(q.titre || '')}" placeholder="ex. LED D9 et bouton D6 : si / sinon"></div>
       <div class="ligne-enonce">
         <div class="champ"><label for="champ-enonce">Énoncé</label>
           <textarea id="champ-enonce" data-champ="enonce" rows="3" maxlength="600" placeholder="La consigne lue par l'élève">${esc(q.enonce)}</textarea>
@@ -177,20 +184,14 @@
           <div class="champ"><label for="champ-unite">Unité affichée (option)</label><input id="champ-unite" data-calcul="unite" maxlength="12" value="${esc(d.unite || '')}" placeholder="ex. cm, °"></div>
           <p class="aide">Formats acceptés de l'élève : entiers et décimaux, avec une virgule ou un point.</p></div>`;
       case 'blocs':
-        return `<b>Blocs et solutions</b>
-          <label class="petit-label">Blocs proposés à l'élève (module du distributeur de céréales)</label>
-          <div class="puces-blocs">${Admin.banque.blocsDisponibles.map((b) => `<button type="button" class="puce-bloc ${d.blocs.includes(b) ? 'actif' : ''}" data-bloc="${b}"
-            style="background:${BLOCS[b][1]}" aria-pressed="${d.blocs.includes(b)}">${BLOCS[b][0]}</button>`).join('')}</div>
-          <label class="petit-label">Séquences acceptées</label>
-          ${d.sequences.map((s, i) => `<div class="ligne-sequence"><span class="mono">${i + 1} · ${esc(textesSequences[i] || '…')}</span>
-            <button class="lien-bouton" type="button" data-modifier-seq="${i}">Modifier</button>
-            <button class="mini-bouton retirer" type="button" data-retirer-seq="${i}" aria-label="Retirer la séquence ${i + 1}">×</button></div>`).join('')
-            || '<p class="aide">Aucune séquence pour l\'instant : assemblez la bonne réponse.</p>'}
-          <button class="lien-bouton" type="button" data-ajouter-seq>+ Ajouter ${d.sequences.length ? 'une variante' : 'la bonne réponse'} (assembler dans Blockly)</button>
-          <span class="aide">Écritures équivalentes déjà acceptées : « si bouton », « si bouton = HAUT », « si bouton ≠ BAS ».</span>`;
+        return `<b>Blocs et solutions</b>${htmlBlocs(d, false)}`;
       case 'completer': {
+        const versions = `<div class="ligne-mode">Version :
+            <button type="button" class="puce-filtre ${d.version !== 'blocs' ? 'actif' : ''}" data-version="texte">Texte (trous dans le code)</button>
+            <button type="button" class="puce-filtre ${d.version === 'blocs' ? 'actif' : ''}" data-version="blocs">Blocs (programme Blockly à compléter)</button></div>`;
+        if (d.version === 'blocs') return `<b>Programme de blocs à compléter</b>${versions}${htmlBlocs(d, true)}`;
         const n = (d.texte.match(/___/g) || []).length;
-        return `<b>Programme à trous</b>
+        return `<b>Programme à trous</b>${versions}
           <label class="petit-label" for="champ-programme">Programme · écrire ___ (trois tirets bas) pour chaque trou</label>
           <textarea id="champ-programme" class="code-admin" data-completer="texte" rows="5" spellcheck="false" placeholder="si ___ alors&#10;    allumer la LED">${esc(d.texte)}</textarea>
           <span class="aide">${n ? `${n} trou${n > 1 ? 's' : ''} détecté${n > 1 ? 's' : ''}.` : 'Aucun trou pour l\'instant.'}</span>
@@ -204,6 +205,31 @@
       default:
         return '<p>Type inconnu.</p>';
     }
+  }
+
+  // Blocs : palette, broches, séquences acceptées et, pour « à compléter », programme de départ avec ses trous.
+  function htmlBlocs(d, aCompleter) {
+    const sequences = d.sequences.map((s, i) => `<div class="ligne-sequence"><span class="mono">${aCompleter && i === 0 ? 'Solution' : i + 1} · ${esc(textesSequences[i] || '…')}</span>
+      <button class="lien-bouton" type="button" data-modifier-seq="${i}">Modifier</button>
+      <button class="mini-bouton retirer" type="button" data-retirer-seq="${i}" aria-label="Retirer la séquence ${i + 1}">×</button></div>`).join('');
+    const depart = !aCompleter ? '' : `<label class="petit-label">Programme de départ : la solution avec des trous</label>
+      ${d.depart ? `<div class="ligne-sequence"><span class="mono">${esc(texteDepart || '…')}</span>
+        <button class="lien-bouton" type="button" data-preparer-trous>Modifier les trous</button></div>`
+        : `<p class="aide">${d.sequences.length ? 'Pas encore de trous.' : 'Assemblez d\'abord la solution complète.'}</p>`}
+      ${!d.depart && d.sequences.length ? '<button class="lien-bouton" type="button" data-preparer-trous>+ Préparer les trous (dans Blockly)</button>' : ''}
+      <span class="aide">Trous possibles : bloc manquant, nombre à écrire (temps, angle, nombre de fois, valeur de CHOIX), menu à choisir (broche, HAUT / BAS, = / ≠), condition à placer. Le reste du programme est verrouillé pour l'élève.</span>`;
+    return `<label class="petit-label">${aCompleter ? 'Blocs de la palette, pour remplir les trous (ajoutez des blocs pièges ; aucun si seules des valeurs sont à compléter)' : 'Blocs proposés à l\'élève (module du distributeur de céréales)'}</label>
+      <div class="puces-blocs">${Admin.banque.blocsDisponibles.map((b) => `<button type="button" class="puce-bloc ${d.blocs.includes(b) ? 'actif' : ''}" data-bloc="${b}"
+        style="background:${BLOCS[b][1]}" aria-pressed="${d.blocs.includes(b)}">${BLOCS[b][0]}</button>`).join('')}</div>
+      <div class="ligne-mode">Broches :
+        <button type="button" class="puce-filtre ${!d.broches ? 'actif' : ''}" data-broches="0">Sans (logique seule)</button>
+        <button type="button" class="puce-filtre ${d.broches ? 'actif' : ''}" data-broches="1">Avec choix de la broche (LED, bouton, servo)</button></div>
+      ${d.broches ? '<span class="aide">L\'élève choisit la broche dans un menu (D2 à D13 ; servo D5 ou D6) : indiquez le branchement dans l\'énoncé, et choisissez la bonne broche dans chaque séquence.</span>' : ''}
+      <label class="petit-label">${aCompleter ? 'Solution : le programme complet (et ses variantes acceptées)' : 'Séquences acceptées'}</label>
+      ${sequences || `<p class="aide">Aucune séquence pour l'instant : assemblez la bonne réponse.</p>`}
+      <button class="lien-bouton" type="button" data-ajouter-seq>+ Ajouter ${d.sequences.length ? 'une variante' : aCompleter ? 'la solution' : 'la bonne réponse'} (assembler dans Blockly)</button>
+      ${depart}
+      <span class="aide">Écritures équivalentes déjà acceptées : « si bouton », « si bouton = HAUT », « si bouton ≠ BAS ».</span>`;
   }
 
   // Le nombre de trous suit le programme : on garde les réponses déjà saisies.
@@ -250,7 +276,7 @@
     const t = ev.target;
     if (!brouillon) return;
     const d = brouillon.donnees;
-    if (t.dataset.champ === 'enonce' || t.dataset.champ === 'explication') brouillon[t.dataset.champ] = t.value;
+    if (['titre', 'enonce', 'explication'].includes(t.dataset.champ)) brouillon[t.dataset.champ] = t.value;
     else if (t.dataset.champ === 'duree_s') brouillon.duree_s = t.value === '' ? null : Number(t.value);
     else if (t.dataset.qcm !== undefined) d.choix[Number(t.dataset.qcm)] = t.value;
     else if (t.dataset.ordre !== undefined) d.elements[Number(t.dataset.ordre)] = t.value;
@@ -314,6 +340,19 @@
       d.blocs = d.blocs.includes(k) ? d.blocs.filter((x) => x !== k) : [...d.blocs, k];
       modification({ redessiner: true, delai: 300 });
     }
+    const v = c('[data-version]');
+    if (v && v.dataset.version !== (d.version || 'texte')) {
+      const rempli = JSON.stringify(d) !== JSON.stringify(d.version === 'blocs' ? COMPLETER_BLOCS() : DEFAUTS.completer());
+      if (rempli && !confirm('Changer de version efface le programme et les réponses de cette question (l\'énoncé est gardé). Continuer ?')) return;
+      brouillon.donnees = v.dataset.version === 'blocs' ? COMPLETER_BLOCS() : DEFAUTS.completer();
+      textesSequences = [];
+      texteDepart = '';
+      modification({ redessiner: true, delai: 200 });
+      return;
+    }
+    const br = c('[data-broches]');
+    if (br) { d.broches = br.dataset.broches === '1'; modification({ redessiner: true, delai: 300 }); }
+    if (c('[data-preparer-trous]')) editerDepart();
     const mode = c('[data-mode]');
     if (mode) { d.mode = mode.dataset.mode; modification({ redessiner: true, delai: 300 }); }
     if (c('[data-ajouter-seq]')) editerSequence(null);
@@ -369,11 +408,12 @@
   // ---------- Séquences de blocs : assemblées dans Blockly ----------
   async function editerSequence(i) {
     const d = brouillon.donnees;
-    if (!d.blocs.length) { Admin.bandeau('Choisissez d\'abord les blocs proposés à l\'élève.', true); return; }
+    const aCompleter = estCompleterBlocs(brouillon);
+    if (!aCompleter && !d.blocs.length) { Admin.bandeau('Choisissez d\'abord les blocs proposés à l\'élève.', true); return; }
     const m = Admin.modale({
       titre: i === null ? 'Assembler une séquence acceptée' : `Modifier la séquence ${i + 1}`,
-      large: true,
-      contenu: `<p class="aide">Assemblez la réponse attendue sous « Programme », avec les blocs proposés à l'élève.</p>
+      plein: true,
+      contenu: `<p class="aide">${aCompleter ? 'Assemblez le programme complet, sans trou' : 'Assemblez la réponse attendue sous « Programme », avec les blocs proposés à l\'élève'}${d.broches ? ', en choisissant la bonne broche de chaque bloc' : ''}.</p>
         <div class="zone-blocs zone-blocs-admin" id="zone-blocs-admin"><p class="chargement-blocs">Chargement des blocs…</p></div>
         <p class="erreur" id="erreur-seq" hidden></p>
         <div class="actions-modale"><button class="btn" type="button" data-fermer-seq>Annuler</button>
@@ -385,7 +425,7 @@
       await RR.blocs.charger();
       const zoneB = m.querySelector('#zone-blocs-admin');
       zoneB.innerHTML = '';
-      editeur = RR.blocs.creer(zoneB, d.blocs);
+      editeur = RR.blocs.creer(zoneB, aCompleter ? Admin.banque.blocsDisponibles : d.blocs, { broches: d.broches });
       if (i !== null) {
         const rep = await Admin.envoyer('blocs:versBlockly', { sequence: d.sequences[i] });
         if (rep.ok) editeur.charger(rep.sauvegarde);
@@ -402,10 +442,63 @@
       if (!rep.ok) { montrer(rep.erreur); return; }
       if (!rep.sequence.length) { montrer('Le programme est vide : accrochez des blocs sous « Programme ».'); return; }
       if (rep.incomplets) { montrer('Un bloc a une case vide (condition ou nombre) : complétez-la.'); return; }
+      if (d.broches && rep.brochesManquantes) { montrer('Choisissez la broche de chaque bloc LED, bouton et servo.'); return; }
       if (i === null) { d.sequences.push(rep.sequence); textesSequences.push(rep.texte); } else { d.sequences[i] = rep.sequence; textesSequences[i] = rep.texte; }
       Admin.fermerModale();
       modification({ redessiner: true, delai: 200 });
       if (rep.horsProgramme) Admin.bandeau(`${rep.horsProgramme} bloc(s) hors du programme n'ont pas été pris en compte.`);
+    });
+  }
+
+  // ---------- Programme de départ (à compléter) : la solution, avec des trous ----------
+  async function editerDepart() {
+    const d = brouillon.donnees;
+    if (!d.sequences.length) { Admin.bandeau('Assemblez d\'abord la solution complète.', true); return; }
+    const m = Admin.modale({
+      titre: 'Préparer les trous',
+      plein: true,
+      contenu: `<p class="aide">Transformez la solution en programme à compléter :
+        <b>bloc manquant</b> : supprimez le bloc et glissez « ? bloc manquant » à sa place ·
+        <b>nombre</b> : cliquez dessus et écrivez <b>?</b> ·
+        <b>menu</b> (broche, HAUT / BAS, = / ≠) : choisissez <b>?</b> ·
+        <b>condition</b> : retirez-la, la case reste vide.
+        Le reste sera verrouillé pour l'élève.</p>
+        <div class="zone-blocs zone-blocs-admin" id="zone-blocs-admin"><p class="chargement-blocs">Chargement des blocs…</p></div>
+        <p class="erreur" id="erreur-seq" hidden></p>
+        <div class="actions-modale"><button class="btn" type="button" data-fermer-seq>Annuler</button>
+          <button class="btn" type="button" data-repartir>Repartir de la solution</button>
+          <button class="btn btn-primaire" type="button" data-valider-seq>Enregistrer les trous</button></div>`,
+    });
+    let editeur = null;
+    Admin.surFermeture = () => { if (editeur) editeur.detruire(); };
+    const chargerProgramme = async (sequence) => {
+      const rep = await Admin.envoyer('blocs:versBlockly', { sequence });
+      if (rep.ok && editeur) editeur.charger(rep.sauvegarde);
+    };
+    try {
+      await RR.blocs.charger();
+      const zoneB = m.querySelector('#zone-blocs-admin');
+      zoneB.innerHTML = '';
+      editeur = RR.blocs.creer(zoneB, Admin.banque.blocsDisponibles, { broches: d.broches, trous: true, blocManquant: true });
+      await chargerProgramme(d.depart || d.sequences[0]);
+    } catch {
+      m.querySelector('#zone-blocs-admin').innerHTML = '<p class="erreur">Les blocs n\'ont pas pu se charger. Actualisez la page.</p>';
+    }
+    m.querySelector('[data-fermer-seq]').addEventListener('click', () => Admin.fermerModale());
+    m.querySelector('[data-repartir]').addEventListener('click', () => chargerProgramme(d.sequences[0]));
+    m.querySelector('[data-valider-seq]').addEventListener('click', async () => {
+      if (!editeur) return;
+      const rep = await Admin.envoyer('blocs:lire', { sauvegarde: editeur.sauvegarder() });
+      const err = m.querySelector('#erreur-seq');
+      const montrer = (t) => { err.hidden = false; err.textContent = t; };
+      if (!rep.ok) { montrer(rep.erreur); return; }
+      if (!rep.sequence.length) { montrer('Le programme est vide.'); return; }
+      if (!rep.incomplets) { montrer('Aucun trou pour l\'instant : créez au moins un trou (voir ci-dessus).'); return; }
+      d.depart = rep.sequence;
+      texteDepart = rep.texte;
+      Admin.fermerModale();
+      modification({ redessiner: true, delai: 200 });
+      Admin.bandeau(`Programme à compléter enregistré : ${rep.incomplets} trou${rep.incomplets > 1 ? 's' : ''}.`);
     });
   }
 
@@ -416,7 +509,8 @@
     const m = Admin.modale({
       titre: 'Aperçu élève',
       large: true,
-      contenu: `<iframe class="cadre-apercu" id="cadre-apercu" src="/apercu.html?v=4" title="Aperçu de la question telle que l'élève la voit"></iframe>
+      plein: brouillon.type === 'blocs' || estCompleterBlocs(brouillon),
+      contenu: `<iframe class="cadre-apercu" id="cadre-apercu" src="/apercu.html?v=6" title="Aperçu de la question telle que l'élève la voit"></iframe>
         <div class="actions-modale"><span class="aide">L'aperçu valide la réponse comme en partie, sans rien enregistrer.</span>
           <button class="btn" type="button" data-recommencer>Recommencer</button></div>`,
     });
@@ -470,6 +564,7 @@
     const q = b.questions.find((x) => x.id === brouillon.id);
     if (q && !modifie && !enregistrement && !zone.contains(document.activeElement)) {
       textesSequences = (q.apercuSequences || []).slice();
+      texteDepart = q.apercuDepart || '';
       if (q.probleme) statut = { texte: `Incomplète : ${q.probleme}. Elle ne sera pas posée.`, type: 'attention' };
     }
   });

@@ -13,32 +13,32 @@ function banque(options = {}) {
   return { b, ecrits };
 }
 
-test('chargement : les 20 questions de test sont complètes', () => {
+test('chargement : les 23 questions de test sont complètes', () => {
   const { b } = banque();
-  assert.equal(b.questions.length, 20);
+  assert.equal(b.questions.length, 23);
   assert.deepEqual(b.questions.filter((q) => probleme(q)).map((q) => q.id), []);
-  assert.equal(b.questionsJouables().length, 20);
+  assert.equal(b.questionsJouables().length, 23);
 });
 
 test('chargement : une question abîmée est gardée et signalée, pas supprimée', () => {
   const b = new Banque({ questions: [...seedQ, { id: 'q-x', type: 'inconnu', enonce: 'x' }, { id: 'q-y', type: 'qcm', enonce: 'y', duree_s: 9999, donnees: { choix: ['a', 'b'], bonne: 0 } }], parcours: seedP });
-  assert.equal(b.questions.length, 22);
+  assert.equal(b.questions.length, 25);
   assert.match(probleme(b.question('q-x')), /abîmée/);
   assert.equal(b.question('q-y').duree_s, null);
-  assert.equal(b.questionsJouables().length, 21);
+  assert.equal(b.questionsJouables().length, 24);
 });
 
 test('nouvelle question : numéro attribué, sauvegarde immédiate, incomplète signalée', () => {
   const { b, ecrits } = banque();
   const r = b.enregistrerQuestion({ type: 'qcm', enonce: '', donnees: { choix: ['a', 'b'], bonne: 0 } });
-  assert.equal(r.question.id, 'q-021');
+  assert.equal(r.question.id, 'q-024');
   assert.equal(r.probleme, 'énoncé vide');
-  assert.deepEqual(ecrits.at(-1), ['questions', 21]);
+  assert.deepEqual(ecrits.at(-1), ['questions', 24]);
   const r2 = b.enregistrerQuestion({ ...r.question, enonce: '2 + 2 ?', donnees: { choix: ['4', '5', '', ''], bonne: 0 } });
-  assert.equal(r2.question.id, 'q-021');
+  assert.equal(r2.question.id, 'q-024');
   assert.equal(r2.probleme, null);
   // Version jouable : les cases vides du QCM disparaissent.
-  assert.deepEqual(b.questionsJouables().find((q) => q.id === 'q-021').donnees.choix, ['4', '5']);
+  assert.deepEqual(b.questionsJouables().find((q) => q.id === 'q-024').donnees.choix, ['4', '5']);
 });
 
 test('nettoyage : champs inconnus retirés, longueurs limitées, durée vérifiée', () => {
@@ -75,7 +75,7 @@ test('dupliquer une question et un parcours', () => {
   assert.equal(question.enonce, b.question('q-005').enonce);
   const { parcours } = b.dupliquerParcours('p-test');
   assert.equal(parcours.nom, 'Test (copie)');
-  assert.equal(parcours.questions.length, 20);
+  assert.equal(parcours.questions.length, 23);
 });
 
 test('parcours : nom obligatoire, questions inconnues retirées, réglages bornés', () => {
@@ -93,11 +93,11 @@ test('export puis import « ajouter » : tout est renuméroté et les parcours s
   const fichier = JSON.parse(JSON.stringify(b.exporter()));
   assert.equal(fichier.format, 'robot-rush');
   const rapport = b.importer(fichier, { mode: 'ajouter' });
-  assert.equal(rapport.questions, 20);
+  assert.equal(rapport.questions, 23);
   assert.equal(rapport.parcours, 1);
-  assert.equal(b.questions.length, 40);
+  assert.equal(b.questions.length, 46);
   const copie = b.parcours[1];
-  assert.equal(copie.questions.length, 20);
+  assert.equal(copie.questions.length, 23);
   assert.ok(copie.questions.every((id) => !seedQ.some((q) => q.id === id)), 'le parcours importé pointe vers les nouvelles questions');
 });
 
@@ -155,4 +155,29 @@ test('fichiers JSON avec une marque BOM (Bloc-notes de Windows) : lus quand mêm
   delete process.env.DATA_DIR;
   delete require.cache[require.resolve('../server/stockage')];
   fs.rmSync(dossier, { recursive: true, force: true });
+});
+
+test('à compléter (blocs) : départ et broches gardés, aperçus en clair', () => {
+  const { b } = banque();
+  const { question, probleme: p } = b.enregistrerQuestion({ type: 'completer', enonce: 'x', donnees: {
+    version: 'blocs', blocs: ['led_etat'], broches: true,
+    sequences: [[{ bloc: 'led_etat', etat: 1, broche: 'D3' }]],
+    depart: [{ bloc: 'led_etat', etat: '?', broche: 'D3' }, { bloc: 'trou' }, { bloc: 'pirate' }] } });
+  assert.equal(p, null);
+  assert.equal(question.donnees.broches, true);
+  assert.deepEqual(question.donnees.depart, [{ bloc: 'led_etat', etat: '?', broche: 'D3' }, { bloc: 'trou' }]);
+  const vue = b.vue().questions.find((x) => x.id === question.id);
+  assert.equal(vue.apercuDepart, 'LED à l\'état ? (D3) → [bloc manquant]');
+  assert.deepEqual(vue.apercuSequences, ['allumer la LED (D3)']);
+  // Version texte par défaut (anciennes questions).
+  const { question: t } = b.enregistrerQuestion({ type: 'completer', enonce: 'y', donnees: { texte: 'si ___', trous: [{ bonne: 'a' }] } });
+  assert.equal(t.donnees.version, 'texte');
+});
+
+test('titre : gardé, nettoyé, 80 caractères au plus', () => {
+  const { b } = banque();
+  const { question } = b.enregistrerQuestion({ type: 'calcul', titre: `  LED D9   ${'x'.repeat(100)}`, enonce: 'Combien ?', donnees: { reponse: 3 } });
+  assert.ok(question.titre.length <= 80);
+  assert.ok(question.titre.startsWith('LED D9 x'));
+  assert.equal(b.enregistrerQuestion({ type: 'calcul', enonce: 'y', donnees: { reponse: 1 } }).question.titre, null);
 });

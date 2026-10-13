@@ -38,6 +38,7 @@ function nettoyerReglages(entree, base = REGLAGES_DEFAUT) {
     }
   }
   if (entree && entree.solutionGarantie !== undefined) r.solutionGarantie = Boolean(entree.solutionGarantie);
+  if (entree && ['duree', 'solution'].includes(entree.finBlocage)) r.finBlocage = entree.finBlocage;
   return r;
 }
 
@@ -320,7 +321,7 @@ class Partie extends EventEmitter {
     this.dernierTick = n;
 
     for (const e of this.equipes) {
-      if (e.blocage && this.t >= e.blocage.finA) {
+      if (e.blocage && e.blocage.finA !== null && this.t >= e.blocage.finA) {
         const obstacle = this.obstacle(e.blocage.obstacle);
         e.blocage = null;
         e.protegeJusqua = this.t + this.reglages.protection * 1000;
@@ -534,7 +535,9 @@ class Partie extends EventEmitter {
         texte: `${source.nom} t'envoie ${obs.un} : paré avec ${sol.un} du stock` });
       this.emit('alerte', source.id, { type: 'info', texte: `${cible.nom} avait ${sol.un} en stock : attaque parée` });
     } else {
-      cible.blocage = { obstacle: obs.id, finA: this.t + this.reglages.dureeBlocage * 1000, par: source.id };
+      // finA null : bloquée jusqu'à ce qu'elle prenne la solution (réglage « finBlocage »).
+      const finA = this.reglages.finBlocage === 'solution' ? null : this.t + this.reglages.dureeBlocage * 1000;
+      cible.blocage = { obstacle: obs.id, finA, par: source.id };
       this.ajouterFil({ type: 'attaque', equipe: source.id, cible: cible.id, obstacle: obs.id, pseudo,
         texte: `${source.nom} envoie ${obs.un} à ${cible.nom} !` });
       this.emit('alerte', cible.id, { type: 'attaque', obstacle: obs.id, solution: sol.id,
@@ -631,7 +634,8 @@ class Partie extends EventEmitter {
         code: avecCodes ? e.code : undefined,
         position: e.position,
         stock: e.stock,
-        blocage: e.blocage ? { obstacle: e.blocage.obstacle, restantMs: e.blocage.finA - this.t } : null,
+        blocage: e.blocage ? { obstacle: e.blocage.obstacle, solution: this.solutionDe(e.blocage.obstacle).id,
+          restantMs: e.blocage.finA === null ? null : e.blocage.finA - this.t } : null,
         protegeRestantMs: Math.max(0, e.protegeJusqua - this.t),
         succesRestantMs: Math.max(0, e.succesJusqua - this.t),
         nbEleves: parEquipe[e.id].length,

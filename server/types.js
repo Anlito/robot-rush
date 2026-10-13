@@ -127,27 +127,31 @@ function lireProgramme(reponse) {
 const blocsType = {
   preparer(q) {
     const autorises = (q.donnees.blocs || blocs.BLOCS_DISPONIBLES).filter((b) => blocs.BLOCS_DISPONIBLES.includes(b));
-    return { vue: { blocs: autorises }, prive: {} };
+    return { vue: { blocs: autorises, broches: Boolean(q.donnees.broches) }, prive: {} };
   },
   valider(q, reponse) {
     const lu = lireProgramme(reponse);
-    return Boolean(lu) && lu.incomplets === 0 && blocs.programmeAccepte(lu.programme, q.donnees.sequences);
+    return Boolean(lu) && lu.incomplets === 0 && blocs.programmeAccepte(lu.programme, q.donnees.sequences, { broches: Boolean(q.donnees.broches) });
   },
   textes(q, reponse) {
     const lu = lireProgramme(reponse);
     return { donnee: lu ? blocs.texteProgramme(lu.programme) : null, bonne: blocs.texteProgramme(q.donnees.sequences[0]) };
   },
   verifier(q) {
-    const s = (q.donnees || {}).sequences;
+    const d = q.donnees || {};
+    const s = d.sequences;
     if (!Array.isArray(s) || !s.length || !s.every(Array.isArray)) return 'aucune séquence acceptée';
     if (s.some((x) => !x.length)) return 'une séquence acceptée est vide';
+    if (d.broches && s.some((x) => blocs.brochesManquantes(x))) return 'broches activées : choisir la broche de chaque bloc dans les séquences acceptées';
     return null;
   },
 };
 
-// ---------- 5. Programme à compléter : trous à remplir (liste déroulante ou glisser-déposer) ----------
+// ---------- 5. Programme à compléter ----------
+// Deux versions : « texte » (trous à remplir par liste déroulante ou glisser-déposer)
+// et « blocs » (programme Blockly de départ avec des trous, à compléter avec d'autres blocs ou des valeurs).
 const MARQUEUR = '___';
-const completer = {
+const completerTexte = {
   preparer(q, rng) {
     const d = q.donnees;
     const segments = d.texte.split(MARQUEUR);
@@ -181,6 +185,34 @@ const completer = {
     if (d.trous.some((t) => !nettoyer(t.bonne))) return 'bonne réponse d\'un trou manquante';
     return null;
   },
+};
+
+// Version blocs : le programme de départ (verrouillé, avec ses trous) est envoyé à l'élève ;
+// la validation est celle des blocs (séquences acceptées, écritures équivalentes).
+const completerBlocs = {
+  preparer(q) {
+    const { vue } = blocsType.preparer({ donnees: { ...q.donnees, blocs: q.donnees.blocs || [] } });
+    return { vue: { ...vue, version: 'blocs', depart: blocs.versBlockly(q.donnees.depart, { verrouiller: true }) }, prive: {} };
+  },
+  valider: (q, reponse) => blocsType.valider(q, reponse),
+  textes: (q, reponse) => blocsType.textes(q, reponse),
+  verifier(q) {
+    const d = q.donnees || {};
+    if (!Array.isArray(d.sequences) || !d.sequences.length) return 'solution manquante : assembler le programme complet';
+    const pb = blocsType.verifier(q);
+    if (pb) return pb;
+    if (!Array.isArray(d.depart) || !d.depart.length) return 'programme de départ manquant : préparer les trous';
+    if (!blocs.compterTrous(d.depart)) return 'le programme de départ n\'a aucun trou';
+    return null;
+  },
+};
+
+const version = (q) => (q.donnees && q.donnees.version === 'blocs' ? completerBlocs : completerTexte);
+const completer = {
+  preparer: (q, rng) => version(q).preparer(q, rng),
+  valider: (q, reponse, prive) => version(q).valider(q, reponse, prive),
+  textes: (q, reponse, prive) => version(q).textes(q, reponse, prive),
+  verifier: (q) => version(q).verifier(q),
 };
 
 const TYPES = { qcm, ordre, calcul, blocs: blocsType, completer };

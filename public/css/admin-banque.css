@@ -22,6 +22,8 @@ body[data-onglet="partie"] .lien-banque { display: none; }
   color: var(--encre); font-weight: 800; font-size: 12px; margin-right: 6px; border: 1px solid var(--encre); flex: none;
 }
 .texte-q { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; display: flex; align-items: center; }
+.libelle-q { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.libelle-q b { font-weight: 700; }
 .puce-filtre { font: inherit; font-size: 13px; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--bordure-champ); background: var(--blanc); cursor: pointer; height: auto; }
 .puce-filtre.actif { background: var(--encre); color: var(--blanc); border-color: var(--encre); font-weight: 700; }
 textarea { font: inherit; border: 1.5px solid var(--bordure-champ); border-radius: 10px; padding: 10px 12px; background: var(--blanc); resize: vertical; line-height: 1.4; }
@@ -47,6 +49,7 @@ textarea { font: inherit; border: 1.5px solid var(--bordure-champ); border-radiu
 .ligne-q .num, .ligne-q .duree { color: var(--encre-2); }
 .ligne-q .duree { text-align: right; }
 .editeur-q { padding: 18px 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; min-height: 0; }
+.editeur-q > * { flex-shrink: 0; } /* l'éditeur défile : aucun bloc ne doit être écrasé */
 .tete-editeur { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .titre-editeur { font-family: var(--f-titre); font-size: 24px; }
 .tete-editeur .actions { margin-left: auto; }
@@ -128,6 +131,11 @@ textarea { font: inherit; border: 1.5px solid var(--bordure-champ); border-radiu
 .fond-modale { position: fixed; inset: 0; background: rgba(22, 22, 29, .55); z-index: 50; display: flex; align-items: center; justify-content: center; padding: 24px; }
 .modale { background: var(--blanc); border: 1.5px solid var(--encre); border-radius: 14px; width: min(760px, 100%); max-height: calc(100vh - 48px); display: flex; flex-direction: column; }
 .modale.large { width: min(1180px, 100%); }
+/* Fenêtres de blocs (assembler, préparer les trous, aperçu) : tout l'écran, la zone Blockly prend la place restante. */
+.modale.plein { width: 100%; height: calc(100vh - 48px); }
+.modale.plein .corps-modale { flex: 1; min-height: 0; padding: 10px 14px; gap: 8px; }
+.modale.plein .corps-modale > .aide { margin: 0; font-size: 13px; line-height: 1.35; }
+.modale.plein .zone-blocs-admin, .modale.plein .cadre-apercu { flex: 1; height: auto; min-height: 320px; }
 .tete-modale { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1.5px solid var(--trait); }
 .tete-modale b { font-family: var(--f-titre); font-size: 20px; }
 .corps-modale { padding: 16px 18px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }

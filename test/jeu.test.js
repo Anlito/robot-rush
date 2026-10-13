@@ -413,3 +413,23 @@ test('fil : le pseudo de l\'élève accompagne les actions de son équipe', () =
   assert.equal(p.fil[0].type, 'parade');
   assert.match(p.fil[0].texte, /franchit le trou avec son pont/);
 });
+
+test('fin du blocage « solution » : pas de fin automatique, seule la solution débloque', () => {
+  const { p, j, avancerTemps } = nouvellePartie({ reglages: { finBlocage: 'solution' } });
+  p.demarrer();
+  attaquer(p, j.eleve0, 'trou', 1);
+  avancerTemps(20000); // plus que la durée de blocage (15 s), moins que le temps de question (30 s)
+  assert.equal(p.equipes[1].blocage.obstacle, 'trou');
+  const vue = p.vuePublique().equipes[1].blocage;
+  assert.equal(vue.restantMs, null);
+  assert.equal(vue.solution, 'pont');
+  prendre(p, j.eleve1, 'echelle');
+  assert.ok(p.equipes[1].blocage, 'une autre solution ne débloque pas');
+  prendre(p, j.eleve1, 'pont');
+  assert.equal(p.equipes[1].blocage, null);
+});
+
+test('fin du blocage : réglage inconnu ignoré, durée par défaut', () => {
+  const { p } = nouvellePartie({ reglages: { finBlocage: 'jamais' } });
+  assert.equal(p.reglages.finBlocage, 'duree');
+});
