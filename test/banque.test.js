@@ -192,3 +192,16 @@ test('le modèle pour l\'IA (outils-salle/MODELE-QUESTIONS-IA.md) reste importab
   assert.equal(r.questions, fichier.questions.length);
   for (const q of b.questions) assert.equal(probleme(q), null, q.titre);
 });
+
+test('le fichier exemple (outils-salle/exemple-questions-robot-rush.json) couvre tous les types et s\'importe sans erreur', () => {
+  const fichier = require('../outils-salle/exemple-questions-robot-rush.json');
+  const { TYPES } = require('../server/types');
+  const b = new Banque({ questions: [], parcours: [], sauver: () => {} });
+  const r = b.importer(fichier, { mode: 'ajouter' });
+  assert.deepEqual(r.ignorees, []);
+  assert.equal(r.incompletes, 0);
+  for (const q of b.questions) assert.equal(probleme(q), null, q.titre);
+  for (const type of Object.keys(TYPES)) assert.ok(b.questions.some((q) => q.type === type), `type ${type} absent du fichier exemple`);
+  assert.ok(b.questions.some((q) => q.donnees.version === 'blocs'), 'blocs à compléter');
+  assert.ok(b.questions.some((q) => q.bonus > 0), 'question bonus');
+});

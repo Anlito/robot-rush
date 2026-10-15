@@ -5,7 +5,9 @@ exact du fichier. Le fichier qu'elle produit s'importe directement dans le jeu.
 
 ## Mode d'emploi (pour le professeur)
 
-1. Ouvrir l'IA, **joindre ce fichier** (ou copier tout son contenu), puis écrire la demande, par exemple :
+1. Ouvrir l'IA, **joindre ce fichier** (ou copier tout son contenu) **et le fichier exemple**
+   [`exemple-questions-robot-rush.json`](exemple-questions-robot-rush.json) (une question de chaque type et de chaque variante),
+   puis écrire la demande, par exemple :
    > Crée 12 questions Robot Rush pour des élèves de 5e sur la programmation d'une LED et d'un bouton :
    > 4 QCM, 2 remises en ordre, 2 calculs, 2 programmes à compléter (texte), 2 blocs à compléter et 2 « relier ».
    > Mets un bonus de 2 cases aux 2 questions les plus difficiles.

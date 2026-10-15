@@ -1,0 +1,289 @@
+{
+  "format": "robot-rush",
+  "version": 1,
+  "description": "Fichier exemple : une question de chaque type et de chaque variante, pour servir de modèle (IA) ou pour essayer le jeu. S'importe tel quel : Importer JSON, Ajouter à ma banque.",
+  "questions": [
+    {
+      "id": "ex-01",
+      "type": "qcm",
+      "niveau": "5e",
+      "titre": "QCM à 4 réponses : rôle de loop()",
+      "enonce": "Dans un programme Arduino, quelle partie se répète sans fin ?",
+      "image": null,
+      "duree_s": null,
+      "bonus": 0,
+      "explication": "setup() s'exécute une fois au démarrage, loop() se répète sans fin.",
+      "donnees": { "choix": ["setup()", "loop()", "main()", "start()"], "bonne": 1 }
+    },
+    {
+      "id": "ex-02",
+      "type": "qcm",
+      "niveau": "5e",
+      "titre": "QCM à 2 réponses : vrai ou faux",
+      "enonce": "Vrai ou faux : une LED est un capteur.",
+      "image": null,
+      "duree_s": 20,
+      "bonus": 0,
+      "explication": "Faux : la LED agit (elle éclaire), c'est un actionneur.",
+      "donnees": { "choix": ["Vrai", "Faux"], "bonne": 1 }
+    },
+    {
+      "id": "ex-03",
+      "type": "ordre",
+      "niveau": "5e",
+      "titre": "Remise en ordre : clignotement",
+      "enonce": "Remets les étapes dans l'ordre pour faire clignoter la LED une fois.",
+      "image": null,
+      "duree_s": null,
+      "bonus": 0,
+      "explication": "On allume, on attend, on éteint, on attend.",
+      "donnees": { "elements": ["Allumer la LED", "Attendre 1 seconde", "Éteindre la LED", "Attendre 1 seconde"] }
+    },
+    {
+      "id": "ex-04",
+      "type": "calcul",
+      "niveau": "5e",
+      "titre": "Calcul avec unité : durée d'un clignotement",
+      "enonce": "La LED reste allumée 0,5 s puis éteinte 0,5 s, et cela 4 fois. Combien de secondes en tout ?",
+      "image": null,
+      "duree_s": null,
+      "bonus": 0,
+      "explication": "(0,5 + 0,5) × 4 = 4 secondes.",
+      "donnees": { "reponse": 4, "unite": "s" }
+    },
+    {
+      "id": "ex-05",
+      "type": "calcul",
+      "niveau": "4e",
+      "titre": "Calcul décimal sans unité : variable",
+      "enonce": "La variable `score` vaut 2,5. On lui ajoute 1,5 puis on la multiplie par 2. Que vaut `score` ?",
+      "image": null,
+      "duree_s": 45,
+      "bonus": 1,
+      "explication": "(2,5 + 1,5) × 2 = 8.",
+      "donnees": { "reponse": 8, "unite": null }
+    },
+    {
+      "id": "ex-06",
+      "type": "completer",
+      "niveau": "5e",
+      "titre": "À compléter (texte, listes déroulantes)",
+      "enonce": "Complète : la LED s'allume quand on appuie sur le bouton, sinon elle s'éteint.",
+      "image": null,
+      "duree_s": null,
+      "bonus": 0,
+      "explication": "Condition : bouton appuyé. Sinon : on éteint la LED.",
+      "donnees": {
+        "version": "texte",
+        "mode": "liste",
+        "texte": "si ___ alors\n    allumer la LED\nsinon\n    ___",
+        "trous": [
+          { "bonne": "bouton appuyé", "distracteurs": ["bouton relâché", "LED allumée"] },
+          { "bonne": "éteindre la LED", "distracteurs": ["allumer la LED", "attendre 1 s"] }
+        ]
+      }
+    },
+    {
+      "id": "ex-07",
+      "type": "completer",
+      "niveau": "5e",
+      "titre": "À compléter (texte, glisser-déposer)",
+      "enonce": "Complète le programme qui fait clignoter la LED 3 fois.",
+      "image": null,
+      "duree_s": null,
+      "bonus": 0,
+      "explication": "Répéter 3 fois : allumer, attendre, éteindre, attendre.",
+      "donnees": {
+        "version": "texte",
+        "mode": "glisser",
+        "texte": "répéter ___ fois\n    allumer la LED\n    attendre 1 s\n    ___\n    attendre 1 s",
+        "trous": [
+          { "bonne": "3", "distracteurs": ["1", "4"] },
+          { "bonne": "éteindre la LED", "distracteurs": ["tourner le servo"] }
+        ]
+      }
+    },
+    {
+      "id": "ex-08",
+      "type": "blocs",
+      "niveau": "5e",
+      "titre": "Blocs à assembler (sans broches)",
+      "enonce": "Assemble un programme qui fait clignoter la LED 3 fois (1 s allumée, 1 s éteinte).",
+      "image": null,
+      "duree_s": null,
+      "bonus": 0,
+      "explication": "Répéter 3 fois : allumer, attendre 1 s, éteindre, attendre 1 s.",
+      "donnees": {
+        "blocs": ["led_etat", "attendre", "repeter"],
+        "broches": false,
+        "sequences": [
+          [ { "bloc": "repeter", "fois": 3, "faire": [
+              { "bloc": "led_etat", "etat": 1 }, { "bloc": "attendre", "duree": 1 },
+              { "bloc": "led_etat", "etat": 0 }, { "bloc": "attendre", "duree": 1 } ] } ]
+        ]
+      }
+    },
+    {
+      "id": "ex-09",
+      "type": "blocs",
+      "niveau": "4e",
+      "titre": "Blocs à assembler (avec broches, si / sinon, variante acceptée)",
+      "enonce": "Le bouton est branché sur D7 et le servomoteur sur D6. Quand on appuie sur le bouton, le servo va à 90°, sinon il revient à 0°.",
+      "image": null,
+      "duree_s": 90,
+      "bonus": 2,
+      "explication": "Si état du bouton (D7) alors servo (D6) à 90° sinon servo (D6) à 0°.",
+      "donnees": {
+        "blocs": ["si_sinon", "bouton_etat", "valeur_haut_bas", "comparaison", "servo_angle", "led_etat"],
+        "broches": true,
+        "sequences": [
+          [ { "bloc": "si_sinon", "condition": { "bloc": "bouton_etat", "broche": "D7" },
+              "alors": [ { "bloc": "servo_angle", "angle": 90, "broche": "D6" } ],
+              "sinon": [ { "bloc": "servo_angle", "angle": 0, "broche": "D6" } ] } ]
+        ]
+      }
+    },
+    {
+      "id": "ex-10",
+      "type": "blocs",
+      "niveau": "3e",
+      "titre": "Blocs à assembler (variable CHOIX et comparaison)",
+      "enonce": "Range 2 dans la variable CHOIX, puis : si CHOIX = 2, allume la LED.",
+      "image": null,
+      "duree_s": null,
+      "bonus": 0,
+      "explication": "affecter à CHOIX la valeur 2, puis si CHOIX = 2 alors allumer la LED.",
+      "donnees": {
+        "blocs": ["affecter", "variable", "nombre", "comparaison", "si_alors", "led_etat"],
+        "broches": false,
+        "sequences": [
+          [ { "bloc": "affecter", "variable": "CHOIX", "valeur": 2 },
+            { "bloc": "si_alors", "condition": { "bloc": "comparaison", "op": "=", "a": { "bloc": "variable", "variable": "CHOIX" }, "b": 2 },
+              "alors": [ { "bloc": "led_etat", "etat": 1 } ] } ]
+        ]
+      }
+    },
+    {
+      "id": "ex-11",
+      "type": "completer",
+      "niveau": "5e",
+      "titre": "Blocs à compléter (sans broches) : bloc manquant et nombres",
+      "enonce": "Complète le programme : la LED doit clignoter 5 fois (allumée 0,5 s, puis éteinte 0,5 s).",
+      "image": null,
+      "duree_s": null,
+      "bonus": 0,
+      "explication": "Répéter 5 fois : allumer, attendre 0,5 s, éteindre, attendre 0,5 s.",
+      "donnees": {
+        "version": "blocs",
+        "blocs": ["led_etat", "servo_angle"],
+        "broches": false,
+        "sequences": [
+          [ { "bloc": "repeter", "fois": 5, "faire": [
+              { "bloc": "led_etat", "etat": 1 }, { "bloc": "attendre", "duree": 0.5 },
+              { "bloc": "led_etat", "etat": 0 }, { "bloc": "attendre", "duree": 0.5 } ] } ]
+        ],
+        "depart": [
+          { "bloc": "repeter", "fois": { "bloc": "trou" }, "faire": [
+              { "bloc": "led_etat", "etat": 1 }, { "bloc": "attendre", "duree": { "bloc": "trou" } },
+              { "bloc": "trou" }, { "bloc": "attendre", "duree": 0.5 } ] }
+        ]
+      }
+    },
+    {
+      "id": "ex-12",
+      "type": "completer",
+      "niveau": "4e",
+      "titre": "Blocs à compléter (avec broches) : condition, menus « ? »",
+      "enonce": "La LED est branchée sur D4 et le bouton sur D7. Complète : quand on appuie sur le bouton, la LED s'allume ; sinon, elle s'éteint.",
+      "image": null,
+      "duree_s": null,
+      "bonus": 2,
+      "explication": "Condition : état du bouton (D7). Alors : LED (D4) à HAUT. Sinon : LED (D4) à BAS.",
+      "donnees": {
+        "version": "blocs",
+        "blocs": ["bouton_etat", "valeur_haut_bas", "comparaison"],
+        "broches": true,
+        "sequences": [
+          [ { "bloc": "si_sinon", "condition": { "bloc": "bouton_etat", "broche": "D7" },
+              "alors": [ { "bloc": "led_etat", "etat": 1, "broche": "D4" } ],
+              "sinon": [ { "bloc": "led_etat", "etat": 0, "broche": "D4" } ] } ]
+        ],
+        "depart": [
+          { "bloc": "si_sinon", "condition": null,
+            "alors": [ { "bloc": "led_etat", "etat": 1, "broche": "?" } ],
+            "sinon": [ { "bloc": "led_etat", "etat": "?", "broche": "D4" } ] }
+        ]
+      }
+    },
+    {
+      "id": "ex-13",
+      "type": "completer",
+      "niveau": "5e",
+      "titre": "Blocs à compléter (valeurs seulement, palette vide)",
+      "enonce": "Le servomoteur doit aller à 0°, attendre 2 s, puis aller à 180°. Complète les valeurs.",
+      "image": null,
+      "duree_s": null,
+      "bonus": 0,
+      "explication": "Servo à 0°, attendre 2 s, servo à 180°.",
+      "donnees": {
+        "version": "blocs",
+        "blocs": [],
+        "broches": false,
+        "sequences": [
+          [ { "bloc": "servo_angle", "angle": 0 }, { "bloc": "attendre", "duree": 2 }, { "bloc": "servo_angle", "angle": 180 } ]
+        ],
+        "depart": [
+          { "bloc": "servo_angle", "angle": { "bloc": "trou" } }, { "bloc": "attendre", "duree": { "bloc": "trou" } }, { "bloc": "servo_angle", "angle": 180 }
+        ]
+      }
+    },
+    {
+      "id": "ex-14",
+      "type": "relier",
+      "niveau": "5e",
+      "titre": "Relier : capteurs et actionneurs",
+      "enonce": "Relie chaque composant à son rôle.",
+      "image": null,
+      "duree_s": 45,
+      "bonus": 0,
+      "explication": "Le bouton est un capteur (il informe), la LED et le servomoteur sont des actionneurs (ils agissent).",
+      "donnees": {
+        "paires": [
+          { "gauche": "Bouton poussoir", "droite": "capteur" },
+          { "gauche": "LED", "droite": "actionneur lumineux" },
+          { "gauche": "Servomoteur", "droite": "actionneur de mouvement" },
+          { "gauche": "Arduino", "droite": "carte programmable" }
+        ]
+      }
+    },
+    {
+      "id": "ex-15",
+      "type": "relier",
+      "niveau": "4e",
+      "titre": "Relier : blocs et effets (question bonus)",
+      "enonce": "Relie chaque bloc à ce qu'il fait.",
+      "image": null,
+      "duree_s": 60,
+      "bonus": 3,
+      "explication": "Chaque bloc a un rôle précis dans le programme.",
+      "donnees": {
+        "paires": [
+          { "gauche": "`attendre 1 s`", "droite": "met le programme en pause" },
+          { "gauche": "`répéter 3 fois`", "droite": "refait les blocs à l'intérieur" },
+          { "gauche": "`si … alors`", "droite": "agit seulement si la condition est vraie" },
+          { "gauche": "`affecter à CHOIX`", "droite": "range une valeur dans une variable" },
+          { "gauche": "`état du bouton`", "droite": "lit le capteur" }
+        ]
+      }
+    }
+  ],
+  "parcours": [
+    {
+      "id": "p-exemple",
+      "nom": "Exemple : tous les types",
+      "ordre_aleatoire": true,
+      "questions": ["ex-01", "ex-02", "ex-03", "ex-04", "ex-05", "ex-06", "ex-07", "ex-08", "ex-09", "ex-10", "ex-11", "ex-12", "ex-13", "ex-14", "ex-15"],
+      "reglages": { "dureePartie": 12, "longueur": 30 }
+    }
+  ]
+}
