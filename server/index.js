@@ -468,7 +468,7 @@ io.on('connection', (socket) => {
       if (pb) throw new ErreurBanque(`Aperçu impossible : ${pb}.`);
       const { vue, prive } = TYPES[q.type].preparer(q, Math.random);
       socket.data.apercu = { q, prive };
-      return { question: { id: 'apercu', type: q.type, enonce: q.enonce, image: q.image, ...vue } };
+      return { question: { id: 'apercu', type: q.type, enonce: q.enonce, image: q.image, bonus: q.bonus || 0, ...vue } };
     });
     gerer(socket, 'apercu:repondre', ({ reponse }) => {
       const a = socket.data.apercu;
@@ -509,6 +509,7 @@ io.on('connection', (socket) => {
   const moi = () => socket.data.jeton;
   gerer(socket, 'repondre', (d) => partie.repondre(moi(), d));
   gerer(socket, 'action', ({ action }) => partie.choisirAction(moi(), action));
+  gerer(socket, 'quitterEquipe', () => partie.quitterEquipe(moi()));
   gerer(socket, 'solution', ({ solution }) => partie.prendreSolution(moi(), solution));
   gerer(socket, 'attaquer', ({ obstacle, cible }) => partie.attaquer(moi(), { obstacle, cible }));
 

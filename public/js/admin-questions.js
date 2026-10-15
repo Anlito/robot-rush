@@ -5,9 +5,9 @@
 
 (() => {
   const { esc, el } = RR;
-  const TYPES = [['qcm', 'QCM'], ['ordre', 'Remise en ordre'], ['calcul', 'Calcul'], ['blocs', 'Blocs'], ['completer', 'À compléter']];
+  const TYPES = [['qcm', 'QCM'], ['ordre', 'Remise en ordre'], ['calcul', 'Calcul'], ['blocs', 'Blocs'], ['completer', 'À compléter'], ['relier', 'Relier']];
   const NOM_TYPE = Object.fromEntries(TYPES);
-  const COURT = { qcm: 'QCM', ordre: 'Ordre', calcul: 'Calcul', blocs: 'Blocs', completer: 'À compléter' };
+  const COURT = { qcm: 'QCM', ordre: 'Ordre', calcul: 'Calcul', blocs: 'Blocs', completer: 'À compléter', relier: 'Relier' };
   const LONGS = ['blocs', 'completer'];
   const FORMES_QCM = [
     { fond: '#2563EB', texte: '#fff', forme: 'M0 -8L8.5 7H-8.5Z' },
@@ -28,6 +28,7 @@
     calcul: () => ({ reponse: '', unite: '' }),
     blocs: () => ({ blocs: ['led_etat', 'attendre', 'si_alors', 'si_sinon', 'bouton_etat'], sequences: [] }),
     completer: () => ({ version: 'texte', texte: '', mode: 'liste', trous: [] }),
+    relier: () => ({ paires: [{ gauche: '', droite: '' }, { gauche: '', droite: '' }, { gauche: '', droite: '' }] }),
   };
   const COMPLETER_BLOCS = () => ({ version: 'blocs', blocs: ['led_etat', 'attendre'], broches: false, sequences: [], depart: null });
   const estCompleterBlocs = (q) => q.type === 'completer' && q.donnees.version === 'blocs';
@@ -75,7 +76,7 @@
       <button type="button" class="ligne-q ${brouillon && brouillon.id === q.id ? 'choisie' : ''}" data-q="${esc(q.id)}" role="option" aria-selected="${brouillon && brouillon.id === q.id}">
         <span class="num mono">${esc(numero(q.id))}</span>
         <span class="badge-type">${COURT[q.type] || '?'}</span>
-        <span class="texte-q">${q.probleme ? `<span class="pastille-pb" title="Incomplète : ${esc(q.probleme)}">!</span>` : ''}${Admin.libelleQuestion(q)}</span>
+        <span class="texte-q">${q.probleme ? `<span class="pastille-pb" title="Incomplète : ${esc(q.probleme)}">!</span>` : ''}${q.bonus ? `<span class="etoile-bonus" title="Question bonus : +${q.bonus} case(s)">★${q.bonus}</span>` : ''}${Admin.libelleQuestion(q)}</span>
         <span class="gris">${esc(q.niveau || '')}</span>
         <span class="mono gris duree">${q.duree_s || dureeDefaut(q.type)} s</span>
       </button>`).join('') || '<p class="vide-liste">Aucune question ne correspond.</p>';
@@ -150,6 +151,8 @@
       <div class="ligne-bas">
         <div class="champ"><label for="champ-niveau">Niveau</label><select id="champ-niveau" data-champ="niveau">
           ${Admin.banque.niveaux.map((n) => `<option ${q.niveau === n ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
+        <div class="champ"><label for="champ-bonus">Bonus</label><select id="champ-bonus" data-champ="bonus" title="Question plus difficile : cases gagnées tout de suite, en plus de l'action">
+          ${[0, 1, 2, 3, 4, 5].map((n) => `<option value="${n}" ${(q.bonus || 0) === n ? 'selected' : ''}>${n ? `★ +${n} case${n > 1 ? 's' : ''}` : 'Aucun'}</option>`).join('')}</select></div>
         <div class="champ"><label for="champ-duree">Durée</label><span class="saisie-unite large"><input id="champ-duree" data-champ="duree_s" type="number" min="5" max="300"
           value="${q.duree_s ?? ''}" placeholder="${dureeDefaut(q.type)}"><span>s</span></span></div>
         <div class="champ"><label for="champ-explication">Explication après réponse (option)</label>
@@ -185,6 +188,15 @@
           <p class="aide">Formats acceptés de l'élève : entiers et décimaux, avec une virgule ou un point.</p></div>`;
       case 'blocs':
         return `<b>Blocs et solutions</b>${htmlBlocs(d, false)}`;
+      case 'relier':
+        return `<b>Paires à relier</b>
+          ${d.paires.map((p, i) => `<div class="ligne-paire"><b class="mono">${i + 1}</b>
+            <input data-paire="${i}" data-cote="gauche" value="${esc(p.gauche)}" maxlength="150" placeholder="Élément de gauche">
+            <span aria-hidden="true">↔</span>
+            <input data-paire="${i}" data-cote="droite" value="${esc(p.droite)}" maxlength="150" placeholder="Son partenaire à droite">
+            <button class="mini-bouton retirer" type="button" data-retirer-paire="${i}" ${d.paires.length <= 2 ? 'disabled' : ''} aria-label="Retirer la paire ${i + 1}">×</button></div>`).join('')}
+          ${d.paires.length < 6 ? '<button class="lien-bouton" type="button" data-ajouter-paire>+ Ajouter une paire</button>' : ''}
+          <span class="aide">Saisir chaque paire sur une ligne : l'élève voit la colonne de gauche dans cet ordre et celle de droite mélangée. 2 à 6 paires.</span>`;
       case 'completer': {
         const versions = `<div class="ligne-mode">Version :
             <button type="button" class="puce-filtre ${d.version !== 'blocs' ? 'actif' : ''}" data-version="texte">Texte (trous dans le code)</button>
@@ -280,6 +292,7 @@
     else if (t.dataset.champ === 'duree_s') brouillon.duree_s = t.value === '' ? null : Number(t.value);
     else if (t.dataset.qcm !== undefined) d.choix[Number(t.dataset.qcm)] = t.value;
     else if (t.dataset.ordre !== undefined) d.elements[Number(t.dataset.ordre)] = t.value;
+    else if (t.dataset.paire !== undefined) d.paires[Number(t.dataset.paire)][t.dataset.cote] = t.value;
     else if (t.dataset.calcul) d[t.dataset.calcul] = t.value;
     else if (t.dataset.completer === 'texte') {
       d.texte = t.value;
@@ -306,6 +319,7 @@
     if (!brouillon) return;
     if (t.name === 'bonne-qcm') { brouillon.donnees.bonne = Number(t.value); modification({ redessiner: true, delai: 200 }); }
     if (t.dataset.champ === 'niveau') { brouillon.niveau = t.value; modification({ delai: 200 }); }
+    if (t.dataset.champ === 'bonus') { brouillon.bonus = Number(t.value); modification({ delai: 200 }); }
   });
 
   zone.addEventListener('click', async (ev) => {
@@ -324,6 +338,9 @@
       modification({ delai: 200 });
       return;
     }
+    if (c('[data-ajouter-paire]')) { d.paires.push({ gauche: '', droite: '' }); modification({ redessiner: true }); el(`[data-paire="${d.paires.length - 1}"]`).focus(); }
+    const rp = c('[data-retirer-paire]');
+    if (rp) { d.paires.splice(Number(rp.dataset.retirerPaire), 1); modification({ redessiner: true, delai: 300 }); }
     if (c('[data-ajouter-etape]')) { d.elements.push(''); modification({ redessiner: true }); el(`[data-ordre="${d.elements.length - 1}"]`).focus(); }
     const r = c('[data-retirer-etape]');
     if (r) { d.elements.splice(Number(r.dataset.retirerEtape), 1); modification({ redessiner: true, delai: 300 }); }
@@ -510,7 +527,7 @@
       titre: 'Aperçu élève',
       large: true,
       plein: brouillon.type === 'blocs' || estCompleterBlocs(brouillon),
-      contenu: `<iframe class="cadre-apercu" id="cadre-apercu" src="/apercu.html?v=6" title="Aperçu de la question telle que l'élève la voit"></iframe>
+      contenu: `<iframe class="cadre-apercu" id="cadre-apercu" src="/apercu.html?v=8" title="Aperçu de la question telle que l'élève la voit"></iframe>
         <div class="actions-modale"><span class="aide">L'aperçu valide la réponse comme en partie, sans rien enregistrer.</span>
           <button class="btn" type="button" data-recommencer>Recommencer</button></div>`,
     });

@@ -160,3 +160,12 @@ select.mini-bouton { appearance: none; text-align: center; text-align-last: cent
 .barre-h.acquis span { background: var(--correct-2); }
 .barre-h.en-cours span { background: var(--jaune); }
 .barre-h.a-revoir span { background: var(--alerte); }
+
+/* Écrans 1024 à 1280 pixels (4:3) : en-tête plus compact */
+.logo b { white-space: nowrap; }
+@media (max-width: 1280px) {
+  .barre-admin { gap: 16px; padding: 0 14px; }
+  .onglet { padding: 0 10px; }
+  .liens { gap: 10px; }
+  .si-large { display: none; }
+}

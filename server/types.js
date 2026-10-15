@@ -215,7 +215,48 @@ const completer = {
   verifier: (q) => version(q).verifier(q),
 };
 
-const TYPES = { qcm, ordre, calcul, blocs: blocsType, completer };
+// ---------- 6. Relier les paires : chaque élément de gauche avec son élément de droite ----------
+// La colonne de droite est mélangée. L'élève renvoie, pour chaque élément de gauche (dans l'ordre),
+// la position affichée de l'élément de droite qu'il a relié. On compare les textes : deux éléments de droite
+// identiques sont donc interchangeables.
+const relier = {
+  preparer(q, rng) {
+    const p = q.donnees.paires;
+    let droite = melanger(p.map((_, i) => i), rng);
+    // Jamais déjà dans le bon ordre au départ.
+    for (let essai = 0; essai < 10 && droite.every((v, i) => p[v].droite === p[i].droite); essai++) droite = melanger(droite, rng);
+    return { vue: { gauche: p.map((x) => x.gauche), droite: droite.map((i) => p[i].droite) }, prive: { droite } };
+  },
+  lire(q, reponse, prive) {
+    const n = q.donnees.paires.length;
+    if (!Array.isArray(reponse) || reponse.length !== n) return null;
+    const vus = new Set();
+    for (const r of reponse) {
+      const i = Number(r);
+      if (!Number.isInteger(i) || i < 0 || i >= n || vus.has(i)) return null;
+      vus.add(i);
+    }
+    return reponse.map((r) => q.donnees.paires[prive.droite[Number(r)]].droite);
+  },
+  valider(q, reponse, prive) {
+    const lus = relier.lire(q, reponse, prive);
+    return Boolean(lus) && lus.every((t, i) => t === q.donnees.paires[i].droite);
+  },
+  textes(q, reponse, prive) {
+    const lus = relier.lire(q, reponse, prive);
+    const ecrire = (droites) => q.donnees.paires.map((p, i) => `${p.gauche} → ${droites[i]}`).join(' · ');
+    return { donnee: lus ? ecrire(lus) : null, bonne: ecrire(q.donnees.paires.map((p) => p.droite)) };
+  },
+  verifier(q) {
+    const p = (q.donnees || {}).paires;
+    if (!Array.isArray(p) || p.length < 2) return 'il faut au moins 2 paires';
+    if (p.some((x) => !nettoyer(x.gauche) || !nettoyer(x.droite))) return 'une paire est incomplète';
+    if (new Set(p.map((x) => nettoyer(x.gauche).toLowerCase())).size !== p.length) return 'deux éléments de gauche sont identiques';
+    return null;
+  },
+};
+
+const TYPES = { qcm, ordre, calcul, blocs: blocsType, completer, relier };
 
 function typeJouable(q) {
   const t = TYPES[q.type];

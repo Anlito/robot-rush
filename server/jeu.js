@@ -219,6 +219,15 @@ class Partie extends EventEmitter {
     this.emit('change');
   }
 
+  /** L'élève quitte son équipe pour en rejoindre une autre (avant le départ seulement). */
+  quitterEquipe(jeton) {
+    if (!this.joueurs.has(jeton)) erreur('Tu n\'es plus dans la partie.');
+    if (this.etat !== ETATS.LOBBY) erreur('La course a commencé : demande au professeur de te changer d\'équipe.');
+    this.supprimerJoueur(jeton, 'Tape le code de l\'équipe que tu veux rejoindre.');
+    this.emit('change');
+    return {};
+  }
+
   supprimerJoueur(jeton, motif) {
     this.joueurs.delete(jeton);
     this.emit('retire', jeton, motif);
@@ -401,6 +410,21 @@ class Partie extends EventEmitter {
     equipe.justes++;
     this.compter(q, j, 'justes');
     j.retour = { correct: true, explication: q.explication || null };
+    // Question bonus : l'équipe avance tout de suite (sauf si elle est bloquée), puis choisit son action comme d'habitude.
+    const bonus = Number(q.bonus) || 0;
+    if (bonus > 0 && equipe.blocage) j.retour.bonusPerdu = bonus;
+    else if (bonus > 0) {
+      const avant = equipe.position;
+      equipe.position = Math.min(this.reglages.longueur, equipe.position + bonus);
+      j.retour.bonus = equipe.position - avant;
+      this.ajouterFil({ type: 'bonus', equipe: equipe.id, pseudo: j.pseudo,
+        texte: `${equipe.nom} gagne ${j.retour.bonus} case${j.retour.bonus > 1 ? 's' : ''} bonus !` });
+      if (equipe.position >= this.reglages.longueur) {
+        this.ajouterFil({ type: 'arrivee', equipe: equipe.id, texte: `${equipe.nom} franchit la ligne d'arrivée !` });
+        this.terminer('arrivee');
+        return { correct: true };
+      }
+    }
     j.phase = 'action';
     j.finPhase = this.t + this.reglages.delaiAction * 1000;
     this.emit('joueur', jeton);
@@ -724,7 +748,7 @@ class Partie extends EventEmitter {
     };
     if (j.question && j.phase === 'question') {
       const { q, vue, finA, duree } = j.question;
-      v.question = { id: q.id, type: q.type, enonce: q.enonce, image: q.image || null, ...vue,
+      v.question = { id: q.id, type: q.type, enonce: q.enonce, image: q.image || null, bonus: q.bonus || 0, ...vue,
         restantMs: Math.max(0, finA - this.t), dureeMs: duree, numero: j.numero };
     }
     if (['action', 'solution', 'attaque', 'erreur'].includes(j.phase)) v.restantMs = Math.max(0, j.finPhase - this.t);

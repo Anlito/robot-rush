@@ -14,7 +14,7 @@
   function majEntete() {
     const r = ref();
     const b = el('#btn-publier');
-    b.textContent = r.publication ? 'Publier mes questions' : 'Récupérer les questions publiées';
+    b.innerHTML = r.publication ? 'Publier<span class="si-large"> mes questions</span>' : 'Récupérer<span class="si-large"> les questions publiées</span>';
     b.classList.toggle('a-publier', Boolean(r.publication && r.relie && r.nonPubliee));
     b.title = r.publication && r.nonPubliee ? 'Des modifications ne sont pas encore publiées' : '';
     const bandeau = el('#bandeau-reference');

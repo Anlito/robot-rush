@@ -315,7 +315,115 @@ RR.questions = (() => {
     };
   }
 
-  const FABRIQUES = { qcm, ordre, calcul, blocs, completer };
+  // ---------- B7 · Relier les paires ----------
+  // Clic sur un élément de gauche, puis sur son élément de droite : un trait et un numéro de couleur les relient.
+  // Recliquer sur un élément relié le détache. Avec le clavier : chiffres pour la gauche, lettres pour la droite.
+  const COULEURS_PAIRES = ['#2563EB', '#F97316', '#7C3AED', '#15803D', '#DB2777', '#0891B2'];
+  function relier(q, ctx) {
+    const n = q.gauche.length;
+    const lien = Array(n).fill(null); // lien[i] = position à droite reliée à l'élément de gauche i
+    let choisi = null; // élément de gauche en attente de sa paire
+    let z = null;
+    let observateur = null;
+    const LETTRES = 'ABCDEF';
+
+    function rendre() {
+      z.querySelectorAll('[data-gauche]').forEach((b) => {
+        const i = Number(b.dataset.gauche);
+        const relie = lien[i] !== null;
+        b.classList.toggle('choisi', choisi === i);
+        b.classList.toggle('relie', relie);
+        b.style.setProperty('--couleur', relie || choisi === i ? COULEURS_PAIRES[i] : 'var(--encre)');
+        b.querySelector('.marque').textContent = i + 1;
+      });
+      z.querySelectorAll('[data-droite]').forEach((b) => {
+        const k = Number(b.dataset.droite);
+        const i = lien.indexOf(k);
+        b.classList.toggle('relie', i >= 0);
+        b.style.setProperty('--couleur', i >= 0 ? COULEURS_PAIRES[i] : 'var(--encre)');
+        b.querySelector('.marque').textContent = i >= 0 ? i + 1 : LETTRES[k];
+      });
+      tracer();
+    }
+
+    // Traits entre les éléments reliés (recalculés si la fenêtre change de taille).
+    function tracer() {
+      const svg = z.querySelector('.traits-relier');
+      const boite = svg.getBoundingClientRect();
+      svg.innerHTML = lien.map((k, i) => {
+        if (k === null) return '';
+        const a = z.querySelector(`[data-gauche="${i}"]`).getBoundingClientRect();
+        const b = z.querySelector(`[data-droite="${k}"]`).getBoundingClientRect();
+        const x1 = a.right - boite.left; const y1 = a.top + a.height / 2 - boite.top;
+        const x2 = b.left - boite.left; const y2 = b.top + b.height / 2 - boite.top;
+        return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${COULEURS_PAIRES[i]}" stroke-width="6" stroke-linecap="round"/>`;
+      }).join('');
+    }
+
+    function cliquerGauche(i) {
+      ctx.message('');
+      // Élément relié : on le détache et il redevient l'élément choisi.
+      if (lien[i] !== null) lien[i] = null;
+      choisi = i;
+      rendre();
+    }
+    function cliquerDroite(k) {
+      ctx.message('');
+      const deja = lien.indexOf(k);
+      if (choisi === null) {
+        // Clic à droite d'abord : on détache la paire existante, ou on invite à commencer à gauche.
+        if (deja >= 0) { lien[deja] = null; choisi = deja; rendre(); } else ctx.message('Clique d\'abord sur un élément de gauche.');
+        return;
+      }
+      if (deja >= 0) lien[deja] = null;
+      lien[choisi] = k;
+      // Élément suivant à relier, pour enchaîner sans détour.
+      const suivant = lien.findIndex((x, i) => x === null && i !== choisi);
+      choisi = suivant >= 0 ? suivant : null;
+      rendre();
+    }
+    function valider() {
+      if (lien.some((x) => x === null)) { ctx.message('Relie tous les éléments avant de valider.'); return; }
+      ctx.repondre(lien.slice());
+    }
+
+    return {
+      html: `<div class="relier">
+        <div class="colonnes-relier">
+          <svg class="traits-relier" aria-hidden="true"></svg>
+          <div class="colonne-relier">${q.gauche.map((t, i) => `<button type="button" class="element-relier" data-gauche="${i}"><span class="marque"></span><span class="texte">${enonce(t)}</span></button>`).join('')}</div>
+          <div class="colonne-relier">${q.droite.map((t, k) => `<button type="button" class="element-relier" data-droite="${k}"><span class="marque"></span><span class="texte">${enonce(t)}</span></button>`).join('')}</div>
+        </div>
+        <div class="cote"><p class="aide-q">Clique sur un élément à gauche, puis sur son partenaire à droite. Clique sur un élément relié pour le détacher.</p>
+          <button class="bouton-clair" data-effacer type="button">Tout effacer</button>${boutonValider()}</div></div>`,
+      monter(conteneur) {
+        z = conteneur;
+        choisi = 0;
+        z.addEventListener('click', (ev) => {
+          const g = ev.target.closest('[data-gauche]');
+          const d = ev.target.closest('[data-droite]');
+          if (g) cliquerGauche(Number(g.dataset.gauche));
+          else if (d) cliquerDroite(Number(d.dataset.droite));
+          else if (ev.target.closest('[data-effacer]')) { lien.fill(null); choisi = 0; ctx.message(''); rendre(); }
+          else if (ev.target.closest('[data-valider]')) valider();
+        });
+        observateur = new ResizeObserver(() => tracer());
+        observateur.observe(z.querySelector('.colonnes-relier'));
+        rendre();
+      },
+      touche(ev) {
+        const chiffre = Number(ev.key);
+        if (Number.isInteger(chiffre) && chiffre >= 1 && chiffre <= n) { cliquerGauche(chiffre - 1); return true; }
+        const k = LETTRES.indexOf(ev.key.toUpperCase());
+        if (ev.key.length === 1 && k >= 0 && k < n) { cliquerDroite(k); return true; }
+        if (ev.key === 'Enter') { valider(); return true; }
+        return false;
+      },
+      detruire() { if (observateur) observateur.disconnect(); },
+    };
+  }
+
+  const FABRIQUES = { qcm, ordre, calcul, blocs, completer, relier };
 
   /** Composant d'affichage d'une question, ou null si le type est inconnu. */
   function creer(q, ctx) {

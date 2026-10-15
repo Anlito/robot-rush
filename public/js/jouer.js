@@ -5,7 +5,7 @@
   const { robot, pastille, pion, coche, majuscule, icone, esc, el, decompte } = RR;
   const CLE_JETON = 'robotrush.jeton';
   const ALPHABET = /[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]/;
-  const TYPES = { qcm: 'QCM', ordre: 'Remise en ordre', calcul: 'Calcul', blocs: 'Blocs à assembler', completer: 'Programme à compléter' };
+  const TYPES = { qcm: 'QCM', ordre: 'Remise en ordre', calcul: 'Calcul', blocs: 'Blocs à assembler', completer: 'Programme à compléter', relier: 'Relier les paires' };
   const DUREE_FLASH = 600;
   const DUREE_MESSAGE = 4000;
 
@@ -222,13 +222,15 @@
     return `<div class="centre"><div class="carte-info">${robot({ couleur: e.couleur, symbole: e.symbole, taille: 150 })}
       <div class="textes"><span class="grand-titre">${lobby ? 'Tu es dans l\'équipe ' + esc(e.nom) : 'Une question arrive…'}</span>
       <p>${lobby ? 'La course n\'a pas encore commencé. Regarde le tableau : le professeur va donner le départ.' : 'Un instant.'}</p>
-      ${lobby ? `<p class="gris">Après chaque bonne réponse, tu choisiras : <b>avancer</b>, prendre une <b>solution</b> pour ton équipe, ou <b>attaquer</b> une autre équipe.</p>` : ''}
+      ${lobby ? `<p class="gris">Après chaque bonne réponse, tu choisiras : <b>avancer</b>, prendre une <b>solution</b> pour ton équipe, ou <b>attaquer</b> une autre équipe.</p>
+        <button class="bouton-clair changer-equipe" type="button" data-changer-equipe>Changer d'équipe</button>` : ''}
       </div></div></div>`;
   }
 
   function enteteQuestion(q) {
     const long = ['blocs', 'completer'].includes(q.type);
     return `<div class="entete-q"><span class="puce-type">${q.version === 'blocs' ? 'Blocs à compléter' : TYPES[q.type] || q.type}</span>
+      ${q.bonus ? `<span class="puce-bonus">★ Question bonus : +${pluriel(q.bonus, 'case')}</span>` : ''}
       <span class="numero-q">Question ${q.numero}${long ? ` · ${Math.round(q.dureeMs / 1000)} s` : ''}</span>
       <div class="barre-temps"><div id="barre-q" style="transform:scaleX(${q.restantMs / q.dureeMs})"></div></div>
       <b class="secondes" data-fin="${RR.fin(q.restantMs)}" data-suffixe=" s" data-barre="${q.dureeMs}" data-cible="barre-q">${Math.ceil(q.restantMs / 1000)} s</b></div>`;
@@ -269,7 +271,10 @@
     const e = monEquipe();
     const [p1, p2] = etat.paires;
     return `<div class="tete">${robot({ couleur: e.couleur, symbole: e.symbole, etat: 'succes', taille: 96 })}
-      <div class="textes"><span class="grand-titre">Bonne réponse !</span>${moi.retour && moi.retour.explication ? `<span class="sous">${esc(moi.retour.explication)}</span>` : ''}</div>
+      <div class="textes"><span class="grand-titre">Bonne réponse !</span>
+        ${moi.retour && moi.retour.bonus ? `<span class="sous bonus-gagne">★ Bonus : ton robot a déjà avancé de ${pluriel(moi.retour.bonus, 'case')} !</span>` : ''}
+        ${moi.retour && moi.retour.bonusPerdu ? '<span class="sous">Bonus perdu : ton équipe est bloquée.</span>' : ''}
+        ${moi.retour && moi.retour.explication ? `<span class="sous">${esc(moi.retour.explication)}</span>` : ''}</div>
       ${minuteur(moi.restantMs, 'puis « Avancer »')}</div>
       <div class="cartes-action">
         <button class="carte-action carte-avancer" data-action="avancer">
@@ -413,7 +418,16 @@
     else if (b.dataset.solution) choisirSolution(b.dataset.solution);
     else if (b.dataset.obstacle) choisirObstacle(b.dataset.obstacle);
     else if (b.dataset.cible) attaquer(Number(b.dataset.cible));
+    else if (b.dataset.changerEquipe !== undefined) changerEquipe();
   });
+
+  // Avant le départ : l'élève quitte son équipe et retape le code d'une autre (son pseudo est déjà rempli).
+  let pseudoAGarder = '';
+  async function changerEquipe() {
+    pseudoAGarder = moi.pseudo;
+    const r = await envoyer('quitterEquipe', {});
+    if (!r.ok) { pseudoAGarder = ''; alert(r.erreur); }
+  }
   document.addEventListener('keydown', (ev) => {
     if (!moi || ['INPUT', 'SELECT', 'TEXTAREA'].includes(ev.target.tagName) || ev.repeat || ev.ctrlKey || ev.altKey || ev.metaKey) return;
     if (ev.target.closest && ev.target.closest('.zone-blocs')) return; // Blockly gère son propre clavier
@@ -470,6 +484,12 @@
     messageConnexion = motif;
     moi = null; cleZone = null;
     afficher();
+    if (pseudoAGarder) {
+      el('#pseudo').value = pseudoAGarder;
+      pseudoAGarder = '';
+      for (const c of cases) c.value = '';
+      cases[0].focus();
+    }
   });
   socket.on('connect', () => { el('#hors-ligne').hidden = true; });
   socket.on('disconnect', () => { el('#hors-ligne').hidden = false; });

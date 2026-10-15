@@ -14,4 +14,5 @@ done
 NAVIGATEUR="$(command -v chromium || command -v chromium-browser)"
 exec "$NAVIGATEUR" --kiosk --noerrdialogs --disable-infobars --no-first-run \
   --disable-session-crashed-bubble --disable-features=Translate --password-store=basic \
+  --autoplay-policy=no-user-gesture-required \
   --check-for-update-interval=31536000 "$URL"

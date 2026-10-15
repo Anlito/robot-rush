@@ -196,3 +196,22 @@ test('nombre : la virgule et le « ? » sont lus correctement', () => {
   assert.deepEqual(blocs.depuisBlockly(prog(0.5)).programme, [{ bloc: 'attendre', duree: 0.5 }]);
   assert.equal(blocs.depuisBlockly(prog('?')).incomplets, 1);
 });
+
+test('relier les paires : colonne de droite mélangée, validation par les textes', () => {
+  const question = { type: 'relier', donnees: { paires: [
+    { gauche: 'LED', droite: 'actionneur' }, { gauche: 'Bouton', droite: 'capteur' }, { gauche: 'Arduino', droite: 'carte' }] } };
+  assert.equal(TYPES.relier.verifier(question), null);
+  const { vue, prive } = TYPES.relier.preparer(question, Math.random);
+  assert.deepEqual(vue.gauche, ['LED', 'Bouton', 'Arduino']);
+  assert.notDeepEqual(vue.droite, ['actionneur', 'capteur', 'carte'], 'jamais déjà dans l\'ordre');
+  assert.ok(!JSON.stringify(vue).includes('bonne'));
+  const juste = question.donnees.paires.map((p) => vue.droite.indexOf(p.droite));
+  assert.equal(TYPES.relier.valider(question, juste, prive), true);
+  const faux = [juste[1], juste[0], juste[2]];
+  assert.equal(TYPES.relier.valider(question, faux, prive), false);
+  assert.match(TYPES.relier.textes(question, faux, prive).donnee, /LED → capteur/);
+  assert.equal(TYPES.relier.valider(question, [0, 0, 1], prive), false, 'deux fois la même');
+  assert.equal(TYPES.relier.valider(question, [0, 1], prive), false, 'incomplet');
+  assert.match(TYPES.relier.verifier({ donnees: { paires: [{ gauche: 'a', droite: 'b' }] } }), /2 paires/);
+  assert.match(TYPES.relier.verifier({ donnees: { paires: [{ gauche: 'a', droite: 'b' }, { gauche: 'A', droite: 'c' }] } }), /identiques/);
+});

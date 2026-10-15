@@ -523,3 +523,52 @@ test('bilan : rien d\'enregistré si personne n\'a répondu', () => {
   p.arreter();
   assert.equal(bilans.length, 0);
 });
+
+test('question bonus : cases gagnées tout de suite, puis le choix habituel ; perdu si l\'équipe est bloquée', () => {
+  const horloge = { now: 0 };
+  const questions = QUESTIONS.map((q) => ({ ...q, bonus: 3 }));
+  const p = new Partie({ questions, nbEquipes: 2, rng: rngFixe(), maintenant: () => horloge.now });
+  const a = p.rejoindre({ code: p.equipes[0].code, pseudo: 'a' }).jeton;
+  const b = p.rejoindre({ code: p.equipes[1].code, pseudo: 'b' }).jeton;
+  p.demarrer();
+  assert.equal(p.vueEleve(a).question.bonus, 3);
+  bonneReponse(p, a);
+  assert.equal(p.equipes[0].position, 3);
+  assert.equal(p.joueurs.get(a).phase, 'action');
+  assert.equal(p.joueurs.get(a).retour.bonus, 3);
+  assert.equal(p.fil[0].type, 'bonus');
+  p.choisirAction(a, 'avancer');
+  assert.equal(p.equipes[0].position, 5);
+  // Équipe bloquée : pas de bonus.
+  bonneReponse(p, b);
+  p.choisirAction(b, 'attaque');
+  p.joueurs.get(b).tirage.obstacles = ['trou', 'mur'];
+  p.attaquer(b, { obstacle: 'trou', cible: 0 });
+  bonneReponse(p, a);
+  assert.equal(p.equipes[0].position, 5);
+  assert.equal(p.joueurs.get(a).retour.bonusPerdu, 3);
+});
+
+test('question bonus : le bonus peut faire franchir l\'arrivée', () => {
+  const horloge = { now: 0 };
+  const p = new Partie({ questions: QUESTIONS.map((q) => ({ ...q, bonus: 5 })), nbEquipes: 2, reglages: { longueur: 5 }, rng: rngFixe(), maintenant: () => horloge.now });
+  const a = p.rejoindre({ code: p.equipes[0].code, pseudo: 'a' }).jeton;
+  p.rejoindre({ code: p.equipes[1].code, pseudo: 'b' });
+  p.demarrer();
+  bonneReponse(p, a);
+  assert.equal(p.etat, 'terminee');
+  assert.equal(p.resultat.raison, 'arrivee');
+});
+
+test('changer d\'équipe : possible avant le départ seulement', () => {
+  const { p, j } = nouvellePartie();
+  const retires = [];
+  p.on('retire', (jeton) => retires.push(jeton));
+  p.quitterEquipe(j.eleve0);
+  assert.equal(p.joueurs.has(j.eleve0), false);
+  assert.deepEqual(retires, [j.eleve0]);
+  // Le même pseudo peut rejoindre une autre équipe.
+  p.rejoindre({ code: p.equipes[2].code, pseudo: 'eleve0' });
+  p.demarrer({ forcer: true });
+  assert.throws(() => p.quitterEquipe(j.eleve1), /professeur/);
+});

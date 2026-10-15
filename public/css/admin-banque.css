@@ -53,7 +53,9 @@ textarea { font: inherit; border: 1.5px solid var(--bordure-champ); border-radiu
 .tete-editeur { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .titre-editeur { font-family: var(--f-titre); font-size: 24px; }
 .tete-editeur .actions { margin-left: auto; }
-.segmente.types-q { grid-template-columns: repeat(5, 1fr); }
+.segmente.types-q { grid-template-columns: repeat(6, 1fr); }
+.ligne-paire { display: grid; grid-template-columns: 24px minmax(0, 1fr) 20px minmax(0, 1fr) 40px; gap: 8px; align-items: center; }
+.ligne-paire input { height: 40px; border: 1.5px solid var(--bordure-champ); border-radius: 10px; padding: 0 12px; background: var(--blanc); }
 .types-q button { height: 40px; }
 .ligne-enonce { display: grid; grid-template-columns: minmax(0, 1fr) 200px; gap: 14px; }
 .ligne-enonce textarea { min-height: 86px; }
@@ -90,7 +92,9 @@ textarea { font: inherit; border: 1.5px solid var(--bordure-champ); border-radiu
 .ligne-trou textarea { padding: 6px 10px; }
 .bonne-trou { height: 36px !important; border: 1.5px solid var(--correct) !important; border-radius: 8px !important; }
 .ligne-mode { display: flex; gap: 8px; align-items: center; font-size: 14px; }
-.ligne-bas { display: grid; grid-template-columns: 140px 140px minmax(0, 1fr); gap: 14px; }
+.ligne-bas { display: grid; grid-template-columns: 140px 120px 140px minmax(0, 1fr); gap: 14px; }
+@media (max-width: 1280px) { .ligne-bas { grid-template-columns: repeat(3, minmax(0, 1fr)); } .ligne-bas > .champ:last-child { grid-column: 1 / -1; } }
+.etoile-bonus { background: var(--jaune); color: var(--encre); font-weight: 800; font-size: 12px; padding: 0 5px; border-radius: 5px; margin-right: 6px; flex: none; }
 .ligne-bas select { height: 40px; border-radius: 10px; }
 
 /* ----- C3 · Parcours ----- */

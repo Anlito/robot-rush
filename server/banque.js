@@ -44,6 +44,9 @@ const NETTOYAGE = {
     const sequences = liste(d.sequences).slice(0, 10).map(programmeConnu);
     return { blocs: [...new Set(autorises)], broches: d.broches === true, sequences };
   },
+  relier(d) {
+    return { paires: liste(d.paires).slice(0, 6).map((p) => ({ gauche: ligne(p && p.gauche, MAX.element), droite: ligne(p && p.droite, MAX.element) })) };
+  },
   completer(d) {
     if (d.version === 'blocs') {
       return { version: 'blocs', ...NETTOYAGE.blocs(d), depart: Array.isArray(d.depart) ? programmeConnu(d.depart) : null };
@@ -67,6 +70,8 @@ function nettoyerQuestion(q) {
     type,
     niveau: NIVEAUX.includes(q.niveau) ? q.niveau : '5e',
     titre: ligne(q.titre, MAX.titre) || null,
+    // Question bonus : cases gagnées tout de suite en plus de l'action (0 = question normale).
+    bonus: [1, 2, 3, 4, 5].includes(Number(q.bonus)) ? Number(q.bonus) : 0,
     enonce: texte(q.enonce, MAX.enonce),
     image: typeof q.image === 'string' && /^\/images\/[0-9a-f]{16}\.(png|jpg|gif|webp|svg)$/.test(q.image) ? q.image : null,
     duree_s: duree,

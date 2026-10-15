@@ -67,6 +67,16 @@ function reponse(vue, q) {
       return q.donnees.elements.map((t) => { const i = vue.elements.findIndex((x, k) => x === t && !pris.has(k)); pris.add(i); return i; });
     }
     case 'calcul': return String(juste ? q.donnees.reponse : 999);
+    case 'relier': {
+      // La vue donne la colonne de droite mélangée : on retrouve la position de chaque bonne réponse.
+      if (!juste) return vue.gauche.map((_, i) => i);
+      const pris = new Set();
+      return q.donnees.paires.map((p) => {
+        const k = vue.droite.findIndex((t, i) => t === p.droite && !pris.has(i));
+        pris.add(k);
+        return k;
+      });
+    }
     case 'completer':
       if (q.donnees.version === 'blocs') return blocs.versBlockly(juste ? q.donnees.sequences[0] : [{ bloc: 'led_etat', etat: 1 }]);
       return q.donnees.trous.map((t) => (juste ? t.bonne : '?'));

@@ -239,7 +239,7 @@ body { min-width: 1024px; }
 .fleches { display: flex; gap: 6px; }
 .fleche { width: 44px; height: 44px; border: 2px solid var(--encre); border-radius: 10px; background: #fff; font-size: 20px; font-weight: 700; cursor: pointer; }
 .fleche:disabled { opacity: .3; cursor: default; }
-.ordre .cote, .blocs .cote { display: flex; flex-direction: column; justify-content: flex-end; gap: 12px; }
+.ordre .cote, .blocs .cote, .relier .cote { display: flex; flex-direction: column; justify-content: flex-end; gap: 12px; }
 
 /* B4 · Calcul */
 .calcul { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; }
@@ -297,3 +297,30 @@ body { min-width: 1024px; }
 .zone-blocs .injectionDiv.zelos-renderer .blocklyText,
 .zone-blocs .injectionDiv.zelos-renderer .blocklyDropdownText,
 .zone-blocs .injectionDiv.zelos-renderer .blocklyFieldText { fill: var(--encre) !important; font-weight: 700; }
+
+/* Salle d'attente : changer d'équipe avant le départ */
+.changer-equipe { align-self: flex-start; margin-top: 8px; padding: 0 22px; }
+
+/* Question bonus */
+.puce-bonus { background: var(--jaune); color: var(--encre); font-weight: 800; font-size: 15px; padding: 4px 10px; border-radius: 6px; white-space: nowrap; border: 2px solid var(--encre); }
+.bonus-gagne { font-weight: 800; color: var(--encre); background: #FCF0C8; padding: 2px 8px; border-radius: 6px; align-self: flex-start; }
+
+/* B7 · Relier les paires */
+.relier { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 28px; min-height: 0; }
+.colonnes-relier { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 120px; align-content: start; }
+.traits-relier { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+.colonne-relier { display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 2; }
+.element-relier {
+  --couleur: var(--encre);
+  min-height: 64px; background: #fff; border: 3px solid var(--couleur); border-radius: 14px; display: flex; align-items: center; gap: 12px;
+  padding: 6px 14px; font: inherit; font-size: 22px; font-weight: 700; text-align: left; cursor: pointer; color: var(--encre);
+}
+.element-relier .marque { width: 40px; height: 40px; flex: none; border-radius: 10px; background: var(--couleur); color: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--f-titre); font-size: 22px; }
+.element-relier .texte { min-width: 0; line-height: 1.15; }
+.element-relier.choisi { box-shadow: 0 0 0 4px #FCF0C8, 0 0 0 7px var(--couleur); }
+.element-relier.relie { background: color-mix(in srgb, var(--couleur) 10%, #fff); }
+@media (max-height: 800px) {
+  .element-relier { min-height: 52px; font-size: 19px; }
+  .element-relier .marque { width: 34px; height: 34px; font-size: 19px; }
+  .colonnes-relier { gap: 80px; }
+}

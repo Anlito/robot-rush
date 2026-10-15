@@ -6,7 +6,7 @@
 
 (() => {
   const { esc, el } = RR;
-  const TYPES = { qcm: 'QCM', ordre: 'Ordre', calcul: 'Calcul', blocs: 'Blocs', completer: 'À compléter' };
+  const TYPES = { qcm: 'QCM', ordre: 'Ordre', calcul: 'Calcul', blocs: 'Blocs', completer: 'À compléter', relier: 'Relier' };
   const RAISONS = { temps: 'temps écoulé', arrivee: 'arrivée d\'une équipe', arret: 'arrêtée par le professeur' };
   const SEUILS = [[80, 'acquis', 'Acquis'], [50, 'en-cours', 'En cours'], [0, 'a-revoir', 'À revoir']];
 

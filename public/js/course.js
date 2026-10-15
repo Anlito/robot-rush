@@ -182,6 +182,22 @@
   }
 
   // ---------- A4 · Fin ----------
+  // Bouton du son (coin de l'écran) : activer ou couper la fanfare ; le clic autorise aussi le son.
+  const boutonSon = el('#bouton-son');
+  function majBoutonSon() {
+    const actif = RR.son.actif();
+    boutonSon.textContent = actif ? (RR.son.pret() ? 'Son activé' : 'Cliquer pour activer le son') : 'Son coupé';
+    boutonSon.classList.toggle('coupe', !actif);
+    boutonSon.classList.toggle('a-activer', actif && !RR.son.pret());
+  }
+  boutonSon.addEventListener('click', () => {
+    // Premier clic : il active le son (le navigateur l'autorise grâce à ce clic), sans le couper aussitôt.
+    if (!boutonSon.classList.contains('a-activer')) RR.son.basculer();
+    setTimeout(majBoutonSon, 100);
+  });
+  window.addEventListener('pointerdown', () => setTimeout(majBoutonSon, 100));
+  majBoutonSon();
+
   function afficherFin() {
     const r = etat.resultat;
     const L = etat.reglages.longueur;
@@ -244,7 +260,11 @@
     }
     if (vue === 'lobby') afficherLobby();
     if (vue === 'course') { majCouloirs(); majClassement(); majFil(); }
-    if (vue === 'fin' && derniereVue !== 'fin') afficherFin();
+    if (vue === 'fin' && derniereVue !== 'fin') {
+      afficherFin();
+      // Fanfare seulement si on a vu la course finir (pas en rouvrant la page sur un podium).
+      if (derniereVue === 'course') RR.son.victoire();
+    }
     if (vue !== 'course') dernierFil = null;
     derniereVue = vue;
   }

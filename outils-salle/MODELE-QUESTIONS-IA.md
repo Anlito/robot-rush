@@ -7,7 +7,8 @@ exact du fichier. Le fichier qu'elle produit s'importe directement dans le jeu.
 
 1. Ouvrir l'IA, **joindre ce fichier** (ou copier tout son contenu), puis écrire la demande, par exemple :
    > Crée 12 questions Robot Rush pour des élèves de 5e sur la programmation d'une LED et d'un bouton :
-   > 4 QCM, 2 remises en ordre, 2 calculs, 2 programmes à compléter (texte) et 2 blocs à compléter.
+   > 4 QCM, 2 remises en ordre, 2 calculs, 2 programmes à compléter (texte), 2 blocs à compléter et 2 « relier ».
+   > Mets un bonus de 2 cases aux 2 questions les plus difficiles.
    > Ajoute un parcours « LED et bouton » avec toutes ces questions.
 2. Copier le fichier JSON donné par l'IA dans le Bloc-notes, l'enregistrer sous le nom `questions-ia.json`
    (Type : *Tous les fichiers*, Codage : *UTF-8*).
@@ -37,13 +38,14 @@ une seule bonne réponse possible. Vérifie chaque bonne réponse avant de répo
 | Champ | Contenu |
 |---|---|
 | `id` | identifiant au choix, unique dans le fichier : `"q-1"`, `"q-2"`… (le jeu renumérote à l'import) |
-| `type` | `"qcm"`, `"ordre"`, `"calcul"`, `"blocs"` ou `"completer"` |
+| `type` | `"qcm"`, `"ordre"`, `"calcul"`, `"blocs"`, `"completer"` ou `"relier"` |
 | `niveau` | `"5e"`, `"4e"`, `"3e"`, `"SEGPA"` ou `"autre"` |
 | `titre` | 80 caractères au plus, vu seulement par le professeur, pour retrouver la question (ex. « LED : si / sinon ») |
 | `enonce` | 600 caractères au plus ; un mot entre accents graves, comme `` `score` ``, s'affiche comme du code |
 | `explication` | 400 caractères au plus, affichée après la réponse (pourquoi c'est juste) |
 | `duree_s` | `null` (durée par défaut : 30 s, ou 60 s pour blocs et à compléter) ou un nombre de 5 à 300 |
 | `image` | `null` |
+| `bonus` | `0` (question normale) ou `1` à `5` : question plus difficile, l'équipe avance tout de suite de ce nombre de cases en plus de son action |
 | `donnees` | selon le type, voir ci-dessous |
 
 ### `donnees` selon le type
@@ -62,6 +64,13 @@ Les réponses sont mélangées à l'affichage.
 **`calcul`** : réponse numérique exacte (nombre, décimales avec un point), unité facultative (12 caractères au plus).
 ```
 { "reponse": 2.5, "unite": "s" }
+```
+
+**`relier`** : 2 à 6 paires (150 caractères au plus par élément). L'élève voit la colonne de gauche dans cet ordre et celle de
+droite mélangée, et relie chaque élément à son partenaire. Éléments de gauche tous différents.
+```
+{ "paires": [ { "gauche": "LED", "droite": "actionneur" }, { "gauche": "Bouton", "droite": "capteur" },
+              { "gauche": "Arduino", "droite": "carte programmable" } ] }
 ```
 
 **`completer`**, version texte : programme écrit en pseudo-code, avec `___` (trois tirets bas) à la place de chaque
@@ -190,11 +199,16 @@ ajouter une seconde séquence seulement pour une vraie variante (par exemple com
           "sinon": [ { "bloc": "led_etat", "etat": 0, "broche": "D4" } ] } ] ],
         "depart": [ { "bloc": "si_sinon", "condition": null,
           "alors": [ { "bloc": "led_etat", "etat": 1, "broche": "?" } ],
-          "sinon": [ { "bloc": "led_etat", "etat": "?", "broche": "D4" } ] } ] } }
+          "sinon": [ { "bloc": "led_etat", "etat": "?", "broche": "D4" } ] } ] } },
+    { "id": "q-7", "type": "relier", "niveau": "5e", "titre": "Capteurs et actionneurs", "image": null, "duree_s": 45, "bonus": 2,
+      "enonce": "Relie chaque composant à son rôle.",
+      "explication": "Le bouton est un capteur (il informe), la LED et le servomoteur sont des actionneurs (ils agissent).",
+      "donnees": { "paires": [ { "gauche": "Bouton poussoir", "droite": "capteur" }, { "gauche": "LED", "droite": "actionneur lumineux" },
+        { "gauche": "Servomoteur", "droite": "actionneur de mouvement" }, { "gauche": "Arduino", "droite": "carte programmable" } ] } }
   ],
   "parcours": [
     { "id": "p-1", "nom": "LED et bouton", "ordre_aleatoire": true,
-      "questions": ["q-1", "q-2", "q-3", "q-4", "q-5", "q-6"], "reglages": {} }
+      "questions": ["q-1", "q-2", "q-3", "q-4", "q-5", "q-6", "q-7"], "reglages": {} }
   ]
 }
 ```
