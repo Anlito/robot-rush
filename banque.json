@@ -1,13 +1,14 @@
 {
   "format": "robot-rush",
   "version": 1,
-  "exporteLe": "2026-10-13T21:09:55.444Z",
+  "exporteLe": "2026-10-15T13:43:07.847Z",
   "questions": [
     {
       "id": "q-1",
       "type": "calcul",
       "niveau": "5e",
       "titre": "Priorités opératoires",
+      "bonus": 0,
       "enonce": "Calcule : 3 + 4 × 5",
       "image": null,
       "duree_s": null,
@@ -22,6 +23,7 @@
       "type": "ordre",
       "niveau": "5e",
       "titre": "Nombres relatifs à ranger",
+      "bonus": 0,
       "enonce": "Range ces nombres du plus petit au plus grand.",
       "image": null,
       "duree_s": null,
@@ -41,6 +43,7 @@
       "type": "calcul",
       "niveau": "5e",
       "titre": "Aire d'un triangle",
+      "bonus": 0,
       "enonce": "Un triangle a une base de 8 cm et une hauteur de 5 cm. Quelle est son aire ?",
       "image": null,
       "duree_s": null,
@@ -55,6 +58,7 @@
       "type": "calcul",
       "niveau": "4e",
       "titre": "Pythagore : hypoténuse",
+      "bonus": 1,
       "enonce": "Un triangle est rectangle, avec deux côtés de l'angle droit de 6 cm et 8 cm. Quelle est la longueur de l'hypoténuse ?",
       "image": null,
       "duree_s": null,
@@ -69,6 +73,7 @@
       "type": "qcm",
       "niveau": "4e",
       "titre": "Égalité de Pythagore",
+      "bonus": 0,
       "enonce": "Le triangle ABC est rectangle en A. Quelle égalité est vraie ?",
       "image": null,
       "duree_s": null,
@@ -88,6 +93,7 @@
       "type": "calcul",
       "niveau": "4e",
       "titre": "Puissance de 2",
+      "bonus": 0,
       "enonce": "Calcule : 2⁵",
       "image": null,
       "duree_s": null,
@@ -102,6 +108,7 @@
       "type": "calcul",
       "niveau": "4e",
       "titre": "Résoudre une équation",
+      "bonus": 1,
       "enonce": "Résous l'équation 3x + 5 = 20. Quelle est la valeur de x ?",
       "image": null,
       "duree_s": null,
@@ -116,6 +123,7 @@
       "type": "calcul",
       "niveau": "5e",
       "titre": "Proportionnalité : prix",
+      "bonus": 0,
       "enonce": "3 kg de pommes coûtent 7,50 €. Combien coûtent 5 kg de pommes ?",
       "image": null,
       "duree_s": null,
@@ -130,6 +138,7 @@
       "type": "qcm",
       "niveau": "5e",
       "titre": "Homophones a / à, et / est",
+      "bonus": 0,
       "enonce": "Quelle phrase est correctement écrite ?",
       "image": null,
       "duree_s": null,
@@ -149,6 +158,7 @@
       "type": "completer",
       "niveau": "5e",
       "titre": "Passé composé avec être",
+      "bonus": 0,
       "enonce": "Complète la phrase en conjuguant le verbe « aller » au passé composé.",
       "image": null,
       "duree_s": null,
@@ -174,6 +184,7 @@
       "type": "qcm",
       "niveau": "4e",
       "titre": "Accord du participe passé",
+      "bonus": 0,
       "enonce": "Choisis la bonne orthographe : « Les fleurs que j'ai ___ sont belles. »",
       "image": null,
       "duree_s": null,
@@ -193,6 +204,7 @@
       "type": "qcm",
       "niveau": "4e",
       "titre": "Le passé simple",
+      "bonus": 0,
       "enonce": "Quel est le passé simple de « il chante » ?",
       "image": null,
       "duree_s": null,
@@ -212,6 +224,7 @@
       "type": "qcm",
       "niveau": "4e",
       "titre": "Figure de style",
+      "bonus": 0,
       "enonce": "« Il est fort comme un lion » est…",
       "image": null,
       "duree_s": null,
@@ -231,6 +244,7 @@
       "type": "ordre",
       "niveau": "5e",
       "titre": "Schéma narratif",
+      "bonus": 0,
       "enonce": "Remets dans l'ordre les étapes du schéma narratif d'un récit.",
       "image": null,
       "duree_s": null,
@@ -250,6 +264,7 @@
       "type": "qcm",
       "niveau": "5e",
       "titre": "Charlemagne empereur",
+      "bonus": 0,
       "enonce": "En quelle année Charlemagne est-il couronné empereur ?",
       "image": null,
       "duree_s": null,
@@ -269,6 +284,7 @@
       "type": "qcm",
       "niveau": "5e",
       "titre": "Gutenberg",
+      "bonus": 0,
       "enonce": "Quelle invention de Gutenberg, vers 1450, a permis de diffuser les idées plus vite ?",
       "image": null,
       "duree_s": null,
@@ -288,6 +304,7 @@
       "type": "ordre",
       "niveau": "5e",
       "titre": "Frise du Moyen Âge à la Renaissance",
+      "bonus": 0,
       "enonce": "Remets ces événements dans l'ordre chronologique.",
       "image": null,
       "duree_s": null,
@@ -307,6 +324,7 @@
       "type": "qcm",
       "niveau": "4e",
       "titre": "Début de la Révolution",
+      "bonus": 0,
       "enonce": "En quelle année commence la Révolution française ?",
       "image": null,
       "duree_s": null,
@@ -326,6 +344,7 @@
       "type": "ordre",
       "niveau": "4e",
       "titre": "Étapes de la Révolution",
+      "bonus": 1,
       "enonce": "Remets ces événements dans l'ordre chronologique.",
       "image": null,
       "duree_s": null,
@@ -345,6 +364,7 @@
       "type": "qcm",
       "niveau": "4e",
       "titre": "Monarchie absolue",
+      "bonus": 0,
       "enonce": "Quel roi de France incarne la monarchie absolue au XVIIe siècle ?",
       "image": null,
       "duree_s": null,
@@ -364,6 +384,7 @@
       "type": "qcm",
       "niveau": "5e",
       "titre": "Continent le plus peuplé",
+      "bonus": 0,
       "enonce": "Quel continent compte le plus d'habitants ?",
       "image": null,
       "duree_s": null,
@@ -383,6 +404,7 @@
       "type": "qcm",
       "niveau": "4e",
       "titre": "La mondialisation",
+      "bonus": 0,
       "enonce": "Qu'est-ce que la mondialisation ?",
       "image": null,
       "duree_s": null,
@@ -402,6 +424,7 @@
       "type": "ordre",
       "niveau": "5e",
       "titre": "Échelles administratives",
+      "bonus": 0,
       "enonce": "Range ces territoires du plus petit au plus grand.",
       "image": null,
       "duree_s": null,
@@ -420,6 +443,7 @@
       "type": "qcm",
       "niveau": "5e",
       "titre": "Gaz de la respiration",
+      "bonus": 0,
       "enonce": "Quel gaz l'organisme prélève-t-il dans l'air pour respirer ?",
       "image": null,
       "duree_s": null,
@@ -439,6 +463,7 @@
       "type": "ordre",
       "niveau": "5e",
       "titre": "Trajet des aliments",
+      "bonus": 0,
       "enonce": "Remets dans l'ordre le trajet d'un aliment dans le tube digestif.",
       "image": null,
       "duree_s": null,
@@ -458,6 +483,7 @@
       "type": "qcm",
       "niveau": "5e",
       "titre": "Mesurer un séisme",
+      "bonus": 0,
       "enonce": "Quel instrument enregistre les secousses d'un séisme ?",
       "image": null,
       "duree_s": null,
@@ -477,6 +503,7 @@
       "type": "qcm",
       "niveau": "4e",
       "titre": "Fécondation",
+      "bonus": 0,
       "enonce": "Chez l'être humain, où a lieu la fécondation ?",
       "image": null,
       "duree_s": null,
@@ -496,6 +523,7 @@
       "type": "completer",
       "niveau": "5e",
       "titre": "Photosynthèse",
+      "bonus": 0,
       "enonce": "Complète le texte sur la photosynthèse.",
       "image": null,
       "duree_s": null,
@@ -529,6 +557,7 @@
       "type": "qcm",
       "niveau": "5e",
       "titre": "Ébullition de l'eau",
+      "bonus": 0,
       "enonce": "À quelle température l'eau pure bout-elle, à pression normale ?",
       "image": null,
       "duree_s": null,
@@ -548,6 +577,7 @@
       "type": "qcm",
       "niveau": "5e",
       "titre": "Changements d'état",
+      "bonus": 0,
       "enonce": "Comment s'appelle le passage de l'état liquide à l'état gazeux ?",
       "image": null,
       "duree_s": null,
@@ -567,6 +597,7 @@
       "type": "calcul",
       "niveau": "4e",
       "titre": "Lumière du Soleil",
+      "bonus": 1,
       "enonce": "La lumière du Soleil parcourt 150 000 000 km jusqu'à la Terre, à 300 000 km/s. Combien de secondes met-elle ?",
       "image": null,
       "duree_s": null,
@@ -581,6 +612,7 @@
       "type": "qcm",
       "niveau": "4e",
       "titre": "pH d'une solution",
+      "bonus": 0,
       "enonce": "Une solution a un pH égal à 3. Elle est…",
       "image": null,
       "duree_s": null,
@@ -600,6 +632,7 @@
       "type": "qcm",
       "niveau": "4e",
       "titre": "Composition de l'air",
+      "bonus": 0,
       "enonce": "Quel gaz est le plus abondant dans l'air ?",
       "image": null,
       "duree_s": null,
@@ -619,6 +652,7 @@
       "type": "completer",
       "niveau": "5e",
       "titre": "Past simple : go",
+      "bonus": 0,
       "enonce": "Complète la phrase au prétérit (past simple).",
       "image": null,
       "duree_s": null,
@@ -644,6 +678,7 @@
       "type": "qcm",
       "niveau": "5e",
       "titre": "Troisième personne du singulier",
+      "bonus": 0,
       "enonce": "Which sentence is correct?",
       "image": null,
       "duree_s": null,
@@ -663,6 +698,7 @@
       "type": "qcm",
       "niveau": "4e",
       "titre": "Comparatif",
+      "bonus": 0,
       "enonce": "Complete: This book is ___ than that one.",
       "image": null,
       "duree_s": null,
@@ -682,6 +718,7 @@
       "type": "qcm",
       "niveau": "5e",
       "titre": "Demander l'heure",
+      "bonus": 0,
       "enonce": "Comment demande-t-on « Quelle heure est-il ? » en anglais ?",
       "image": null,
       "duree_s": null,
@@ -701,6 +738,7 @@
       "type": "qcm",
       "niveau": "5e",
       "titre": "Devise de la République",
+      "bonus": 0,
       "enonce": "Quelle est la devise de la République française ?",
       "image": null,
       "duree_s": null,
@@ -720,6 +758,7 @@
       "type": "qcm",
       "niveau": "4e",
       "titre": "Loi de 1905",
+      "bonus": 0,
       "enonce": "Que met en place la loi de 1905 ?",
       "image": null,
       "duree_s": null,
@@ -739,6 +778,7 @@
       "type": "qcm",
       "niveau": "4e",
       "titre": "Majorité civile",
+      "bonus": 0,
       "enonce": "À partir de quel âge est-on majeur en France ?",
       "image": null,
       "duree_s": null,
@@ -752,12 +792,1937 @@
         ],
         "bonne": 1
       }
+    },
+    {
+      "id": "q-41",
+      "type": "calcul",
+      "niveau": "autre",
+      "titre": "Périmètre d'un rectangle",
+      "bonus": 0,
+      "enonce": "Un rectangle mesure 12 cm de long et 7 cm de large. Quel est son périmètre ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "Périmètre = 2 × (longueur + largeur) = 2 × (12 + 7) = 38 cm.",
+      "donnees": {
+        "reponse": 38,
+        "unite": "cm"
+      }
+    },
+    {
+      "id": "q-42",
+      "type": "calcul",
+      "niveau": "autre",
+      "titre": "Fraction d'une quantité",
+      "bonus": 0,
+      "enonce": "Calcule les trois quarts de 20 (3/4 de 20).",
+      "image": null,
+      "duree_s": null,
+      "explication": "20 ÷ 4 = 5, puis 5 × 3 = 15.",
+      "donnees": {
+        "reponse": 15,
+        "unite": null
+      }
+    },
+    {
+      "id": "q-43",
+      "type": "calcul",
+      "niveau": "5e",
+      "titre": "Somme des angles d'un triangle",
+      "bonus": 0,
+      "enonce": "Dans un triangle, deux angles mesurent 52° et 68°. Combien mesure le troisième angle ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "La somme des angles d'un triangle vaut 180° : 180 − 52 − 68 = 60°.",
+      "donnees": {
+        "reponse": 60,
+        "unite": "°"
+      }
+    },
+    {
+      "id": "q-44",
+      "type": "calcul",
+      "niveau": "4e",
+      "titre": "Volume d'un pavé droit",
+      "bonus": 1,
+      "enonce": "Un pavé droit mesure 5 cm de long, 4 cm de large et 3 cm de haut. Quel est son volume ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "V = L × l × h = 5 × 4 × 3 = 60 cm³.",
+      "donnees": {
+        "reponse": 60,
+        "unite": "cm³"
+      }
+    },
+    {
+      "id": "q-45",
+      "type": "calcul",
+      "niveau": "4e",
+      "titre": "Moyenne de notes",
+      "bonus": 0,
+      "enonce": "Une élève a obtenu 12, 15, 9, 16 et 8. Quelle est sa moyenne ?",
+      "image": null,
+      "duree_s": 45,
+      "explication": "(12 + 15 + 9 + 16 + 8) ÷ 5 = 60 ÷ 5 = 12.",
+      "donnees": {
+        "reponse": 12,
+        "unite": null
+      }
+    },
+    {
+      "id": "q-46",
+      "type": "calcul",
+      "niveau": "4e",
+      "titre": "Calcul littéral",
+      "bonus": 1,
+      "enonce": "Calcule 2 × x² − 5 pour x = 3.",
+      "image": null,
+      "duree_s": 45,
+      "explication": "x² = 3 × 3 = 9, donc 2 × 9 − 5 = 18 − 5 = 13.",
+      "donnees": {
+        "reponse": 13,
+        "unite": null
+      }
+    },
+    {
+      "id": "q-47",
+      "type": "calcul",
+      "niveau": "5e",
+      "titre": "Pourcentage",
+      "bonus": 0,
+      "enonce": "Combien font 20 % de 150 ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "20 % = 20/100 : 150 × 20 ÷ 100 = 30.",
+      "donnees": {
+        "reponse": 30,
+        "unite": null
+      }
+    },
+    {
+      "id": "q-48",
+      "type": "qcm",
+      "niveau": "autre",
+      "titre": "Critère de divisibilité par 3",
+      "bonus": 0,
+      "enonce": "Quel nombre est divisible par 3 ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "Un nombre est divisible par 3 si la somme de ses chiffres l'est : 2 + 3 + 1 = 6, donc 231 est divisible par 3.",
+      "donnees": {
+        "choix": [
+          "124",
+          "231",
+          "215",
+          "142"
+        ],
+        "bonne": 1
+      }
+    },
+    {
+      "id": "q-49",
+      "type": "ordre",
+      "niveau": "5e",
+      "titre": "Ranger des fractions",
+      "bonus": 1,
+      "enonce": "Range ces fractions de la plus petite à la plus grande.",
+      "image": null,
+      "duree_s": null,
+      "explication": "En les mettant au même dénominateur (12) : 3/12 < 4/12 < 6/12 < 9/12.",
+      "donnees": {
+        "elements": [
+          "1/4",
+          "1/3",
+          "1/2",
+          "3/4"
+        ]
+      }
+    },
+    {
+      "id": "q-50",
+      "type": "relier",
+      "niveau": "5e",
+      "titre": "Formules d'aires",
+      "bonus": 1,
+      "enonce": "Relie chaque figure à la formule de son aire.",
+      "image": null,
+      "duree_s": 60,
+      "explication": "Rectangle : longueur × largeur ; carré : côté × côté ; triangle : base × hauteur ÷ 2 ; disque : π × rayon × rayon.",
+      "donnees": {
+        "paires": [
+          {
+            "gauche": "Rectangle",
+            "droite": "longueur × largeur"
+          },
+          {
+            "gauche": "Carré",
+            "droite": "côté × côté"
+          },
+          {
+            "gauche": "Triangle",
+            "droite": "base × hauteur ÷ 2"
+          },
+          {
+            "gauche": "Disque",
+            "droite": "π × rayon × rayon"
+          }
+        ]
+      }
+    },
+    {
+      "id": "q-51",
+      "type": "qcm",
+      "niveau": "autre",
+      "titre": "Nature : adverbe",
+      "bonus": 0,
+      "enonce": "Dans « Elle chante joliment », quelle est la nature du mot « joliment » ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "« joliment » est invariable et complète le verbe « chante » : c'est un adverbe.",
+      "donnees": {
+        "choix": [
+          "Un adverbe",
+          "Un adjectif",
+          "Un nom",
+          "Un verbe"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-52",
+      "type": "qcm",
+      "niveau": "5e",
+      "titre": "Fonction : COD",
+      "bonus": 0,
+      "enonce": "Dans « Léa mange une pomme », quelle est la fonction de « une pomme » ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "On pose la question « Léa mange quoi ? » : une pomme. C'est le complément d'objet direct (COD).",
+      "donnees": {
+        "choix": [
+          "Complément d'objet direct",
+          "Sujet du verbe",
+          "Attribut du sujet",
+          "Complément de lieu"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-53",
+      "type": "completer",
+      "niveau": "5e",
+      "titre": "Imparfait : jouer",
+      "bonus": 0,
+      "enonce": "Complète la phrase en conjuguant « jouer » à l'imparfait.",
+      "image": null,
+      "duree_s": null,
+      "explication": "L'imparfait de « jouer » avec « je » se termine par -ais : je jouais.",
+      "donnees": {
+        "version": "texte",
+        "texte": "Quand j'étais petit, je ___ au parc tous les jours.",
+        "mode": "liste",
+        "trous": [
+          {
+            "bonne": "jouais",
+            "distracteurs": [
+              "jouai",
+              "jouerai",
+              "joué"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "q-54",
+      "type": "qcm",
+      "niveau": "4e",
+      "titre": "Homophones : se / ce",
+      "bonus": 0,
+      "enonce": "Choisis la bonne orthographe : « Mes amis ___ perdus en forêt. »",
+      "image": null,
+      "duree_s": null,
+      "explication": "« se perdre » est un verbe pronominal : ils se sont perdus. « ce sont » ne peut pas être suivi d'un participe passé ici.",
+      "donnees": {
+        "choix": [
+          "se sont",
+          "ce sont",
+          "s'ont",
+          "c'est"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-55",
+      "type": "relier",
+      "niveau": "4e",
+      "titre": "Relier : figures de style",
+      "bonus": 1,
+      "enonce": "Relie chaque figure de style à son exemple.",
+      "image": null,
+      "duree_s": 60,
+      "explication": "Comparaison : mot de comparaison (« comme »). Métaphore : sans mot de comparaison. Hyperbole : exagération. Personnification : un objet agit comme une personne.",
+      "donnees": {
+        "paires": [
+          {
+            "gauche": "Comparaison",
+            "droite": "Il est rapide comme l'éclair."
+          },
+          {
+            "gauche": "Métaphore",
+            "droite": "Cet homme est un lion."
+          },
+          {
+            "gauche": "Hyperbole",
+            "droite": "Je meurs de faim !"
+          },
+          {
+            "gauche": "Personnification",
+            "droite": "Le vent murmure à mon oreille."
+          }
+        ]
+      }
+    },
+    {
+      "id": "q-56",
+      "type": "ordre",
+      "niveau": "autre",
+      "titre": "Ordre alphabétique",
+      "bonus": 0,
+      "enonce": "Range ces mots dans l'ordre du dictionnaire.",
+      "image": null,
+      "duree_s": null,
+      "explication": "On compare lettre par lettre : chai-se, chap-eau, chat, châ-teau (« chat » est plus court que « château »).",
+      "donnees": {
+        "elements": [
+          "chaise",
+          "chapeau",
+          "chat",
+          "château"
+        ]
+      }
+    },
+    {
+      "id": "q-57",
+      "type": "qcm",
+      "niveau": "autre",
+      "titre": "Antonyme : généreux",
+      "bonus": 0,
+      "enonce": "Quel est le contraire de « généreux » ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "Une personne généreuse donne volontiers ; une personne avare garde tout pour elle.",
+      "donnees": {
+        "choix": [
+          "Avare",
+          "Gentil",
+          "Riche",
+          "Aimable"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-58",
+      "type": "qcm",
+      "niveau": "autre",
+      "titre": "Le Néolithique",
+      "bonus": 0,
+      "enonce": "Quelle grande transformation marque le Néolithique ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "Les humains deviennent agriculteurs et éleveurs : ils se sédentarisent et construisent des villages.",
+      "donnees": {
+        "choix": [
+          "Le début de l'agriculture et de l'élevage",
+          "L'invention de l'imprimerie",
+          "La découverte de l'Amérique",
+          "L'arrivée de l'électricité"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-59",
+      "type": "qcm",
+      "niveau": "autre",
+      "titre": "Fondation de Rome",
+      "bonus": 0,
+      "enonce": "Selon la légende, quel personnage fonde la ville de Rome en 753 avant J.-C. ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "Selon la légende, Romulus fonde Rome après avoir tué son frère Rémus.",
+      "donnees": {
+        "choix": [
+          "Romulus",
+          "Jules César",
+          "Auguste",
+          "Néron"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-60",
+      "type": "ordre",
+      "niveau": "autre",
+      "titre": "Les grandes périodes",
+      "bonus": 0,
+      "enonce": "Range ces grandes périodes de l'histoire dans l'ordre chronologique.",
+      "image": null,
+      "duree_s": null,
+      "explication": "Préhistoire, Antiquité, Moyen Âge (476 à 1492), Temps modernes (1492 à 1789), puis Époque contemporaine (depuis 1789).",
+      "donnees": {
+        "elements": [
+          "Préhistoire",
+          "Antiquité",
+          "Moyen Âge",
+          "Temps modernes",
+          "Époque contemporaine"
+        ]
+      }
+    },
+    {
+      "id": "q-61",
+      "type": "qcm",
+      "niveau": "5e",
+      "titre": "Livre sacré de l'islam",
+      "bonus": 0,
+      "enonce": "Comment s'appelle le livre sacré de l'islam ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "Le Coran rassemble les paroles transmises au prophète Muhammad. La Torah est le livre sacré du judaïsme, la Bible celui du christianisme.",
+      "donnees": {
+        "choix": [
+          "Le Coran",
+          "La Torah",
+          "La Bible",
+          "Les Védas"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-62",
+      "type": "relier",
+      "niveau": "4e",
+      "titre": "Relier : dates de la Révolution",
+      "bonus": 1,
+      "enonce": "Relie chaque date à l'événement de la Révolution française.",
+      "image": null,
+      "duree_s": 60,
+      "explication": "Bastille (14 juillet 1789), abolition des privilèges (4 août 1789), Déclaration des droits (26 août 1789), fin de la monarchie (1792).",
+      "donnees": {
+        "paires": [
+          {
+            "gauche": "14 juillet 1789",
+            "droite": "Prise de la Bastille"
+          },
+          {
+            "gauche": "4 août 1789",
+            "droite": "Abolition des privilèges"
+          },
+          {
+            "gauche": "26 août 1789",
+            "droite": "Déclaration des droits de l'homme et du citoyen"
+          },
+          {
+            "gauche": "Septembre 1792",
+            "droite": "Fin de la monarchie : naissance de la Ire République"
+          }
+        ]
+      }
+    },
+    {
+      "id": "q-63",
+      "type": "qcm",
+      "niveau": "4e",
+      "titre": "Montesquieu",
+      "bonus": 1,
+      "enonce": "Quel philosophe des Lumières a défendu la séparation des pouvoirs dans « De l'esprit des lois » ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "Montesquieu (1748) propose de séparer les pouvoirs législatif, exécutif et judiciaire pour éviter les abus.",
+      "donnees": {
+        "choix": [
+          "Montesquieu",
+          "Voltaire",
+          "Rousseau",
+          "Diderot"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-64",
+      "type": "qcm",
+      "niveau": "autre",
+      "titre": "Plus grand océan",
+      "bonus": 0,
+      "enonce": "Quel est le plus grand océan du monde ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "L'océan Pacifique couvre environ un tiers de la surface de la Terre.",
+      "donnees": {
+        "choix": [
+          "Le Pacifique",
+          "L'Atlantique",
+          "L'océan Indien",
+          "L'Arctique"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-65",
+      "type": "qcm",
+      "niveau": "autre",
+      "titre": "L'équateur",
+      "bonus": 0,
+      "enonce": "Comment s'appelle la ligne imaginaire qui partage la Terre en hémisphère Nord et hémisphère Sud ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "L'équateur est à 0° de latitude. Le méridien de Greenwich sépare, lui, l'Est de l'Ouest.",
+      "donnees": {
+        "choix": [
+          "L'équateur",
+          "Le méridien de Greenwich",
+          "Le tropique du Cancer",
+          "Le cercle polaire"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-66",
+      "type": "qcm",
+      "niveau": "5e",
+      "titre": "Continent le plus de pays",
+      "bonus": 0,
+      "enonce": "Quel continent compte le plus de pays ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "L'Afrique compte 54 pays reconnus par l'ONU, plus que tous les autres continents.",
+      "donnees": {
+        "choix": [
+          "L'Afrique",
+          "L'Asie",
+          "L'Europe",
+          "L'Amérique du Sud"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-67",
+      "type": "relier",
+      "niveau": "5e",
+      "titre": "Relier : pays et capitales",
+      "bonus": 0,
+      "enonce": "Relie chaque pays à sa capitale.",
+      "image": null,
+      "duree_s": 45,
+      "explication": "Berlin (Allemagne), Madrid (Espagne), Rome (Italie), Lisbonne (Portugal), Varsovie (Pologne).",
+      "donnees": {
+        "paires": [
+          {
+            "gauche": "Allemagne",
+            "droite": "Berlin"
+          },
+          {
+            "gauche": "Espagne",
+            "droite": "Madrid"
+          },
+          {
+            "gauche": "Italie",
+            "droite": "Rome"
+          },
+          {
+            "gauche": "Portugal",
+            "droite": "Lisbonne"
+          },
+          {
+            "gauche": "Pologne",
+            "droite": "Varsovie"
+          }
+        ]
+      }
+    },
+    {
+      "id": "q-68",
+      "type": "qcm",
+      "niveau": "4e",
+      "titre": "Pays le plus peuplé",
+      "bonus": 1,
+      "enonce": "Quel pays est le plus peuplé du monde depuis 2023 ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "L'Inde a dépassé la Chine en 2023 : les deux pays comptent environ 1,4 milliard d'habitants.",
+      "donnees": {
+        "choix": [
+          "L'Inde",
+          "La Chine",
+          "Les États-Unis",
+          "L'Indonésie"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-69",
+      "type": "qcm",
+      "niveau": "autre",
+      "titre": "Rôle des racines",
+      "bonus": 0,
+      "enonce": "Quel est le rôle principal des racines d'une plante ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "Les racines fixent la plante au sol et absorbent l'eau et les sels minéraux.",
+      "donnees": {
+        "choix": [
+          "Absorber l'eau et les sels minéraux",
+          "Fabriquer des graines",
+          "Capter la lumière",
+          "Rejeter du dioxygène"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-70",
+      "type": "qcm",
+      "niveau": "autre",
+      "titre": "Classer le dauphin",
+      "bonus": 0,
+      "enonce": "À quel groupe d'animaux appartient le dauphin ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "Le dauphin respire par des poumons, allaite ses petits et a une température constante : c'est un mammifère.",
+      "donnees": {
+        "choix": [
+          "Les mammifères",
+          "Les poissons",
+          "Les reptiles",
+          "Les amphibiens"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-71",
+      "type": "ordre",
+      "niveau": "autre",
+      "titre": "Cycle de vie de la grenouille",
+      "bonus": 0,
+      "enonce": "Remets dans l'ordre les étapes de la vie d'une grenouille.",
+      "image": null,
+      "duree_s": null,
+      "explication": "La grenouille est un amphibien : elle subit une métamorphose, du têtard sans pattes à l'adulte.",
+      "donnees": {
+        "elements": [
+          "Œuf",
+          "Têtard",
+          "Têtard avec pattes",
+          "Grenouille adulte"
+        ]
+      }
+    },
+    {
+      "id": "q-72",
+      "type": "qcm",
+      "niveau": "4e",
+      "titre": "Cause des séismes",
+      "bonus": 0,
+      "enonce": "Quel phénomène est à l'origine de la plupart des séismes et des volcans ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "La lithosphère est découpée en plaques qui bougent lentement : leurs frottements et collisions provoquent séismes et volcans.",
+      "donnees": {
+        "choix": [
+          "Le mouvement des plaques tectoniques",
+          "Les marées",
+          "Le vent solaire",
+          "La rotation de la Lune"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-73",
+      "type": "qcm",
+      "niveau": "5e",
+      "titre": "Matériau conducteur",
+      "bonus": 0,
+      "enonce": "Parmi ces matériaux, lequel conduit le courant électrique ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "Les métaux, comme le cuivre, sont conducteurs. Le plastique, le bois et le verre sont isolants.",
+      "donnees": {
+        "choix": [
+          "Le cuivre",
+          "Le plastique",
+          "Le bois",
+          "Le verre"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-74",
+      "type": "relier",
+      "niveau": "5e",
+      "titre": "Relier : changements d'état",
+      "bonus": 1,
+      "enonce": "Relie chaque changement d'état à son nom.",
+      "image": null,
+      "duree_s": 60,
+      "explication": "Solide → liquide : fusion ; liquide → gaz : vaporisation ; gaz → liquide : liquéfaction ; liquide → solide : solidification.",
+      "donnees": {
+        "paires": [
+          {
+            "gauche": "Solide → liquide",
+            "droite": "Fusion"
+          },
+          {
+            "gauche": "Liquide → gaz",
+            "droite": "Vaporisation"
+          },
+          {
+            "gauche": "Gaz → liquide",
+            "droite": "Liquéfaction"
+          },
+          {
+            "gauche": "Liquide → solide",
+            "droite": "Solidification"
+          }
+        ]
+      }
+    },
+    {
+      "id": "q-75",
+      "type": "calcul",
+      "niveau": "4e",
+      "titre": "Vitesse moyenne",
+      "bonus": 0,
+      "enonce": "Un cycliste parcourt 36 km en 2 h. Quelle est sa vitesse moyenne ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "v = d ÷ t = 36 ÷ 2 = 18 km/h.",
+      "donnees": {
+        "reponse": 18,
+        "unite": "km/h"
+      }
+    },
+    {
+      "id": "q-76",
+      "type": "qcm",
+      "niveau": "5e",
+      "titre": "Circuit en série",
+      "bonus": 1,
+      "enonce": "Dans un circuit en série avec deux lampes, que se passe-t-il si l'une des lampes grille ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "En série, le circuit est une seule boucle : si elle est ouverte, plus aucun courant ne circule et l'autre lampe s'éteint.",
+      "donnees": {
+        "choix": [
+          "L'autre lampe s'éteint aussi",
+          "L'autre lampe brille plus fort",
+          "L'autre lampe reste allumée",
+          "L'autre lampe clignote"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-77",
+      "type": "qcm",
+      "niveau": "autre",
+      "titre": "Dire son âge",
+      "bonus": 0,
+      "enonce": "Comment dit-on « Il a douze ans » en anglais ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "En anglais, on utilise le verbe être pour l'âge : He is twelve.",
+      "donnees": {
+        "choix": [
+          "He is twelve.",
+          "He has twelve.",
+          "He have twelve years.",
+          "He is twelve years."
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-78",
+      "type": "completer",
+      "niveau": "4e",
+      "titre": "There is / there are",
+      "bonus": 0,
+      "enonce": "Complète : « Il y a deux pommes sur la table. »",
+      "image": null,
+      "duree_s": null,
+      "explication": "Apples est pluriel, donc on utilise « There are ».",
+      "donnees": {
+        "version": "texte",
+        "texte": "There ___ two apples on the table.",
+        "mode": "liste",
+        "trous": [
+          {
+            "bonne": "are",
+            "distracteurs": [
+              "is",
+              "am",
+              "be"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "q-79",
+      "type": "qcm",
+      "niveau": "5e",
+      "titre": "Sigle ONU",
+      "bonus": 0,
+      "enonce": "Que signifie le sigle ONU ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "L'ONU, créée en 1945, réunit presque tous les pays du monde pour maintenir la paix et favoriser la coopération.",
+      "donnees": {
+        "choix": [
+          "Organisation des Nations unies",
+          "Organisation nationale universelle",
+          "Office des Nations unifiées",
+          "Union des nations occidentales"
+        ],
+        "bonne": 0
+      }
+    },
+    {
+      "id": "q-80",
+      "type": "qcm",
+      "niveau": "autre",
+      "titre": "Notes de la gamme",
+      "bonus": 0,
+      "enonce": "Combien de notes différentes compte la gamme de do majeur (sans répéter le do final) ?",
+      "image": null,
+      "duree_s": null,
+      "explication": "do, ré, mi, fa, sol, la, si : 7 notes.",
+      "donnees": {
+        "choix": [
+          "5 notes",
+          "7 notes",
+          "8 notes",
+          "12 notes"
+        ],
+        "bonne": 1
+      }
+    },
+    {
+      "id": "q-81",
+      "type": "blocs",
+      "niveau": "5e",
+      "titre": "Bouton et servo moteur",
+      "bonus": 2,
+      "enonce": "Si j'appuie sur le bouton de la broche D7 alors le servo moteur (D6) passe à 90° pendant 1 seconde puis 0°.",
+      "image": null,
+      "duree_s": 90,
+      "explication": "Si état du bouton (D7) alors : servo (D6) à 90°, attendre 1 s, servo (D6) à 0°.",
+      "donnees": {
+        "blocs": [
+          "si_alors",
+          "bouton_etat",
+          "servo_angle",
+          "attendre",
+          "led_etat"
+        ],
+        "broches": true,
+        "sequences": [
+          [
+            {
+              "bloc": "si_alors",
+              "condition": {
+                "bloc": "bouton_etat",
+                "broche": "D7"
+              },
+              "alors": [
+                {
+                  "bloc": "servo_angle",
+                  "angle": 90,
+                  "broche": "D6"
+                },
+                {
+                  "bloc": "attendre",
+                  "duree": 1
+                },
+                {
+                  "bloc": "servo_angle",
+                  "angle": 0,
+                  "broche": "D6"
+                }
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": "q-82",
+      "type": "blocs",
+      "niveau": "5e",
+      "titre": "Led qui clignotte",
+      "bonus": 1,
+      "enonce": "La Led de la broche D3 clignote toute les 2 secondes.",
+      "image": null,
+      "duree_s": 120,
+      "explication": "Si bouton (D7) alors répéter 2 fois : servo 90°, attendre 1 s, servo 0°, attendre 1 s.",
+      "donnees": {
+        "blocs": [
+          "led_etat",
+          "attendre"
+        ],
+        "broches": true,
+        "sequences": [
+          [
+            {
+              "bloc": "led_etat",
+              "etat": 1,
+              "broche": "D3"
+            },
+            {
+              "bloc": "attendre",
+              "duree": 2
+            },
+            {
+              "bloc": "led_etat",
+              "etat": 0,
+              "broche": "D3"
+            },
+            {
+              "bloc": "attendre",
+              "duree": 2
+            }
+          ],
+          [
+            {
+              "bloc": "attendre",
+              "duree": 2
+            },
+            {
+              "bloc": "led_etat",
+              "etat": 1,
+              "broche": "D3"
+            },
+            {
+              "bloc": "attendre",
+              "duree": 2
+            },
+            {
+              "bloc": "led_etat",
+              "etat": 0,
+              "broche": "D3"
+            }
+          ],
+          [
+            {
+              "bloc": "led_etat",
+              "etat": 0,
+              "broche": "D3"
+            },
+            {
+              "bloc": "attendre",
+              "duree": 2
+            },
+            {
+              "bloc": "led_etat",
+              "etat": 1,
+              "broche": "D3"
+            },
+            {
+              "bloc": "attendre",
+              "duree": 2
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": "q-83",
+      "type": "blocs",
+      "niveau": "5e",
+      "titre": "Si alors sinon led",
+      "bonus": 2,
+      "enonce": "Si le bouton sur D7 est appuyé alors la Led D3 s'allume. Sinon elle s'éteint.",
+      "image": null,
+      "duree_s": 120,
+      "explication": "La LED reste allumée pendant toute la distribution : allumer, servo 90°, attendre, servo 0°, éteindre.",
+      "donnees": {
+        "blocs": [
+          "led_etat",
+          "si_sinon",
+          "si_alors",
+          "bouton_etat"
+        ],
+        "broches": true,
+        "sequences": [
+          [
+            {
+              "bloc": "si_sinon",
+              "condition": {
+                "bloc": "bouton_etat",
+                "broche": "D7"
+              },
+              "alors": [
+                {
+                  "bloc": "led_etat",
+                  "etat": 1,
+                  "broche": "D3"
+                }
+              ],
+              "sinon": [
+                {
+                  "bloc": "led_etat",
+                  "etat": 0,
+                  "broche": "D3"
+                }
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": "q-84",
+      "type": "blocs",
+      "niveau": "5e",
+      "titre": "Feu tricolore",
+      "bonus": 1,
+      "enonce": "Feu tricolore : LED rouge sur D2, orange sur D3, verte sur D4. Répète 2 fois : rouge allumée 3 s puis éteinte, verte allumée 3 s puis éteinte, orange allumée 1 s puis éteinte.",
+      "image": null,
+      "duree_s": 120,
+      "explication": "Répéter 2 fois : rouge 3 s, verte 3 s, orange 1 s. On éteint chaque LED avant d'allumer la suivante.",
+      "donnees": {
+        "blocs": [
+          "repeter",
+          "led_etat",
+          "attendre",
+          "servo_angle"
+        ],
+        "broches": true,
+        "sequences": [
+          [
+            {
+              "bloc": "repeter",
+              "fois": 2,
+              "faire": [
+                {
+                  "bloc": "led_etat",
+                  "etat": 1,
+                  "broche": "D2"
+                },
+                {
+                  "bloc": "attendre",
+                  "duree": 3
+                },
+                {
+                  "bloc": "led_etat",
+                  "etat": 0,
+                  "broche": "D2"
+                },
+                {
+                  "bloc": "led_etat",
+                  "etat": 1,
+                  "broche": "D4"
+                },
+                {
+                  "bloc": "attendre",
+                  "duree": 3
+                },
+                {
+                  "bloc": "led_etat",
+                  "etat": 0,
+                  "broche": "D4"
+                },
+                {
+                  "bloc": "led_etat",
+                  "etat": 1,
+                  "broche": "D3"
+                },
+                {
+                  "bloc": "attendre",
+                  "duree": 1
+                },
+                {
+                  "bloc": "led_etat",
+                  "etat": 0,
+                  "broche": "D3"
+                }
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": "q-85",
+      "type": "blocs",
+      "niveau": "3e",
+      "titre": "variable et si sinon",
+      "bonus": 4,
+      "enonce": "Si `CHOIX` = 4, la LED verte (D4) s'allume ; sinon, la LED rouge (D5) s'allume.",
+      "image": null,
+      "duree_s": 120,
+      "explication": "On range 7 dans CHOIX, puis on teste CHOIX = 4. Le test est faux, donc c'est le « sinon » qui s'exécute : LED rouge.",
+      "donnees": {
+        "blocs": [
+          "affecter",
+          "si_sinon",
+          "comparaison",
+          "variable",
+          "nombre",
+          "led_etat",
+          "bouton_etat"
+        ],
+        "broches": true,
+        "sequences": [
+          [
+            {
+              "bloc": "si_sinon",
+              "condition": {
+                "bloc": "comparaison",
+                "op": "=",
+                "a": {
+                  "bloc": "variable",
+                  "variable": "CHOIX"
+                },
+                "b": 4
+              },
+              "alors": [
+                {
+                  "bloc": "led_etat",
+                  "etat": 1,
+                  "broche": "D4"
+                }
+              ],
+              "sinon": [
+                {
+                  "bloc": "led_etat",
+                  "etat": 1,
+                  "broche": "D5"
+                }
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": "q-86",
+      "type": "blocs",
+      "niveau": "3e",
+      "titre": "Théâtre d'ombre : 2 personnages",
+      "bonus": 2,
+      "enonce": "LED du personnage 1 sur D4, LED du personnage 2 sur D5. Utilise deux blocs si … alors, l'un après l'autre : si `CHOIX` = 1, allume D4 ; si `CHOIX` = 2, allume D5.",
+      "image": null,
+      "duree_s": 120,
+      "explication": "CHOIX vaut 2 : le premier test est faux, le second est vrai, donc seule la LED D5 s'allume.",
+      "donnees": {
+        "blocs": [
+          "affecter",
+          "si_alors",
+          "comparaison",
+          "variable",
+          "nombre",
+          "led_etat"
+        ],
+        "broches": true,
+        "sequences": [
+          [
+            {
+              "bloc": "si_alors",
+              "condition": {
+                "bloc": "comparaison",
+                "op": "=",
+                "a": {
+                  "bloc": "variable",
+                  "variable": "CHOIX"
+                },
+                "b": 1
+              },
+              "alors": [
+                {
+                  "bloc": "led_etat",
+                  "etat": 1,
+                  "broche": "D4"
+                }
+              ]
+            },
+            {
+              "bloc": "si_alors",
+              "condition": {
+                "bloc": "comparaison",
+                "op": "=",
+                "a": {
+                  "bloc": "variable",
+                  "variable": "CHOIX"
+                },
+                "b": 2
+              },
+              "alors": [
+                {
+                  "bloc": "led_etat",
+                  "etat": 1,
+                  "broche": "D5"
+                }
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": "q-87",
+      "type": "blocs",
+      "niveau": "4e",
+      "titre": "Simon : LED d'erreur",
+      "bonus": 1,
+      "enonce": "Quand on appuie sur le bouton D7, la LED rouge (D4) clignote 3 fois (0,2 s allumée, 0,2 s éteinte).",
+      "image": null,
+      "duree_s": 120,
+      "explication": "Si bouton (D7) alors répéter 3 fois : LED D4 allumée, attendre 0,2 s, LED D4 éteinte, attendre 0,2 s.",
+      "donnees": {
+        "blocs": [
+          "si_alors",
+          "bouton_etat",
+          "repeter",
+          "led_etat",
+          "attendre"
+        ],
+        "broches": true,
+        "sequences": [
+          [
+            {
+              "bloc": "si_alors",
+              "condition": {
+                "bloc": "bouton_etat",
+                "broche": "D7"
+              },
+              "alors": [
+                {
+                  "bloc": "repeter",
+                  "fois": 3,
+                  "faire": [
+                    {
+                      "bloc": "led_etat",
+                      "etat": 1,
+                      "broche": "D4"
+                    },
+                    {
+                      "bloc": "attendre",
+                      "duree": 0.2
+                    },
+                    {
+                      "bloc": "led_etat",
+                      "etat": 0,
+                      "broche": "D4"
+                    },
+                    {
+                      "bloc": "attendre",
+                      "duree": 0.2
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "id": "q-89",
+      "type": "completer",
+      "niveau": "5e",
+      "titre": "Distributeur : valeurs de la trappe",
+      "bonus": 0,
+      "enonce": "Distributeur de céréales : la trappe s'ouvre à 120°, reste ouverte 1,5 s, puis se referme à 0°. Complète les valeurs.",
+      "image": null,
+      "duree_s": 90,
+      "explication": "Servo à 120°, attendre 1,5 s, servo à 0°.",
+      "donnees": {
+        "version": "blocs",
+        "blocs": [],
+        "broches": false,
+        "sequences": [
+          [
+            {
+              "bloc": "servo_angle",
+              "angle": 120
+            },
+            {
+              "bloc": "attendre",
+              "duree": 1.5
+            },
+            {
+              "bloc": "servo_angle",
+              "angle": 0
+            }
+          ]
+        ],
+        "depart": [
+          {
+            "bloc": "servo_angle",
+            "angle": {
+              "bloc": "trou"
+            }
+          },
+          {
+            "bloc": "attendre",
+            "duree": {
+              "bloc": "trou"
+            }
+          },
+          {
+            "bloc": "servo_angle",
+            "angle": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "q-90",
+      "type": "completer",
+      "niveau": "5e",
+      "titre": "Distributeur : broches à choisir",
+      "bonus": 1,
+      "enonce": "Le bouton est branché sur D7 et le servomoteur sur D6. Complète : quand on appuie sur le bouton, la trappe s'ouvre (90°), attend 1 s, puis se referme (0°).",
+      "image": null,
+      "duree_s": 90,
+      "explication": "Bouton sur D7, servo sur D6 : les deux blocs servo utilisent la broche D6.",
+      "donnees": {
+        "version": "blocs",
+        "blocs": [],
+        "broches": true,
+        "sequences": [
+          [
+            {
+              "bloc": "si_alors",
+              "condition": {
+                "bloc": "bouton_etat",
+                "broche": "D7"
+              },
+              "alors": [
+                {
+                  "bloc": "servo_angle",
+                  "angle": 90,
+                  "broche": "D6"
+                },
+                {
+                  "bloc": "attendre",
+                  "duree": 1
+                },
+                {
+                  "bloc": "servo_angle",
+                  "angle": 0,
+                  "broche": "D6"
+                }
+              ]
+            }
+          ]
+        ],
+        "depart": [
+          {
+            "bloc": "si_alors",
+            "condition": {
+              "bloc": "bouton_etat",
+              "broche": "?"
+            },
+            "alors": [
+              {
+                "bloc": "servo_angle",
+                "angle": 90,
+                "broche": "D6"
+              },
+              {
+                "bloc": "attendre",
+                "duree": {
+                  "bloc": "trou"
+                }
+              },
+              {
+                "bloc": "servo_angle",
+                "angle": 0,
+                "broche": "?"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "q-91",
+      "type": "completer",
+      "niveau": "5e",
+      "titre": "Distributeur : condition à placer",
+      "bonus": 0,
+      "enonce": "Complète le programme : la trappe s'ouvre à 90° quand on appuie sur le bouton, sinon elle reste à 0°.",
+      "image": null,
+      "duree_s": 90,
+      "explication": "La condition est l'état du bouton (vrai quand il est appuyé).",
+      "donnees": {
+        "version": "blocs",
+        "blocs": [
+          "bouton_etat",
+          "valeur_haut_bas",
+          "comparaison"
+        ],
+        "broches": false,
+        "sequences": [
+          [
+            {
+              "bloc": "si_sinon",
+              "condition": {
+                "bloc": "bouton_etat"
+              },
+              "alors": [
+                {
+                  "bloc": "servo_angle",
+                  "angle": 90
+                }
+              ],
+              "sinon": [
+                {
+                  "bloc": "servo_angle",
+                  "angle": 0
+                }
+              ]
+            }
+          ]
+        ],
+        "depart": [
+          {
+            "bloc": "si_sinon",
+            "condition": null,
+            "alors": [
+              {
+                "bloc": "servo_angle",
+                "angle": 90
+              }
+            ],
+            "sinon": [
+              {
+                "bloc": "servo_angle",
+                "angle": 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "q-92",
+      "type": "completer",
+      "niveau": "3e",
+      "titre": "Théâtre d'ombre : bloc manquant",
+      "bonus": 0,
+      "enonce": "Théâtre d'ombre augmenté : quand un personnage est reconnu, sa LED s'allume 2 s puis doit s'éteindre. Glisse le bloc manquant au bon endroit.",
+      "image": null,
+      "duree_s": 90,
+      "explication": "Il faut éteindre la LED à la fin, sinon le personnage resterait éclairé.",
+      "donnees": {
+        "version": "blocs",
+        "blocs": [
+          "led_etat",
+          "servo_angle"
+        ],
+        "broches": false,
+        "sequences": [
+          [
+            {
+              "bloc": "led_etat",
+              "etat": 1
+            },
+            {
+              "bloc": "attendre",
+              "duree": 2
+            },
+            {
+              "bloc": "led_etat",
+              "etat": 0
+            }
+          ]
+        ],
+        "depart": [
+          {
+            "bloc": "led_etat",
+            "etat": 1
+          },
+          {
+            "bloc": "attendre",
+            "duree": 2
+          },
+          {
+            "bloc": "trou"
+          }
+        ]
+      }
+    },
+    {
+      "id": "q-93",
+      "type": "completer",
+      "niveau": "3e",
+      "titre": "Escape game : opérateur à choisir",
+      "bonus": 1,
+      "enonce": "Escape game : le code secret est 5. Le joueur a tapé 3, rangé dans `CHOIX`. La LED rouge (D5) doit s'allumer quand `CHOIX` est différent de 5. Choisis le bon opérateur.",
+      "image": null,
+      "duree_s": 90,
+      "explication": "3 est différent de 5 : la condition CHOIX ≠ 5 est vraie, la LED rouge s'allume.",
+      "donnees": {
+        "version": "blocs",
+        "blocs": [],
+        "broches": true,
+        "sequences": [
+          [
+            {
+              "bloc": "affecter",
+              "variable": "CHOIX",
+              "valeur": 3
+            },
+            {
+              "bloc": "si_alors",
+              "condition": {
+                "bloc": "comparaison",
+                "op": "≠",
+                "a": {
+                  "bloc": "variable",
+                  "variable": "CHOIX"
+                },
+                "b": 5
+              },
+              "alors": [
+                {
+                  "bloc": "led_etat",
+                  "etat": 1,
+                  "broche": "D5"
+                }
+              ]
+            }
+          ]
+        ],
+        "depart": [
+          {
+            "bloc": "affecter",
+            "variable": "CHOIX",
+            "valeur": 3
+          },
+          {
+            "bloc": "si_alors",
+            "condition": {
+              "bloc": "comparaison",
+              "op": "?",
+              "a": {
+                "bloc": "variable",
+                "variable": "CHOIX"
+              },
+              "b": 5
+            },
+            "alors": [
+              {
+                "bloc": "led_etat",
+                "etat": 1,
+                "broche": "D5"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "q-94",
+      "type": "completer",
+      "niveau": "3e",
+      "titre": "Escape game : alarme",
+      "bonus": 2,
+      "enonce": "Escape game : quand l'énigme est ratée, la LED rouge (D5) clignote 5 fois (0,3 s allumée, 0,3 s éteinte). Complète.",
+      "image": null,
+      "duree_s": 120,
+      "explication": "Répéter 5 fois : LED D5 haut, attendre 0,3 s, LED D5 bas, attendre 0,3 s.",
+      "donnees": {
+        "version": "blocs",
+        "blocs": [],
+        "broches": true,
+        "sequences": [
+          [
+            {
+              "bloc": "repeter",
+              "fois": 5,
+              "faire": [
+                {
+                  "bloc": "led_etat",
+                  "etat": 1,
+                  "broche": "D5"
+                },
+                {
+                  "bloc": "attendre",
+                  "duree": 0.3
+                },
+                {
+                  "bloc": "led_etat",
+                  "etat": 0,
+                  "broche": "D5"
+                },
+                {
+                  "bloc": "attendre",
+                  "duree": 0.3
+                }
+              ]
+            }
+          ]
+        ],
+        "depart": [
+          {
+            "bloc": "repeter",
+            "fois": {
+              "bloc": "trou"
+            },
+            "faire": [
+              {
+                "bloc": "led_etat",
+                "etat": 1,
+                "broche": "D5"
+              },
+              {
+                "bloc": "attendre",
+                "duree": {
+                  "bloc": "trou"
+                }
+              },
+              {
+                "bloc": "led_etat",
+                "etat": "?",
+                "broche": "D5"
+              },
+              {
+                "bloc": "attendre",
+                "duree": 0.3
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "q-95",
+      "type": "completer",
+      "niveau": "5e",
+      "titre": "Feu tricolore : rouge puis vert",
+      "bonus": 1,
+      "enonce": "Feu tricolore : LED rouge sur D2, LED verte sur D4. Complète : rouge allumée 3 s puis éteinte, ensuite verte allumée 3 s puis éteinte.",
+      "image": null,
+      "duree_s": 90,
+      "explication": "Rouge allumée 3 s puis éteinte (D2), verte allumée 3 s puis éteinte (D4).",
+      "donnees": {
+        "version": "blocs",
+        "blocs": [],
+        "broches": true,
+        "sequences": [
+          [
+            {
+              "bloc": "led_etat",
+              "etat": 1,
+              "broche": "D2"
+            },
+            {
+              "bloc": "attendre",
+              "duree": 3
+            },
+            {
+              "bloc": "led_etat",
+              "etat": 0,
+              "broche": "D2"
+            },
+            {
+              "bloc": "led_etat",
+              "etat": 1,
+              "broche": "D4"
+            },
+            {
+              "bloc": "attendre",
+              "duree": 3
+            },
+            {
+              "bloc": "led_etat",
+              "etat": 0,
+              "broche": "D4"
+            }
+          ]
+        ],
+        "depart": [
+          {
+            "bloc": "led_etat",
+            "etat": 1,
+            "broche": "D2"
+          },
+          {
+            "bloc": "attendre",
+            "duree": {
+              "bloc": "trou"
+            }
+          },
+          {
+            "bloc": "led_etat",
+            "etat": 0,
+            "broche": "?"
+          },
+          {
+            "bloc": "led_etat",
+            "etat": 1,
+            "broche": "D4"
+          },
+          {
+            "bloc": "attendre",
+            "duree": 3
+          },
+          {
+            "bloc": "led_etat",
+            "etat": "?",
+            "broche": "D4"
+          }
+        ]
+      }
+    },
+    {
+      "id": "q-96",
+      "type": "completer",
+      "niveau": "4e",
+      "titre": "Labyrinthe : condition à placer",
+      "bonus": 1,
+      "enonce": "Labyrinthe robotisé : le bouton de l'objectif est sur D8 et la LED de victoire sur D4. Complète : quand le robot appuie sur le bouton, la LED s'allume 3 s puis s'éteint.",
+      "image": null,
+      "duree_s": 90,
+      "explication": "Condition : état du bouton (D8). Alors LED D4 haut, attendre 3 s, LED D4 bas.",
+      "donnees": {
+        "version": "blocs",
+        "blocs": [
+          "bouton_etat",
+          "valeur_haut_bas",
+          "comparaison"
+        ],
+        "broches": true,
+        "sequences": [
+          [
+            {
+              "bloc": "si_alors",
+              "condition": {
+                "bloc": "bouton_etat",
+                "broche": "D8"
+              },
+              "alors": [
+                {
+                  "bloc": "led_etat",
+                  "etat": 1,
+                  "broche": "D4"
+                },
+                {
+                  "bloc": "attendre",
+                  "duree": 3
+                },
+                {
+                  "bloc": "led_etat",
+                  "etat": 0,
+                  "broche": "D4"
+                }
+              ]
+            }
+          ]
+        ],
+        "depart": [
+          {
+            "bloc": "si_alors",
+            "condition": null,
+            "alors": [
+              {
+                "bloc": "led_etat",
+                "etat": 1,
+                "broche": "D4"
+              },
+              {
+                "bloc": "attendre",
+                "duree": 3
+              },
+              {
+                "bloc": "led_etat",
+                "etat": 0,
+                "broche": "D4"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "q-97",
+      "type": "completer",
+      "niveau": "3e",
+      "titre": "Escape game : la porte s'ouvre",
+      "bonus": 1,
+      "enonce": "Escape game : la porte secrète s'ouvre avec un servomoteur (D6). Le joueur a tapé le bon code, 4, rangé dans `CHOIX`. Complète : si `CHOIX` = code secret (4), le servo va à 90°.",
+      "image": null,
+      "duree_s": 90,
+      "explication": "On compare CHOIX au code secret 4 ; si c'est égal, le servo (D6) ouvre la porte à 90°.",
+      "donnees": {
+        "version": "blocs",
+        "blocs": [],
+        "broches": true,
+        "sequences": [
+          [
+            {
+              "bloc": "affecter",
+              "variable": "CHOIX",
+              "valeur": 4
+            },
+            {
+              "bloc": "si_alors",
+              "condition": {
+                "bloc": "comparaison",
+                "op": "=",
+                "a": {
+                  "bloc": "variable",
+                  "variable": "CHOIX"
+                },
+                "b": 4
+              },
+              "alors": [
+                {
+                  "bloc": "servo_angle",
+                  "angle": 90,
+                  "broche": "D6"
+                }
+              ]
+            }
+          ]
+        ],
+        "depart": [
+          {
+            "bloc": "affecter",
+            "variable": "CHOIX",
+            "valeur": 4
+          },
+          {
+            "bloc": "si_alors",
+            "condition": {
+              "bloc": "comparaison",
+              "op": "=",
+              "a": {
+                "bloc": "variable",
+                "variable": "CHOIX"
+              },
+              "b": {
+                "bloc": "trou"
+              }
+            },
+            "alors": [
+              {
+                "bloc": "servo_angle",
+                "angle": {
+                  "bloc": "trou"
+                },
+                "broche": "D6"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "q-98",
+      "type": "relier",
+      "niveau": "5e",
+      "titre": "Relier : composants du distributeur",
+      "bonus": 0,
+      "enonce": "Distributeur de céréales : relie chaque composant à son rôle.",
+      "image": null,
+      "duree_s": 45,
+      "explication": "Le bouton est le capteur (il informe), le servomoteur ouvre la trappe (actionneur), l'Arduino exécute le programme, la LED signale la distribution.",
+      "donnees": {
+        "paires": [
+          {
+            "gauche": "Bouton",
+            "droite": "demande une dose (capteur)"
+          },
+          {
+            "gauche": "Servomoteur",
+            "droite": "ouvre la trappe (actionneur)"
+          },
+          {
+            "gauche": "Carte Arduino",
+            "droite": "exécute le programme"
+          },
+          {
+            "gauche": "LED",
+            "droite": "signale la distribution"
+          }
+        ]
+      }
+    },
+    {
+      "id": "q-99",
+      "type": "relier",
+      "niveau": "3e",
+      "titre": "Relier : chaîne du théâtre d'ombre",
+      "bonus": 1,
+      "enonce": "Théâtre d'ombre augmenté : relie chaque élément à sa fonction dans la chaîne d'information.",
+      "image": null,
+      "duree_s": 60,
+      "explication": "Acquérir (webcam), traiter (IA), communiquer (Arduino), agir (LED) : c'est la chaîne d'information.",
+      "donnees": {
+        "paires": [
+          {
+            "gauche": "Webcam",
+            "droite": "capte l'image"
+          },
+          {
+            "gauche": "Intelligence artificielle",
+            "droite": "reconnaît le personnage"
+          },
+          {
+            "gauche": "Carte Arduino",
+            "droite": "commande les LED"
+          },
+          {
+            "gauche": "LED",
+            "droite": "éclaire le personnage"
+          }
+        ]
+      }
+    },
+    {
+      "id": "q-100",
+      "type": "ordre",
+      "niveau": "5e",
+      "titre": "Distributeur : de l'appui aux céréales",
+      "bonus": 0,
+      "enonce": "Remets dans l'ordre ce qui se passe quand on appuie sur le bouton du distributeur.",
+      "image": null,
+      "duree_s": null,
+      "explication": "Le bouton informe la carte, qui lit son état, décide selon le programme, puis commande le servo qui ouvre la trappe.",
+      "donnees": {
+        "elements": [
+          "Le bouton est appuyé",
+          "L'Arduino lit l'état du bouton",
+          "Le programme décide de distribuer",
+          "Le servomoteur ouvre la trappe",
+          "Les céréales tombent"
+        ]
+      }
     }
   ],
   "parcours": [
     {
       "id": "p-1",
-      "nom": "Culture collège : mélange 5e / 4e",
+      "nom": "Rentrée 3e : les 100 questions",
       "ordre_aleatoire": true,
       "questions": [
         "q-1",
@@ -799,16 +2764,75 @@
         "q-37",
         "q-38",
         "q-39",
-        "q-40"
+        "q-40",
+        "q-41",
+        "q-42",
+        "q-43",
+        "q-44",
+        "q-45",
+        "q-46",
+        "q-47",
+        "q-48",
+        "q-49",
+        "q-50",
+        "q-51",
+        "q-52",
+        "q-53",
+        "q-54",
+        "q-55",
+        "q-56",
+        "q-57",
+        "q-58",
+        "q-59",
+        "q-60",
+        "q-61",
+        "q-62",
+        "q-63",
+        "q-64",
+        "q-65",
+        "q-66",
+        "q-67",
+        "q-68",
+        "q-69",
+        "q-70",
+        "q-71",
+        "q-72",
+        "q-73",
+        "q-74",
+        "q-75",
+        "q-76",
+        "q-77",
+        "q-78",
+        "q-79",
+        "q-80",
+        "q-81",
+        "q-82",
+        "q-83",
+        "q-84",
+        "q-85",
+        "q-86",
+        "q-87",
+        "q-89",
+        "q-90",
+        "q-91",
+        "q-92",
+        "q-93",
+        "q-94",
+        "q-95",
+        "q-96",
+        "q-97",
+        "q-98",
+        "q-99",
+        "q-100"
       ],
       "reglages": {
-        "dureePartie": 15,
-        "longueur": 40
+        "dureePartie": 20,
+        "longueur": 50
       }
     },
     {
       "id": "p-2",
-      "nom": "Maths et sciences",
+      "nom": "Culture collège (sans techno)",
       "ordre_aleatoire": true,
       "questions": [
         "q-1",
@@ -819,27 +2843,6 @@
         "q-6",
         "q-7",
         "q-8",
-        "q-24",
-        "q-25",
-        "q-26",
-        "q-27",
-        "q-28",
-        "q-29",
-        "q-30",
-        "q-31",
-        "q-32",
-        "q-33"
-      ],
-      "reglages": {
-        "dureePartie": 12,
-        "longueur": 30
-      }
-    },
-    {
-      "id": "p-3",
-      "nom": "Lettres, histoire-géo et EMC",
-      "ordre_aleatoire": true,
-      "questions": [
         "q-9",
         "q-10",
         "q-11",
@@ -855,9 +2858,110 @@
         "q-21",
         "q-22",
         "q-23",
+        "q-24",
+        "q-25",
+        "q-26",
+        "q-27",
+        "q-28",
+        "q-29",
+        "q-30",
+        "q-31",
+        "q-32",
+        "q-33",
+        "q-34",
+        "q-35",
+        "q-36",
+        "q-37",
         "q-38",
         "q-39",
-        "q-40"
+        "q-40",
+        "q-41",
+        "q-42",
+        "q-43",
+        "q-44",
+        "q-45",
+        "q-46",
+        "q-47",
+        "q-48",
+        "q-49",
+        "q-50",
+        "q-51",
+        "q-52",
+        "q-53",
+        "q-54",
+        "q-55",
+        "q-56",
+        "q-57",
+        "q-58",
+        "q-59",
+        "q-60",
+        "q-61",
+        "q-62",
+        "q-63",
+        "q-64",
+        "q-65",
+        "q-66",
+        "q-67",
+        "q-68",
+        "q-69",
+        "q-70",
+        "q-71",
+        "q-72",
+        "q-73",
+        "q-74",
+        "q-75",
+        "q-76",
+        "q-77",
+        "q-78",
+        "q-79",
+        "q-80"
+      ],
+      "reglages": {
+        "dureePartie": 15,
+        "longueur": 40
+      }
+    },
+    {
+      "id": "p-3",
+      "nom": "Maths et sciences",
+      "ordre_aleatoire": true,
+      "questions": [
+        "q-1",
+        "q-2",
+        "q-3",
+        "q-4",
+        "q-5",
+        "q-6",
+        "q-7",
+        "q-8",
+        "q-41",
+        "q-42",
+        "q-43",
+        "q-44",
+        "q-45",
+        "q-46",
+        "q-47",
+        "q-48",
+        "q-49",
+        "q-50",
+        "q-24",
+        "q-25",
+        "q-26",
+        "q-27",
+        "q-28",
+        "q-69",
+        "q-70",
+        "q-71",
+        "q-72",
+        "q-29",
+        "q-30",
+        "q-31",
+        "q-32",
+        "q-33",
+        "q-73",
+        "q-74",
+        "q-75",
+        "q-76"
       ],
       "reglages": {
         "dureePartie": 12,
@@ -866,17 +2970,98 @@
     },
     {
       "id": "p-4",
+      "nom": "Lettres, histoire-géo, EMC et musique",
+      "ordre_aleatoire": true,
+      "questions": [
+        "q-9",
+        "q-10",
+        "q-11",
+        "q-12",
+        "q-13",
+        "q-14",
+        "q-51",
+        "q-52",
+        "q-53",
+        "q-54",
+        "q-55",
+        "q-56",
+        "q-57",
+        "q-15",
+        "q-16",
+        "q-17",
+        "q-18",
+        "q-19",
+        "q-20",
+        "q-58",
+        "q-59",
+        "q-60",
+        "q-61",
+        "q-62",
+        "q-63",
+        "q-21",
+        "q-22",
+        "q-23",
+        "q-64",
+        "q-65",
+        "q-66",
+        "q-67",
+        "q-68",
+        "q-38",
+        "q-39",
+        "q-40",
+        "q-79",
+        "q-80"
+      ],
+      "reglages": {
+        "dureePartie": 12,
+        "longueur": 30
+      }
+    },
+    {
+      "id": "p-5",
       "nom": "Anglais",
       "ordre_aleatoire": true,
       "questions": [
         "q-34",
         "q-35",
         "q-36",
-        "q-37"
+        "q-37",
+        "q-77",
+        "q-78"
       ],
       "reglages": {
         "dureePartie": 5,
         "longueur": 15
+      }
+    },
+    {
+      "id": "p-6",
+      "nom": "Techno : nos projets en blocs",
+      "ordre_aleatoire": true,
+      "questions": [
+        "q-81",
+        "q-82",
+        "q-83",
+        "q-84",
+        "q-85",
+        "q-86",
+        "q-87",
+        "q-89",
+        "q-90",
+        "q-91",
+        "q-92",
+        "q-93",
+        "q-94",
+        "q-95",
+        "q-96",
+        "q-97",
+        "q-98",
+        "q-99",
+        "q-100"
+      ],
+      "reglages": {
+        "dureePartie": 12,
+        "longueur": 30
       }
     }
   ]
