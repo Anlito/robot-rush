@@ -12,6 +12,13 @@ avec un obstacle. La course est projetée en classe.
 | `/admin` | professeur | parcours, équipes, réglages, codes, élèves, Démarrer / Pause / Arrêter |
 | `/test` | professeur, depuis un poste élève | diagnostic du réseau : « Connexion réussie », temps réel, rapidité |
 
+## Faire créer des questions par une IA
+
+[outils-salle/MODELE-QUESTIONS-IA.md](outils-salle/MODELE-QUESTIONS-IA.md) (consigne et format) et
+[outils-salle/exemple-questions-robot-rush.json](outils-salle/exemple-questions-robot-rush.json) (une question de chaque type,
+importable) : à joindre à l'IA. Une copie de ces deux fichiers est proposée au téléchargement sur https://anlito.github.io
+(dossier `fichiers/robot-rush/` du dépôt `Anlito/anlito.github.io`) : **la recopier quand ils changent**.
+
 ## Mode local : le jeu sur le PC du professeur, sans internet
 
 **Guide pas à pas pour les enseignants : [MODE-LOCAL.md](MODE-LOCAL.md)** (installation de Node.js ou version portable,
@@ -205,7 +212,7 @@ public/          pages /course, /jouer, /admin, /test, styles, scripts, SVG, pol
 seed/            questions et parcours de départ
 test/            tests de la logique de jeu (node --test)
 tools/           élèves factices, test de charge, préparation du dossier local
-outils-salle/    fiche de mise en place à imprimer
+outils-salle/    fiche de mise en place à imprimer, modèle et fichier exemple pour l'IA
 render.yaml, railway.json, fly.toml, Dockerfile   déploiement en ligne
 demarrer.bat     lancement Windows (double-clic) ; demarrer.command (Mac), demarrer.sh (Linux)
 design/          maquettes Claude Design (référence de l'interface)
