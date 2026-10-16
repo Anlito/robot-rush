@@ -7,7 +7,7 @@
 <link rel="icon" href="/assets/robots/robot-verte-normal.svg">
 <link rel="stylesheet" href="/fonts/polices.css?v=4">
 <link rel="stylesheet" href="/css/commun.css?v=4">
-<link rel="stylesheet" href="/css/admin.css?v=8">
+<link rel="stylesheet" href="/css/admin.css?v=9">
 <link rel="stylesheet" href="/css/admin-banque.css?v=12">
 </head>
 <body>
@@ -142,6 +142,11 @@
   <div class="vue-admin vue-historique" id="vue-historique" hidden>
     <aside class="liste-historique">
       <div class="outils-liste"><select id="filtre-classe-h" aria-label="Filtrer par classe"></select>
+        <div class="boutons-h"><button class="btn btn-petit" type="button" id="btn-exporter-h">Exporter l'historique</button>
+          <button class="btn btn-petit" type="button" id="btn-importer-h">Importer</button>
+          <input type="file" id="fichier-historique" accept=".json,application/json" hidden></div>
+        <p class="avert-h" id="avert-h" hidden><b>Version en ligne :</b> l'historique est effacé quand le serveur redémarre.
+          Exportez-le à la fin de la séance, puis importez-le sur votre ordinateur pour le garder.</p>
         <span class="aide">Une partie est enregistrée à la fin de la course. Aucun nom d'élève n'est conservé.</span></div>
       <div class="lignes-h" id="lignes-h"></div>
     </aside>
@@ -175,6 +180,6 @@
 <script src="/js/admin-parcours.js?v=6"></script>
 <script src="/js/admin-fichiers.js?v=4"></script>
 <script src="/js/admin-reference.js?v=2"></script>
-<script src="/js/admin-historique.js?v=2"></script>
+<script src="/js/admin-historique.js?v=3"></script>
 </body>
 </html>

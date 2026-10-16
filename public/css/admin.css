@@ -169,3 +169,7 @@ select.mini-bouton { appearance: none; text-align: center; text-align-last: cent
   .liens { gap: 10px; }
   .si-large { display: none; }
 }
+
+.boutons-h { display: flex; gap: 8px; }
+.boutons-h .btn { flex: 1; }
+.avert-h { margin: 0; padding: 8px 10px; border-radius: 8px; background: #FCF0C8; font-size: 13px; line-height: 1.35; }

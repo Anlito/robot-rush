@@ -16,6 +16,35 @@ const nettoyerTitre = nettoyer(LONGUEUR_TITRE);
 const taux = (justes, total) => (total ? Math.round((100 * justes) / total) : null);
 const repondues = (b) => b.justes + b.fausses + b.tempsEcoules;
 
+const FORMAT = 'robot-rush-historique';
+const nombre = (v) => (Number.isFinite(Number(v)) && Number(v) >= 0 ? Math.round(Number(v)) : 0);
+const texte = (v, max) => (v === null || v === undefined ? null : String(v).slice(0, max));
+const compteurs = (b) => ({ posees: nombre(b.posees), justes: nombre(b.justes), fausses: nombre(b.fausses), tempsEcoules: nombre(b.tempsEcoules) });
+
+/** Une partie lue dans un fichier importé : seuls les champs connus sont gardés (jamais de pseudo). */
+function nettoyerPartie(p) {
+  if (!p || typeof p !== 'object' || !/^h-[\w-]{1,40}$/.test(String(p.id)) || Number.isNaN(Date.parse(p.date))) return null;
+  if (!Array.isArray(p.equipes) || !Array.isArray(p.questions)) return null;
+  return {
+    id: String(p.id), titre: nettoyerTitre(p.titre), classe: nettoyerClasse(p.classe),
+    date: new Date(p.date).toISOString(), raison: texte(p.raison, 20), dureeMs: nombre(p.dureeMs),
+    parcours: p.parcours && typeof p.parcours === 'object' ? { id: texte(p.parcours.id, 40), nom: texte(p.parcours.nom, 80) } : null,
+    nbEleves: nombre(p.nbEleves),
+    reglages: { dureePartie: nombre(p.reglages && p.reglages.dureePartie), longueur: nombre(p.reglages && p.reglages.longueur) },
+    equipes: p.equipes.slice(0, 8).map((e) => ({
+      nom: texte(e.nom, 30), couleur: /^#[0-9a-f]{6}$/i.test(e.couleur) ? e.couleur : '#888888', symbole: texte(e.symbole, 20),
+      rang: nombre(e.rang), position: nombre(e.position), justes: nombre(e.justes), fausses: nombre(e.fausses),
+      attaques: nombre(e.attaques), solutions: nombre(e.solutions), nbEleves: nombre(e.nbEleves),
+    })),
+    questions: p.questions.slice(0, 1000).map((b) => ({
+      id: texte(b.id, 40), titre: texte(b.titre, 80), enonce: texte(b.enonce, 600), type: texte(b.type, 20),
+      version: b.version === 'blocs' ? 'blocs' : undefined, niveau: texte(b.niveau, 10), ...compteurs(b),
+      parEquipe: Object.fromEntries(Object.entries(b.parEquipe && typeof b.parEquipe === 'object' ? b.parEquipe : {})
+        .slice(0, 8).map(([nom, v]) => [String(nom).slice(0, 30), compteurs(v || {})])),
+    })),
+  };
+}
+
 function creerHistorique({ stockage }) {
   const lire = () => {
     const h = stockage.lireAnnexe('historique.json');
@@ -93,12 +122,39 @@ function creerHistorique({ stockage }) {
     };
   }
 
+  /** Tout l'historique dans un fichier, pour le garder ou le regarder sur un autre ordinateur. */
+  function exporter() {
+    return { format: FORMAT, version: 1, exporteLe: new Date().toISOString(), parties: lire() };
+  }
+
+  /** Ajoute les parties d'un fichier exporté ; une partie déjà présente (même identifiant) n'est pas dupliquée. */
+  function importer(donnees) {
+    if (!donnees || donnees.format !== FORMAT || !Array.isArray(donnees.parties)) {
+      throw new ErreurBanque('Ce fichier n\'est pas un historique Robot Rush (bouton « Exporter l\'historique »).');
+    }
+    const h = lire();
+    const ids = new Set(h.map((p) => p.id));
+    let ajoutees = 0;
+    let deja = 0;
+    let illisibles = 0;
+    for (const brute of donnees.parties) {
+      const p = nettoyerPartie(brute);
+      if (!p) { illisibles++; continue; }
+      if (ids.has(p.id)) { deja++; continue; }
+      h.push(p);
+      ids.add(p.id);
+      ajoutees++;
+    }
+    if (ajoutees) ecrire(h.sort((a, b) => b.date.localeCompare(a.date)).slice(0, MAX_PARTIES));
+    return { ajoutees, deja, illisibles };
+  }
+
   /** Classes rencontrées dans l'historique (pour le filtre). */
   function classes() {
     return [...new Set(lire().map((p) => p.classe).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr'));
   }
 
-  return { ajouter, liste, detail, modifier, supprimer, cumul, classes };
+  return { ajouter, liste, detail, modifier, supprimer, cumul, classes, exporter, importer };
 }
 
 module.exports = { creerHistorique, nettoyerClasse, nettoyerTitre, LONGUEUR_CLASSE, LONGUEUR_TITRE };

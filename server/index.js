@@ -395,6 +395,12 @@ io.on('connection', (socket) => {
       historique.modifier(String(id), { titre, classe });
       io.to('admin').emit('historique', vueHistorique());
     });
+    gerer(socket, 'historique:exporter', () => ({ fichier: historique.exporter() }));
+    gerer(socket, 'historique:importer', ({ donnees }) => {
+      const rapport = historique.importer(donnees);
+      io.to('admin').emit('historique', vueHistorique());
+      return { rapport };
+    });
     gerer(socket, 'historique:supprimer', ({ id }) => {
       historique.supprimer(String(id));
       io.to('admin').emit('historique', vueHistorique());

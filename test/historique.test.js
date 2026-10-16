@@ -52,3 +52,27 @@ test('classe : nettoyée, 30 caractères au plus, vide = aucune', () => {
   assert.equal(nettoyerClasse('   '), null);
   assert.equal(nettoyerClasse('x'.repeat(50)).length, 30);
 });
+
+test('historique : export puis import sur un autre ordinateur, sans doublon ni champ inconnu', () => {
+  const ici = creerHistorique({ stockage: stockage() });
+  const p1 = ici.ajouter(bilan([q('q1', 3, 1)], '2026-10-01T09:00:00.000Z'), { classe: '5e B', titre: 'Séance 1' });
+  const fichier = ici.exporter();
+  assert.equal(fichier.format, 'robot-rush-historique');
+  assert.equal(fichier.parties.length, 1);
+
+  const ailleurs = creerHistorique({ stockage: stockage() });
+  ailleurs.ajouter(bilan([q('q2', 1, 1)], '2026-10-08T09:00:00.000Z'), { classe: '5e B' });
+  // Un champ inattendu (un pseudo glissé à la main) n'est pas gardé.
+  const modifie = JSON.parse(JSON.stringify(fichier));
+  modifie.parties[0].pseudos = ['Léa'];
+  modifie.parties.push({ id: 'pas-un-id', date: 'nulle part' });
+  const r = ailleurs.importer(modifie);
+  assert.deepEqual(r, { ajoutees: 1, deja: 0, illisibles: 1 });
+  assert.equal(ailleurs.liste().length, 2);
+  assert.equal(ailleurs.liste()[1].id, p1.id, 'triées de la plus récente à la plus ancienne');
+  assert.ok(!JSON.stringify(ailleurs.detail(p1.id)).includes('Léa'));
+  assert.equal(ailleurs.cumul('5e B').nbParties, 2);
+  // Réimporter le même fichier : rien en double.
+  assert.deepEqual(ailleurs.importer(modifie), { ajoutees: 0, deja: 1, illisibles: 1 });
+  assert.throws(() => ailleurs.importer({ format: 'robot-rush', questions: [] }), /pas un historique/);
+});

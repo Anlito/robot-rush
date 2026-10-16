@@ -191,8 +191,44 @@
     else Admin.bandeau(rep.erreur, true);
   });
 
+  // ----- Exporter / importer tout l'historique (fichier .json) -----
+  el('#btn-exporter-h').addEventListener('click', async () => {
+    const rep = await Admin.envoyer('historique:exporter', {});
+    if (!rep.ok) { Admin.bandeau(rep.erreur, true); return; }
+    const n = rep.fichier.parties.length;
+    if (!n) { Admin.bandeau('L\'historique est vide : rien à exporter.', true); return; }
+    const lien = document.createElement('a');
+    lien.href = URL.createObjectURL(new Blob([JSON.stringify(rep.fichier, null, 2)], { type: 'application/json' }));
+    lien.download = `robot-rush-historique-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(lien);
+    lien.click();
+    lien.remove();
+    setTimeout(() => URL.revokeObjectURL(lien.href), 2000);
+    Admin.bandeau(`Historique exporté : ${n} partie${n > 1 ? 's' : ''} (${lien.download}).`);
+  });
+  el('#btn-importer-h').addEventListener('click', () => el('#fichier-historique').click());
+  el('#fichier-historique').addEventListener('change', async (ev) => {
+    const fichier = ev.target.files[0];
+    ev.target.value = '';
+    if (!fichier) return;
+    let donnees;
+    try { donnees = JSON.parse((await fichier.text()).replace(/^\uFEFF/, '')); } catch {
+      Admin.bandeau('Ce fichier n\'est pas lisible : choisissez un fichier exporté avec « Exporter l\'historique ».', true);
+      return;
+    }
+    const rep = await Admin.envoyer('historique:importer', { donnees });
+    if (!rep.ok) { Admin.bandeau(rep.erreur, true); return; }
+    const r = rep.rapport;
+    Admin.bandeau(`Historique importé : ${r.ajoutees} partie${r.ajoutees > 1 ? 's' : ''} ajoutée${r.ajoutees > 1 ? 's' : ''}`
+      + `${r.deja ? `, ${r.deja} déjà présente${r.deja > 1 ? 's' : ''}` : ''}${r.illisibles ? `, ${r.illisibles} illisible${r.illisibles > 1 ? 's' : ''}` : ''}.`, r.illisibles > 0);
+  });
+
   Admin.ecouter('historique', recevoir);
-  Admin.ecouter('admin:donnees', () => charger());
+  Admin.ecouter('admin:donnees', (d) => {
+    // Hébergement sans disque permanent (Render gratuit) : rappel d'exporter.
+    el('#avert-h').hidden = !d.stockageEphemere;
+    charger();
+  });
   window.addEventListener('onglet', (ev) => { if (ev.detail === 'historique') charger(); });
   rendreDetail();
 })();
