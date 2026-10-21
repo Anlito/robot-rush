@@ -1,3 +1,27 @@
+<!-- suivi-maintenance:debut -->
+## État du projet et améliorations documentées — 21 octobre 2026
+
+- Blockly et ses médias sont chargés depuis Labo Blocs en ligne, sans copie locale. Les questions de programmation nécessitent Internet, y compris lorsque le serveur du jeu est lancé sur le réseau local.
+- Les courses, questions, blocs de quiz et corrections côté serveur restent propres à Robot Rush.
+- La collision des identifiants d’historiques créés au même instant a été corrigée pour éviter de confondre deux bilans lors de leur import.
+- Les tests et le contrôle de sauvegarde/relecture des blocs ont été effectués lors de ces modifications.
+- Le dépôt et le dossier source local sont synchronisés. Le redémarrage ou le redéploiement d’un serveur Robot Rush déjà lancé reste une opération distincte ; la synchronisation du code ne redémarre pas un service.
+
+### Référence locale et maintenance
+
+Dossier de travail de référence : **Documents/RobotRush**. Dépôt : [Anlito/robot-rush](https://github.com/Anlito/robot-rush). La branche principale est **main**. Les copies temporaires d’un chat ou les worktrees servent au travail intermédiaire ; elles ne remplacent pas ce dossier.
+
+À chaque intervention :
+
+1. Vérifier les modifications locales et la version publiée avant de commencer ; sauvegarder le travail non enregistré.
+2. Décrire dans ce README les améliorations, les vérifications, les limites et les opérations restantes.
+3. Publier les changements autorisés, puis synchroniser le dossier local de référence avec le même commit.
+4. Contrôler le commit local, le commit distant et les fichiers restants avant d’annoncer que le projet est à jour. Signaler explicitement tout décalage ou travail conservé hors publication.
+
+Cette règle permet de reprendre le projet dans un autre outil local sans perdre les dernières améliorations. Une publication du site ne met pas automatiquement à jour les dossiers du PC.
+
+<!-- suivi-maintenance:fin -->
+
 ## Blockly centralisé
 
 Les questions de blocs chargent Blockly depuis Labo Blocs en ligne, sans copie dans ce projet. Une connexion Internet est nécessaire pour ces questions, même si le serveur Robot Rush est lancé localement. Le moteur du jeu, les courses, les questions et la correction côté serveur restent propres à Robot Rush.
@@ -22,6 +46,9 @@ avec un obstacle. La course est projetée en classe.
 [outils-salle/exemple-questions-robot-rush.json](outils-salle/exemple-questions-robot-rush.json) (une question de chaque type,
 importable) : à joindre à l'IA. Une copie de ces deux fichiers est proposée au téléchargement sur https://anlito.github.io
 (dossier `fichiers/robot-rush/` du dépôt `Anlito/anlito.github.io`) : **la recopier quand ils changent**.
+
+
+L’accès professeur se configure pour chaque installation. Aucune valeur de mot de passe n’est indiquée dans ce README.
 
 ## Mode local : le jeu sur le PC du professeur
 
@@ -68,7 +95,6 @@ ou par variables d'environnement, prioritaires :
 | Fichier | Variable | Rôle | Défaut |
 |---|---|---|---|
 | `port` | `PORT` | port d'écoute | 3000 |
-| `motDePasse` | `ADMIN_PASSWORD` | mot de passe de l'espace professeur | `robot` (avertissement affiché) |
 | `adressePublique` | `PUBLIC_URL` | adresse affichée aux élèves (hébergement en ligne) | adresse du PC sur le réseau local |
 | `ouvrirNavigateur` | `OUVRIR_NAVIGATEUR=1` | ouvrir l'espace professeur au démarrage | non |
 | | `DATA_DIR` | dossier des données | `data/` (ou le volume Railway) |
