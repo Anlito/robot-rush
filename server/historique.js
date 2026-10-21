@@ -5,6 +5,7 @@
 // Sert à connaître les acquis : taux de réussite par question, pour une partie ou cumulé pour une classe.
 
 const { ErreurBanque } = require('./banque');
+const { randomUUID } = require('node:crypto');
 
 const MAX_PARTIES = 300;
 const LONGUEUR_CLASSE = 30;
@@ -55,7 +56,7 @@ function creerHistorique({ stockage }) {
   /** Enregistre le bilan d'une partie terminée (le plus récent en premier). */
   function ajouter(bilan, { classe = null, titre = null } = {}) {
     const h = lire();
-    const partie = { id: `h-${Date.now().toString(36)}`, titre: nettoyerTitre(titre), classe: nettoyerClasse(classe), ...bilan };
+    const partie = { id: `h-${randomUUID()}`, titre: nettoyerTitre(titre), classe: nettoyerClasse(classe), ...bilan };
     h.unshift(partie);
     ecrire(h.slice(0, MAX_PARTIES));
     return partie;

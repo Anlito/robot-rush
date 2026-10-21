@@ -53,7 +53,9 @@ test('classe : nettoyée, 30 caractères au plus, vide = aucune', () => {
   assert.equal(nettoyerClasse('x'.repeat(50)).length, 30);
 });
 
-test('historique : export puis import sur un autre ordinateur, sans doublon ni champ inconnu', () => {
+test('historique : export puis import sur un autre ordinateur, sans doublon ni champ inconnu', (t) => {
+  // Les deux ordinateurs peuvent créer un bilan dans la même milliseconde.
+  t.mock.method(Date, 'now', () => 123456789);
   const ici = creerHistorique({ stockage: stockage() });
   const p1 = ici.ajouter(bilan([q('q1', 3, 1)], '2026-10-01T09:00:00.000Z'), { classe: '5e B', titre: 'Séance 1' });
   const fichier = ici.exporter();
