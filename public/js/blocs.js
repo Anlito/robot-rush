@@ -1,7 +1,7 @@
 /* Questions de blocs : éditeur Blockly.
  *
  * Repris du projet « distributeur de céréales » (site/js/blocs.js et site/js/editeur.js) :
- * Blockly copié dans le dépôt (public/vendor/blockly, aucun CDN), libellés français des blocs,
+ * Blockly chargé depuis le module central de Labo Blocs en ligne, libellés français des blocs,
  * couleurs des familles, thème, rendu « zelos », repérage des blocs restés hors du programme.
  * Adaptations pour Robot Rush (version réduite, sans simulateur) :
  *  - un seul chapeau « Programme » ; nouveau bloc « répéter ( ) fois » ;
@@ -172,8 +172,9 @@ RR.blocs = (() => {
     return new Promise((resolve, reject) => {
       const s = document.createElement('script');
       s.src = src;
-      s.onload = resolve;
-      s.onerror = () => reject(new Error(`Impossible de charger ${src}`));
+      const timer = setTimeout(() => { s.remove(); reject(new Error('La connexion à Labo Blocs est nécessaire pour les questions de blocs. Vérifie Internet puis réessaie.')); }, 15000);
+      s.onload = () => { clearTimeout(timer); resolve(); };
+      s.onerror = () => { clearTimeout(timer); reject(new Error('Impossible de joindre Labo Blocs. Vérifie Internet puis réessaie.')); };
       document.head.appendChild(s);
     });
   }
@@ -181,8 +182,8 @@ RR.blocs = (() => {
   /** Charge Blockly une seule fois (à l'avance si possible, pour ne pas faire attendre l'élève). */
   function charger() {
     if (!chargement) {
-      chargement = script('/vendor/blockly/blockly_compressed.js?v=3')
-        .then(() => script('/vendor/blockly/fr.js?v=3'))
+      chargement = script('https://anlito.github.io/labo-blocs/module/blockly/blockly_compressed.js?v=3')
+        .then(() => script('https://anlito.github.io/labo-blocs/module/blockly/fr.js?v=3'))
         .then(() => {
           const B = window.Blockly;
           // Nombre : accepte la virgule (0,5) et, en mode « à compléter », la case vide « ? ».
@@ -241,7 +242,7 @@ RR.blocs = (() => {
     const ws = B.inject(zone, {
       toolbox: contenu.length ? { kind: 'flyoutToolbox', contents: contenu } : undefined,
       renderer: 'zelos',
-      media: '/vendor/blockly/media/',
+      media: 'https://anlito.github.io/labo-blocs/module/blockly/media/',
       theme,
       trashcan: true,
       sounds: false,

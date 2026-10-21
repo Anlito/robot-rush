@@ -1,3 +1,7 @@
+## Blockly centralisé
+
+Les questions de blocs chargent Blockly depuis Labo Blocs en ligne, sans copie dans ce projet. Une connexion Internet est nécessaire pour ces questions, même si le serveur Robot Rush est lancé localement. Le moteur du jeu, les courses, les questions et la correction côté serveur restent propres à Robot Rush.
+
 # Robot Rush
 
 Jeu de course d'équipes en direct pour la classe de technologie (collège 5e–3e, SEGPA).
@@ -19,7 +23,7 @@ avec un obstacle. La course est projetée en classe.
 importable) : à joindre à l'IA. Une copie de ces deux fichiers est proposée au téléchargement sur https://anlito.github.io
 (dossier `fichiers/robot-rush/` du dépôt `Anlito/anlito.github.io`) : **la recopier quand ils changent**.
 
-## Mode local : le jeu sur le PC du professeur, sans internet
+## Mode local : le jeu sur le PC du professeur
 
 **Guide pas à pas pour les enseignants : [MODE-LOCAL.md](MODE-LOCAL.md)** (installation de Node.js ou version portable,
 double-clic sur `demarrer.bat`, pare-feu Windows, adresse et QR code pour les élèves, page `/test`, dépannage).
@@ -32,7 +36,7 @@ Sur **Raspberry Pi** (borne branchée en RJ45 et sur le vidéoprojecteur, instal
 
 En bref : double-cliquer sur `demarrer.bat` (Mac : `demarrer.command`, Linux : `demarrer.sh`).
 Le script vérifie Node.js, installe les composants la première fois, crée `config-serveur.json`,
-puis lance le serveur et ouvre l'espace professeur. Tout fonctionne hors ligne : polices, icônes, QR code
+puis lance le serveur et ouvre l'espace professeur. Le serveur, les polices, les icônes et le QR code fonctionnent localement ; les questions de blocs nécessitent Internet. Ressources locales : polices, icônes, QR code
 et bibliothèques sont dans le projet.
 
 ## En ligne : Railway, Render ou Fly.io
@@ -137,7 +141,7 @@ Durée par défaut : 30 s, 60 s pour `blocs` et `completer` (réglables), sauf s
 
 | Repris tel quel | Adapté pour Robot Rush |
 |---|---|
-| Blockly copié dans `public/vendor/blockly` (aucun CDN) | chargé seulement à la première question de blocs |
+| Blockly chargé depuis Labo Blocs en ligne | chargé seulement à la première question de blocs |
 | Libellés français, couleurs des familles, thème, rendu « zelos » (`public/js/blocs.js`) | broches au choix de la question (menus D2 à D13, servo D5 / D6) ; un seul chapeau « Programme » ; nouveau bloc « répéter ( ) fois » ; palette à plat (les blocs de la question) |
 | Format simplifié des programmes et conversion Blockly ↔ programme (`server/blocs.js`) | lu côté serveur, étendu à « répéter » ; normalisation des écritures équivalentes |
 | Repérage des blocs « hors du programme » (contour pointillé) | avertissement avant de valider |
@@ -208,7 +212,7 @@ public/          pages /course, /jouer, /admin, /test, styles, scripts, SVG, pol
   js/questions.js  affichage des 5 types de questions (élève et aperçu)
   js/admin*.js     espace professeur : partie, questions, parcours, fichiers
   js/blocs.js      éditeur Blockly (blocs de l'atelier céréales)
-  vendor/blockly/  Blockly, copié depuis le projet céréales
+  Blockly : module central de Labo Blocs en ligne
 seed/            questions et parcours de départ
 test/            tests de la logique de jeu (node --test)
 tools/           élèves factices, test de charge, préparation du dossier local

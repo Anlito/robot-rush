@@ -1,10 +1,10 @@
-# Robot Rush en mode local (sans internet)
+# Robot Rush avec serveur local
 
-Ce mode permet de jouer **sans hébergement et sans internet** : le jeu tourne sur le PC du professeur,
+Ce mode permet de jouer **sans hébergement externe** : le jeu tourne sur le PC du professeur,
 branché au vidéoprojecteur, et les ordinateurs des élèves s'y connectent par le réseau du collège.
 Rien n'est installé sur les postes élèves : un navigateur suffit.
 
-Aucune donnée ne sort du réseau local. Les questions, parcours et réglages sont enregistrés sur le PC
+Les données du jeu restent dans le réseau local ; les bibliothèques Blockly sont chargées depuis Labo Blocs en ligne. Les questions, parcours et réglages sont enregistrés sur le PC
 (dossier `data/`). Les pseudos des élèves ne sont jamais enregistrés : ils disparaissent à la fin de la partie.
 
 ---
@@ -59,7 +59,7 @@ et l'installer en gardant les options proposées.
    (dossier `node_modules`) : **une connexion internet est nécessaire pour cette étape uniquement**.
 
 Ensuite, le dossier complet (avec `node_modules`, et `node` si vous utilisez la version portable)
-peut être **copié tel quel** sur une clé USB ou un autre PC : il fonctionnera sans internet.
+peut être **copié tel quel** sur une clé USB ou un autre PC : le serveur fonctionnera localement. Les questions de blocs nécessitent une connexion Internet à Labo Blocs.
 
 ## 3. Lancer le jeu
 
